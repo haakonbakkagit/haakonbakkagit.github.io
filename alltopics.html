@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -83,7 +84,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -244,18 +244,6 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -344,14 +332,14 @@ $(document).ready(function () {
 <p>BTopic123: <a href="./btopic123.html">Parametrisations matter for interpretation: Seeds example</a> <span style="color:grey">Quality:Draft </span></p>
 <p>BTopic124: <a href="./btopic124.html">Unknown covariates are included in the Gaussian noise</a> <span style="color:grey">Quality:OK webpage </span></p>
 <p>BTopic125: <a href="./btopic125.html">What I think about overdispersed Poisson</a> <span style="color:grey">Quality:OK webpage </span></p>
-<p>BTopic127: <a href="./btopic127.html">Polygons and Coastlines</a> <span style="color:grey">OK webpage:Draft </span></p>
-<p>BTopic128: <a href="./btopic128.html">Apply Barrier Model to the Archipelago Data</a> <span style="color:grey">OK webpage:Draft </span> (This is an extended version of btopic107, expected to replace 107 in the near future.)</p>
+<p>BTopic127: <a href="./btopic127.html">Polygons and Coastlines</a> <span style="color:grey">Quality:Draft </span></p>
+<p>BTopic128: <a href="./btopic128.html">Apply Barrier Model to the Archipelago Data</a> <span style="color:grey">Quality:Draft </span> (This is an extended version of btopic107, expected to replace 107 in the near future.)</p>
 <div id="quality-levels" class="section level3">
 <h3>Quality levels</h3>
-<p>Draft: Not recommended for reading. The idea is there but the execution is poor.</p>
-<p>OK webpage: A suitable version 1.</p>
-<p>Error checked: Checked for mathematical errors and spell-checked.</p>
-<p>Product tested: Tested by at least one person (other than me).</p>
+<p>Draft: Not recommended for reading. The idea is there but the execution is poor, or not checked.</p>
+<p>OK webpage: A suitable version 1. Checked for errors.</p>
+<p>Error checked: Carefully checked for mathematical errors and spell-checked.</p>
+<p>Product tested: Tested and checked by at least one person (other than me).</p>
 <p>Final: Tested on several people, statisticians and applied practitioners. (Can still be updated with minor changes.)</p>
 </div>
 </div>
@@ -377,6 +365,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

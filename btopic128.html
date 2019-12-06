@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Francesco Serafini" />
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>Apply Barrier Model to the Archipelago Data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Apply Barrier Model to the Archipelago Data</h1>
+<h4 class="author">Francesco Serafini</h4>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">updated 22 April 2018</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this page we show how to apply the Barrier model to a real data problem. These models arise naturally wherever physical, geographical or topological barriers have to be taken into account. Just to make some examples of barriers: land for aquatic animals (and viceversa), industrial areas for human population or cities and roads for woods and forests.<br />
+To highlight the differences with the classical spatial approch and the Barrier model we make use of a practical example: the goal is to estimate the fish species distribution in a certain sea area. We show how uncomplicated it is to implement these models in R-<strong>INLA</strong>. We also provide and explain code for this example.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">2</span> Introduction</h1>
+<p>Before going through the example let us make a brief, non-theoretical, introduction to spatial models and the difference between stationary and non-stationary models. Some authors use the term non-stationary for a non-stationary mean structure, but in our framework the mean structure is always 0 (and modeled by the fixed effects and other model components), hence we are talking about non-stationary covariance structure.</p>
+<div id="why-go-spatial" class="section level2">
+<h2><span class="header-section-number">2.1</span> Why go spatial</h2>
+<p>Whenever we are dealing with observations located in space, especially in species distribution modeling, environmental conditions may not be sufficient to explain the variability of the observations. In other words the measurements, given the covariates, are not independent. Introducing a spatial random effect mitigates this situation.<br />
+Think of a habitat that is optimal for two different species. In this case there may be competition for living in that habitat and one of the species will be forced to move to a less optimal habitat. A model with only covariates cannot properly embody this structure, but a spatial random effect can.</p>
+</div>
+<div id="how-go-spatial" class="section level2">
+<h2><span class="header-section-number">2.2</span> How go spatial</h2>
+<p>The most used way to take into account the spatial dependencies between observations is to introduce in the model a <em>Gaussian Random Field</em> (GRF) (this is also known as a Gaussian Field (GF) or a Spatial Gaussian Field (SGF)). The main characteristic of this model is a covariance structure which depends on the spatial locations of points. The spatial correlation is assumed to be stronger for points close to each other than for points far away from each other. Given that, there are two main situations:</p>
+<ol style="list-style-type: decimal">
+<li><p>The correlation is a function only of the distance between points. The correlation between points propagates on the shortest path between them. In this case we are talking about <strong>stationary Gaussian random fields</strong></p></li>
+<li><p>The correlation function changes depending on the locations of the considered points. The correlation propagates accordingly with the topology of the study area. Here we are talking about <strong>non-stationary Gaussian random fields</strong></p></li>
+</ol>
+<p>For more information about that [TODO: link more info about stationary and non stationary GRF]</p>
+</div>
+<div id="barrier-model" class="section level2">
+<h2><span class="header-section-number">2.3</span> Barrier Model</h2>
+<p>The Barrier model, which we are going to explain in detail in the next sections, provides a non-stationary Gaussian random field. In species distribution modeling, physical barriers such as islands, mountains, cities, roads and lakes could pose obstacles for the movement of species. Hence, the spatial correlation should not follow the shortest path; it cannot propagate across these obstacles but should travel around them.<br />
+The following animation is a simple example. Think of an individual which moves randomly in a given space. When he meets a barrier it is unlikely that the distribution of his average location is not affected by this barrier. Then the probability of being on the other side should be smaller. Smaller the gap is the less likely it is that the individual finds and traverses it. Note that with a stationary Gaussian random field the distribution doesn’t change when the individual get closer to the barrier.</p>
+<div align="center">
+<p><img src="fig/btopic128/prior%20of%20barrier%20model1.gif" width = "400" alt="The study area" align=center /></p>
+</div>
+</div>
+</div>
+<div id="case-study" class="section level1">
+<h1><span class="header-section-number">3</span> Case study</h1>
+<p>Once we have a summary idea of what the Barrier model is, let us go into details using a real case study: the study of fish larvae species distribution in the Finnish archipelago. This example turns out to be particularly appropriate because the considered fish populations live near the coast and the study area presents a large number of small islands.</p>
+<p>Notice: The code and results on this webpage is a reproduction of the results in <span class="citation">(Bakka et al. 2016)</span>.</p>
+<div id="area-of-interest" class="section level2">
+<h2><span class="header-section-number">3.1</span> Area of Interest</h2>
+<p>The study area is located in the Archipelago Sea on the south-west coast of Finland. It is part of the Baltic Sea which is one of the largest brackish water area of the world and it holds the reproductive process of many fish species. Hence, studying this kind of areas is of central importance in marine spatial planning and fisheries managment.</p>
+<div align="center">
+<p><img src="fig/btopic128/image1.png" width = "500" alt="The study area" align=center /></p>
+</div>
+<p>This figure is from <span class="citation">(Bakka et al. 2016)</span>.</p>
+</div>
+<div id="data" class="section level2">
+<h2><span class="header-section-number">3.2</span> Data</h2>
+<p>For a description of the data see <span class="citation">(Kallasvuo, Vanhatalo, and Veneranta 2016)</span>. Data collection was funded by VELMU and Natural Resources Institute Finland (Luke).</p>
+<div id="variable-of-interest" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Variable of interest</h3>
+<p>The data is on three species of fish, smelt (<em>Osmerus eperlanus</em>), perch (<em>Perca fluviatilis</em>) and pikeperch (<em>Sander lucioperca</em>). They are freshwater fish but they reproduce in the coastal areas, close to river outlet. We are interested in the early-stage larvae, their number in 198 locations is recorded. In the study we will focused only on the smelt since the other species have a pretty similar behaviour.</p>
+<p>This is how the observations look like.</p>
+<div align="center">
+<p><img src="fig/btopic128/image2.png" width = "500" alt="The study area" align=center /></p>
+</div>
+<p>This figure is from <span class="citation">(Bakka et al. 2016)</span>.</p>
+</div>
+<div id="covariates" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Covariates</h3>
+<p>We include in the model six environmental variables, available in GIS format in 50m resolution throughout the study area. All of them, except the RiverFlow, were centered and scaled. RiverFlow is treated as a factor, 0 represents the values less or equal 0.08 and 1 represents values greater than 0.08.</p>
+<p>In the following table you find a brief description of the covariates.</p>
+<div align="center">
+<p><img src="fig/btopic128/image3.png" width = "500" alt="The study area" align=center /></p>
+</div>
+<p>This table is from <span class="citation">(Bakka et al. 2016)</span>.</p>
+</div>
+</div>
+<div id="model" class="section level2">
+<h2><span class="header-section-number">3.3</span> Model</h2>
+<p>We choose a three levels hierarchical model to model these data.</p>
+<p><strong>First Level</strong></p>
+<p>We model the number of larvae <span class="math inline">\(y_i\)</span> in a given location <span class="math inline">\(s_i\)</span> for <span class="math inline">\(i = 1,...,n\)</span>. Since this is a count variable we choose the Poisson distribution. The observations are assumed to be independent given the latent variable <span class="math inline">\(\vec{\eta}\)</span>. The <span class="math inline">\(\vec{x_i}\)</span> represent the covariates vector for <span class="math inline">\(i\)</span>-th observation and <span class="math inline">\(z_i\)</span> is fixed sampling effort.</p>
+<p><span class="math display">\[ y_i|\eta_i\sim {\rm Poisson}(z_ie^{\eta_i})\]</span></p>
+<p><span class="math display">\[\eta_i=\beta_0+\vec{x}_i\vec{\beta}+u(s_i)+\epsilon_i\]</span></p>
+<p>Where <span class="math inline">\(\epsilon\)</span> is an iid random effect and <span class="math inline">\(u(s_i)\)</span> a Gaussian random field that could be either stationary or non-stationary. We will use both in the next sections and compare the results.<br />
+Behind the choice of introducing two random effect there is the following consideration: there are two kind of spatial dependencies, long and short range. We model the short range dependencies (e.g. local aggregation behavior, sampling variability) via the iid random effect. The long range dependency (e.g. diffusion and spatial aggregation), which is more structured, is modelled using a Gaussian random field. For more details see <span class="citation">(Bakka et al. 2016)</span> Section 3.</p>
+<p><strong>Second Level</strong></p>
+<p>A diffuse prior has been choosen for the intercept <span class="math inline">\(\beta_0\)</span> and the coefficients vector <span class="math inline">\(\beta\)</span>. The independent random effect <span class="math inline">\(\epsilon\)</span> is simply a vector of independent Gaussians. The spatial random effect <span class="math inline">\(u(s_i)\)</span> belongs to the Matérn family and its covariance structure is defined uniquely by two parameters: the range <span class="math inline">\(r\)</span> and the standard deviation <span class="math inline">\(\sigma_u\)</span>. Talking about these parameters, <span class="math inline">\(\sigma_u\)</span> represents the spatial noise to independent noise ratio. The parameter <span class="math inline">\(r\)</span> changes the length scale at which we are studying the dependencies. Long story short, two points that are <span class="math inline">\(r\)</span> units apart have a covariance close to 0.13. [More detail on SPDE paper]</p>
+<p><span class="math display">\[\beta_j\sim \mathcal{N}(0,1000)\]</span></p>
+<p><span class="math display">\[\beta_0\sim \mathcal{N}(0,1000)\]</span></p>
+<p><span class="math display">\[\epsilon_i\sim\mathcal{N}(0,\sigma_\epsilon^2)\]</span></p>
+<p><span class="math display">\[u(s_i) \sim GRF(r, \sigma_u)\]</span></p>
+<p><strong><em>Stationary vs. Barrier</em></strong></p>
+<p>Given the above formulae it’s hard to understand where is the difference between stationary and non-stationary. The idea behind the Barrier model is to set two different range parameters. One for the barrier area and one for the study area. Setting the first smaller than the second hampers the dependency. Remember, smaller range means that closer points are uncorrelated. It means that the correlation among points, with a barrier between them, is reduced compared to the stationary case. Another important consideration that makes this model very realistic is that the correlation between points that cannot be joined by a path passing through water is almost removed. In the following analysis we will consider the barrier range as fixed and close to zero. The analysis will be done only on the other range parameter. For more details see <span class="citation">(Bakka et al. 2016)</span> Section 3.</p>
+<p><strong>Third Level</strong></p>
+<p>The third level describes priors for the hyper-parameters of the two random effects.<br />
+We use the following priors:</p>
+<p><span class="math display">\[\pi(\sigma_\epsilon)\sim \lambda_\epsilon e^{-\lambda_\epsilon \sigma_\epsilon}\]</span></p>
+<p><span class="math display">\[\pi(\sigma_u)\sim \lambda_0 e^{-\lambda_0 \sigma_u}\]</span></p>
+<p><span class="math display">\[\pi\left(\frac{1}{r}\right)\sim \lambda_1 e^{-\lambda_1 \frac{1}{r}}\]</span></p>
+<p>The choice of <span class="math inline">\(\lambda\)</span>’s is strictly dependent on the scale of the problem and the user’s degree of shrinkage. Notice that these priors even if informative have the role of avoiding overfitting and privileging the simplest model when it is true. In general smaller values of <span class="math inline">\(\lambda\)</span> implies a larger variance of the random effect and then the importance of the fixed effects is reduced. For this case we define <span class="math inline">\(\lambda_\epsilon= \lambda_0 = 1.5\)</span> and <span class="math inline">\(\lambda_1 = 20.8km\)</span>. Check the paper <span class="citation">(paper Bakka et al. 2016. section 3)</span> for a more detailed justification.</p>
+</div>
+</div>
+<div id="implementation-utilities" class="section level1">
+<h1><span class="header-section-number">4</span> Implementation (Utilities)</h1>
+<p>Here the reader can find some code example on how to implement the above models using R-<strong>INLA</strong>. We will show how to deal with a hierarchical model by using R-<strong>INLA</strong> and how to make some nice plots. These are all the packages that we will use:</p>
+<pre class="r"><code>library(INLA)
+library(fields)
+library(rgeos)
+library(ggplot2)</code></pre>
+<p>Let us start downloading the data:</p>
+<pre class="r"><code>load(file = &quot;https://haakonbakka.bitbucket.io/data/WebSiteData-Archipelago.RData&quot;)</code></pre>
+<p>Alternatively, if you already have the data saved locally:</p>
+<pre class="r"><code>load(file = &quot;data/WebSiteData-Archipelago.RData&quot;)</code></pre>
+<p>The file contains:</p>
+<ul>
+<li><p><em>poly.water</em>: is a SpatialPolygons representing the study area.<br />
+More details on Polygons [link polygon]</p></li>
+<li><p><em>df</em>: the working data frame</p></li>
+<li><p><em>dat</em>: another data frame containing the original data</p></li>
+</ul>
+<p>After importing the data, we create the variable of interest. As we said before the analysis will be focused on the smelt distribution.</p>
+<pre class="r"><code>df$y = df$y.smelt</code></pre>
+<div id="mesh" class="section level2">
+<h2><span class="header-section-number">4.1</span> Mesh</h2>
+<p>First of all we have to build a mesh; a triangulation on the study area that allows us to approximate the random field.<br />
+For more detail on the mesh in general see [link page mesh]</p>
+<pre class="r"><code># set the max length of triangles edge
+max.edge = 0.6
+# set the length of the boundary extension
+bound.outer = 4.6
+# build the mesh
+mesh = inla.mesh.2d(boundary = poly.water,
+                    loc=cbind(df$locx, df$locy),
+                    max.edge = c(1,5)*max.edge,
+                    cutoff = 0.06,
+                    offset = c(max.edge, bound.outer))</code></pre>
+<p>Take a look. The blue line is the boundary representing the barriers and the red points are the sampling location.</p>
+<pre class="r"><code>plot(mesh, lwd=0.5) 
+points(df$locx, df$locy, col=&quot;red&quot;)</code></pre>
+<p><img src="btopic128_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="stack" class="section level2">
+<h2><span class="header-section-number">4.2</span> Stack</h2>
+<p>In our model we have a complex linear predictor. One of the main problems is that it includes a spatial random effect defined over the mesh points and covariates observed a different locations which are not included in that set. The first step is to build a matrix <span class="math inline">\(A\)</span> that project the random field on the desired locations.<br />
+Thanks to R-<strong>INLA</strong> is one line of code; it is sufficient to use the <span class="math inline">\(\texttt{inla.spde.make.A()}\)</span>. It needs just a mesh and a set of point on which project.</p>
+<pre class="r"><code># set of locations
+locations = cbind(df$locx, df$locy)
+# Projection matrix
+A.i.s = inla.spde.make.A(mesh, loc = locations)</code></pre>
+<p>Just to convince the reader that it works properly. Check the dimensions</p>
+<pre class="r"><code>cat(&#39;Dimension of A: &#39;, dim(A.i.s), &#39;\n&#39;)
+
+cat(&#39;Number of mesh points: &#39;, mesh$n, &#39;\n&#39;)
+
+cat(&#39;Number of lations: &#39;, dim(locations)[1], &#39;\n&#39;)</code></pre>
+<pre><code>## Dimension of A:  198 6539 
+## Number of mesh points:  6539 
+## Number of lations:  198</code></pre>
+<p>The advantages of using R-<strong>INLA</strong> don’t end here. We can build a specific object to deal with this kind of models: the Stack object. It is build using the <span class="math inline">\(\texttt{inla.stack()}\)</span> function. The latter takes as input:</p>
+<ul>
+<li><p><strong>data</strong> : the data and the offset [i’m not sure of this]</p></li>
+<li><p><strong>effect</strong>: a list containing all the effects: fixed and random. For the random effects is sufficient to specify a index vector of locations. For the fixed effects we specify a dataframe containing the covariates.</p></li>
+<li><p><strong>A</strong>: a list containing the above projection matrix and <span class="math inline">\(1\)</span> if the corresponding variable is recorded on the right locations.</p></li>
+</ul>
+<pre class="r"><code>stk &lt;- inla.stack(data=list(y=df$y, e=df$exposure), # data and offset
+                  effects=list(s= 1:mesh$n, # spatial random effect
+                               iidx=1:nrow(df), # iid random effect
+                               data.frame(m=1, df[ ,5:11])), #covariates
+                  A=list(A.i.s, 1, 1), # projection matrix
+                  remove.unused = FALSE, tag=&#39;est&#39;)</code></pre>
+<p>[More detail and examples on the Cameletti book cap.6]</p>
+</div>
+</div>
+<div id="implementation-models" class="section level1">
+<h1><span class="header-section-number">5</span> Implementation (Models)</h1>
+<p>Lets create a list of lists to store the results for the four models that we are going to implement:</p>
+<ul>
+<li><p>Stationary with/without covariates</p></li>
+<li><p>Barrier with/without covariates</p></li>
+</ul>
+<pre class="r"><code># overall list
+M = list()
+
+# each model is a list itself
+M[[1]] = list()
+M[[1]]$shortname = &quot;stationary-no-cov&quot;
+M[[2]] = list()
+M[[2]]$shortname = &quot;stationary-all-cov&quot;
+M[[3]] = list()
+M[[3]]$shortname = &quot;barrier-no-cov&quot;
+M[[4]] = list()
+M[[4]]$shortname = &quot;barrier-all-cov&quot;</code></pre>
+<div id="stationary-model" class="section level2">
+<h2><span class="header-section-number">5.1</span> Stationary Model</h2>
+<p>Start defining the spatial random fields. In R-<strong>INLA</strong> is one line of code. We also need to specify the prior for the hyper-parameters <span class="math inline">\(r\)</span> and <span class="math inline">\(\sigma_u\)</span>. In particular, the prior on <span class="math inline">\(r\)</span> is calibrated to have a median around half of the study area. The hyper-parameters of <span class="math inline">\(\sigma_u\)</span> are choosen in order to have probability <span class="math inline">\(0.01\)</span> to have values greater than <span class="math inline">\(3\)</span>.</p>
+<pre class="r"><code>spde = inla.spde2.pcmatern(mesh, prior.range = c(6, .5), prior.sigma = c(3, 0.01))
+# - Half of the study area : 0.5*diff(range(df$locy)) </code></pre>
+<p>Create another object for the iid random effect. The prior is only on <span class="math inline">\(\sigma_{\epsilon}\)</span> and it is the same used before for <span class="math inline">\(\sigma_u\)</span>.</p>
+<pre class="r"><code>hyper.iid = list(prec = list(prior = &#39;pc.prec&#39;, param = c(3, 0.01))) </code></pre>
+<p>All the prior used for the parameters of the random effects are called PC prior. If the reader is interested in learning more about that check [TODO reference PC prior].</p>
+<p>Now we have just to define the formulae that we will use for the stationary case (both with and without covariates). The <span class="math inline">\(-1\)</span> in front of the formula means that we are not considering an intercept, but actually we are including it with the term <span class="math inline">\(m\)</span>, that is a vector of only <span class="math inline">\(1\)</span>’s. The reason for this is to have the intercept (<span class="math inline">\(m\)</span>) as part of the stack object.</p>
+<pre class="r"><code># no covariates
+M[[1]]$formula = y ~ -1 + m + 
+  f(s, model=spde) +                      # spatial random effect
+  f(iidx, model=&quot;iid&quot;, hyper=hyper.iid)   # iid random effect</code></pre>
+<p>For the model with covariates the formula is built in two steps. First, the covariates are specified, second, the random effects are added.</p>
+<pre class="r"><code># Covariates
+M[[2]]$formula = as.formula(paste( &quot;y ~ -1 + &quot;,paste(colnames(df)[5:11], collapse = &quot; + &quot;)))
+
+# Add random effect
+M[[2]]$formula = update(M[[2]]$formula, .~. + m + 
+                          f(s, model=spde) + 
+                          f(iidx, model=&quot;iid&quot;, hyper=hyper.iid))</code></pre>
+<p>Lets check how the formulae look like:</p>
+<pre class="r"><code>print(M[[1]])</code></pre>
+<pre><code>## $shortname
+## [1] &quot;stationary-no-cov&quot;
+## 
+## $formula
+## y ~ -1 + m + f(s, model = spde) + f(iidx, model = &quot;iid&quot;, hyper = hyper.iid)</code></pre>
+<pre class="r"><code>print(M[[2]])</code></pre>
+<pre><code>## $shortname
+## [1] &quot;stationary-all-cov&quot;
+## 
+## $formula
+## y ~ dptLUKE + dptavg15km + dist30m + joetdsumsq + lined15km + 
+##     swmlog10 + temjul15 + m + f(s, model = spde) + f(iidx, model = &quot;iid&quot;, 
+##     hyper = hyper.iid) - 1</code></pre>
+</div>
+<div id="barrier-model-1" class="section level2">
+<h2><span class="header-section-number">5.2</span> Barrier Model</h2>
+<p>The specification of the spatial random effect is a little bit trickier than before. The point is that we have to define a Polygon representing our study area with some holes which account for the barriers. More info on polygon with holes in [page for polygon].</p>
+<pre class="r"><code># Number of triangles of the mesh
+tl = length(mesh$graph$tv[,1])
+
+# initialize a matrix containing the coordinates of each triangle&#39;s 
+# barycenter
+posTri = matrix(0, tl, 2)
+
+for(t in 1:tl){
+  # Take the vertex of triangles
+  temp = mesh$loc[mesh$graph$tv[t, ], ]
+  # Compute barycenter which sintetize the triangle
+  posTri[t,] = colMeans(temp)[c(1,2)]
+}
+
+#transform it in Spatial Points
+posTri = SpatialPoints(posTri)
+
+# Intersection between mesh points and sea points contained in 
+# poly.water
+normal = over(poly.water, posTri, returnList=T)
+
+# Remove the sea points to obtain the barrier ones.
+normal = unlist(normal)
+barrier.triangles = setdiff(1:tl, normal)
+
+# (this obj will be used just for plotting)
+# build a barrier, this obj contains all the polygons composing the islands
+poly.barrier = inla.barrier.polygon(mesh, barrier.triangles)</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
+## intersection at or near point 0 0</code></pre>
+<pre><code>## mesh.polys is invalid</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
+## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
+## intersection at or near point -4.5999999999999996 -0.91499688999999995</code></pre>
+<pre><code>## mesh.polys is invalid</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
+## using set_RGEOS_CheckValidity(2L)</code></pre>
+<p>Once that we have found the barrier triangles we can build our model very easily using R-<strong>INLA</strong>. The function is very sinilar to the one used for the stationary model, we add just an option specifying the barrier triangles. Also the priors for the hyper-parameters are the same.</p>
+<pre class="r"><code>barrier.model = inla.barrier.pcmatern(mesh, barrier.triangles = 
+                                        barrier.triangles, 
+                                      prior.range = c(6, .5), 
+                                      prior.sigma = c(3, 0.01))</code></pre>
+<p>Now lets build the formulae exactly as before, but with the new GRF.</p>
+<pre class="r"><code># No Covariates
+M[[3]]$formula = y~ -1 + m + 
+  f(s, model=barrier.model) + 
+  f(iidx, model=&quot;iid&quot;, hyper=hyper.iid)
+
+# With Covariates
+# only covariates
+M[[4]]$formula = as.formula(paste( &quot;y ~ -1 + &quot;,paste(colnames(df)[5:11], collapse = &quot; + &quot;)))
+# Add random effects
+M[[4]]$formula = update(M[[4]]$formula, .~. +m + 
+                          f(s, model=barrier.model) + 
+                          f(iidx, model=&quot;iid&quot;, hyper=hyper.iid))</code></pre>
+<p>Lets check them:</p>
+<pre class="r"><code>print(M[[3]])</code></pre>
+<pre><code>## $shortname
+## [1] &quot;barrier-no-cov&quot;
+## 
+## $formula
+## y ~ -1 + m + f(s, model = barrier.model) + f(iidx, model = &quot;iid&quot;, 
+##     hyper = hyper.iid)</code></pre>
+<pre class="r"><code>print(M[[4]])</code></pre>
+<pre><code>## $shortname
+## [1] &quot;barrier-all-cov&quot;
+## 
+## $formula
+## y ~ dptLUKE + dptavg15km + dist30m + joetdsumsq + lined15km + 
+##     swmlog10 + temjul15 + m + f(s, model = barrier.model) + f(iidx, 
+##     model = &quot;iid&quot;, hyper = hyper.iid) - 1</code></pre>
+</div>
+</div>
+<div id="plotting-priors" class="section level1">
+<h1><span class="header-section-number">6</span> Plotting Priors</h1>
+<p>This section is dedicated to show how to obtain some nice plots which highlight the difference between the stationary model and the Barrier model. Before anything else we define a function to find the autocorrelatiions given a precision matrix <span class="math inline">\(Q\)</span>, a location and a mesh.</p>
+<p>The following code is from <a href="https://haakonbakka.bitbucket.io/btopic105.html" class="uri">https://haakonbakka.bitbucket.io/btopic105.html</a>.</p>
+<pre class="r"><code>local.find.correlation = function(Q, location, mesh) {
+  # - vector of standard deviations
+  sd = sqrt(diag(inla.qinv(Q)))
+  
+  # - create a fake A matrix, to extract the closest mesh node index
+  A.tmp = inla.spde.make.A(mesh=mesh, 
+                           loc = matrix(c(location[1],location[2]),1,2))
+  
+  # - index of the closest node
+  id.node = which.max(A.tmp[1, ])
+  
+  
+  print(paste(&#39;The location used was c(&#39;, 
+              round(mesh$loc[id.node, 1], 4), &#39;, &#39;, 
+              round(mesh$loc[id.node, 2], 4), &#39;)&#39; ))
+  
+  ## Solve a matrix system to find the column of the covariance matrix
+  Inode = rep(0, dim(Q)[1]) 
+  Inode[id.node] = 1
+  covar.column = solve(Q, Inode)
+  # compute correaltions
+  corr = drop(matrix(covar.column)) / (sd*sd[id.node])
+  return(corr)
+}</code></pre>
+<p>And create a function just to plot.</p>
+<pre class="r"><code>local.plot.field = function(field, mesh, xlim, ylim, ...){
+  # Error when using the wrong mesh
+  stopifnot(length(field) == mesh$n)
+  
+  # Choose plotting region to be the same as the study area polygon
+  if (missing(xlim)) xlim = poly.water@bbox[1, ] 
+  if (missing(ylim)) ylim = poly.water@bbox[2, ]
+  
+  # Project the mesh onto a 300x300 grid
+  proj = inla.mesh.projector(mesh, xlim = xlim, 
+                             ylim = ylim, dims=c(300, 300))
+  
+  # Do the projection 
+  field.proj = inla.mesh.project(proj, field)
+  
+  # Plot it
+  image.plot(list(x = proj$x, y=proj$y, z = field.proj), 
+             xlim = xlim, ylim = ylim, ...)  
+}</code></pre>
+<p>Now we can make correlation plot for both models very easily.</p>
+<pre class="r"><code># theta = c(log(range), log(sigma))
+Q = inla.spde2.precision(spde, theta = c(log(6),log(3)))
+
+corr = local.find.correlation(Q, loc = c(8,10), mesh)</code></pre>
+<pre><code>## [1] &quot;The location used was c( 8.0112 ,  9.9769 )&quot;</code></pre>
+<pre class="r"><code>local.plot.field(corr, mesh, zlim=c(0.1, 1))
+
+points(8.01, 9.97)
+plot(poly.barrier, add=T, col=&#39;grey&#39;, main = &#39;Stationary Model&#39;)
+title(main = &#39;Stationary Model&#39;)</code></pre>
+<p><img src="btopic128_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code>Q = inla.rgeneric.q(barrier.model, &quot;Q&quot;, theta = c(0, log(6)))
+
+corr = local.find.correlation(Q, loc = c(8,10), mesh)</code></pre>
+<pre><code>## [1] &quot;The location used was c( 8.0112 ,  9.9769 )&quot;</code></pre>
+<pre class="r"><code>local.plot.field(corr, mesh, zlim=c(0.1, 1))
+points(8.01, 9.97)
+plot(poly.barrier, add=T, col=&#39;grey&#39;, main = &#39;Barrier Model&#39;)
+title(main = &#39;Barrier Model&#39;)</code></pre>
+<p><img src="btopic128_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p>As you can see (and as we said) the presence of barriers limits the correalation spread among the space. Focusing on an inlet, the correlation between points in the inlet is very high and very low outside. It means low probability for an individual to find a way to go out from this inlet. Compare this to the correlation in the stationary model, which is not affected by the location of the central point. Feel free to experiment with the chosen location for the central point.</p>
+</div>
+<div id="implementation-results" class="section level1">
+<h1><span class="header-section-number">7</span> Implementation (Results)</h1>
+<p>First of all we have to run the models that we have created so far. Let us set the initial values for each model; this procedure is very useful since it speeds up computations and improves the accuracy of our results. The first time that run the model set the following variables as <code>NULL</code>.<br />
+Don’t worry, we are going to show how to retrieve these values.</p>
+<pre class="r"><code>M[[1]]$init = c(2.509,1.199,-0.574)
+M[[2]]$init = c(1.162,0.313,-0.627)
+M[[3]]$init = c(0.833,2.244,-0.471)
+M[[4]]$init = c(0.044,1.274,-0.596)</code></pre>
+<div id="run-models" class="section level2">
+<h2><span class="header-section-number">7.1</span> Run models</h2>
+<p>To run the models we simply use the <span class="math inline">\(\texttt{inla()}\)</span> function. This is the main function of R-<strong>INLA</strong> package. More detail on [SPDE tutorial]</p>
+<pre class="r"><code>for (i in 1:length(M)){
+  print(paste(&quot;Running:  &quot;, M[[i]]$shortname))
+  M[[i]]$res = inla(M[[i]]$formula,
+                    data=inla.stack.data(stk),
+                    control.predictor=list(A=inla.stack.A(stk)),
+                    family=&quot;poisson&quot;, E = e,
+                    control.inla= list(int.strategy = &quot;eb&quot;),
+                    control.mode=list(restart=T, theta=M[[i]]$init))  
+}</code></pre>
+<pre><code>## [1] &quot;Running:   stationary-no-cov&quot;
+## [1] &quot;Running:   stationary-all-cov&quot;
+## [1] &quot;Running:   barrier-no-cov&quot;
+## [1] &quot;Running:   barrier-all-cov&quot;</code></pre>
+<p>The <code>E=e</code> specifies the sampling effort that we put into the stack (in the <code>inla.stack</code> command). The <code>int.strategy = &quot;eb&quot;</code> speeds up the computation by approximating the posterior (and you can delete this line if you want a more precise posterior).</p>
+<p>And this is how to retrieve the initial values that we use:</p>
+<pre class="r"><code>for (i in 1:length(M)){
+  print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
+}</code></pre>
+<pre><code>## [1] &quot;2.509,1.199,-0.574&quot;
+## [1] &quot;1.144,0.314,-0.62&quot;
+## [1] &quot;0.787,2.339,-0.471&quot;
+## [1] &quot;-0.002,1.29,-0.581&quot;</code></pre>
+</div>
+<div id="comparing-fixed-effect" class="section level2">
+<h2><span class="header-section-number">7.2</span> Comparing fixed effect</h2>
+<p>We compare the results for the fixed effect plotting the <span class="math inline">\(95\%\)</span> confidence interval and the median of the posterior distribution. We plot them using the <strong>ggplot</strong> package which requires a data frame with a particular structure as input.</p>
+<pre class="r"><code># Set up dataframe with relevant results
+res = M[[2]]$res$summary.fixed[ ,c(4,3,5)]
+res = rbind(res, M[[4]]$res$summary.fixed[ ,c(4,3,5)])
+
+# Change the name of the column:
+# E = Estimates
+# L = Lower
+# U = Upper
+colnames(res) = c(&quot;E&quot;, &quot;L&quot;, &quot;U&quot;)
+rownames(res)=NULL
+
+# number of covariates
+n.covar = nrow(M[[2]]$res$summary.fixed)
+
+# specify a factor corresponding to the model:
+# MS = stationary
+# MB = barrier
+res$model = factor(rep(c(&quot;MS&quot;, &quot;MB&quot;), each=n.covar, 
+                       levels = c(&quot;MS&quot;, &quot;MB&quot;)))
+
+# specify a factor corresponding to the covariates
+res$covar = factor(rep(rownames(M[[2]]$res$summary.fixed), 2))
+
+# Plot it
+ggplot(res, aes(x = model, y = E)) +
+  facet_wrap(~covar, scales = &quot;free_y&quot;) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymax = U, ymin = L)) +
+  xlab(NULL) + ylab(NULL) </code></pre>
+<p><img src="btopic128_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p>As we expect the models give similar results in terms of fixed effects.</p>
+</div>
+<div id="comparing-random-effects" class="section level2">
+<h2><span class="header-section-number">7.3</span> Comparing random effects</h2>
+<p>Before comparing the results let us write a function which creates the above data frame automatically. It takes in input two lists which contain the posterior distributions of the hyper-parameters.</p>
+<pre class="r"><code># quantiles considered
+quantile.words = c(&quot;.5&quot;, &quot;.025&quot;, &quot;.975&quot;, &quot;.1&quot;, &quot;.9&quot;)
+
+
+local.make.quantile.table = function(stat, barr, quantile.words){
+  
+  # initialize the dataframe
+  names = names(stat_nocov)
+  pos.hyp = data.frame(name = rep(names,2))
+  qnames = paste0(&quot;q&quot;, quantile.words)
+  for (name in qnames) {
+    pos.hyp[[name]] = NA
+  }
+  
+  # Fill the quantiles informations
+  for(i in 1:3){
+    pos.hyp[i,2:6] = inla.qmarginal(as.numeric(quantile.words), stat[[i]])
+    pos.hyp[(i+3),2:6] = inla.qmarginal(as.numeric(quantile.words), barr[[i]])
+  }
+  
+  # Add a factor representing the model
+  pos.hyp$model = factor(rep(c(&quot;MS&quot;, &quot;MB&quot;), each=3, 
+                             levels = c(&quot;MS&quot;, &quot;MB&quot;)))
+  return(pos.hyp)
+}</code></pre>
+<div id="without-covariates" class="section level3">
+<h3><span class="header-section-number">7.3.1</span> Without Covariates</h3>
+<p>In order to compare the results using the above function we have to create two lists containing the posterior distributions of the hyper-parameters. The results stored in <span class="math inline">\(M\)</span> have different parametrizations, hence, to compare them we have apply different transformations to the posteriors. The function <span class="math inline">\(\texttt{inla.tmarginal()}\)</span> does the job for us.</p>
+<pre class="r"><code># Results stationary model
+stat_nocov = list(
+  sigma.epsilon = inla.tmarginal(function(x) exp(-0.5*x),
+                                 M[[1]]$res$internal.marginals.hyperpar[[3]]),
+  sigma.u = inla.tmarginal(function(x) x,
+                           M[[1]]$res$marginals.hyperpar[[2]]),
+  range = inla.tmarginal(function(x) x,
+                         M[[1]]$res$marginals.hyperpar[[1]]))
+
+# Results barrier model
+barr_nocov = post = list(
+  sigma.epsilon = inla.tmarginal(function(x) exp(-0.5*x), 
+                                 M[[3]]$res$internal.marginals.hyperpar[[3]]),
+  sigma.u = inla.tmarginal(function(x) exp(x), 
+                           M[[3]]$res$internal.marginals.hyperpar[[1]]),
+  range = inla.tmarginal(function(x) exp(x), 
+                         M[[3]]$res$internal.marginals.hyperpar[[2]]))</code></pre>
+<p>Now we combine them using the function created so far; the output is ready to be plotted.</p>
+<pre class="r"><code>pos.hyp_nc = local.make.quantile.table(stat_nocov, barr_nocov, quantile.words)
+
+ggplot(pos.hyp_nc, aes(x = model, y = q.5)) +
+  facet_wrap(~name, scales = &quot;free_y&quot;) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymax = q.975, ymin = q.025)) +
+  geom_errorbar(aes(ymax = q.9, ymin = q.1), col=&quot;black&quot;) +
+  xlab(NULL) + ylab(NULL) </code></pre>
+<p><img src="btopic128_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p>For more details see <span class="citation">(Bakka et al. 2016)</span>.</p>
+</div>
+<div id="with-covariates" class="section level3">
+<h3><span class="header-section-number">7.3.2</span> With Covariates</h3>
+<p>We do the same in the case with covariates.</p>
+<pre class="r"><code># Results stationary model
+stat_cov = list(
+  sigma.epsilon = inla.tmarginal(function(x) exp(-0.5*x),
+                                 M[[2]]$res$internal.marginals.hyperpar[[3]]),
+  sigma.u = inla.tmarginal(function(x) x,
+                           M[[2]]$res$marginals.hyperpar[[2]]),
+  range = inla.tmarginal(function(x) x,
+                         M[[2]]$res$marginals.hyperpar[[1]]))
+
+# Results barrier model
+barr_cov = post = list(
+  sigma.epsilon = inla.tmarginal(function(x) exp(-0.5*x), 
+                                 M[[4]]$res$internal.marginals.hyperpar[[3]]),
+  sigma.u = inla.tmarginal(function(x) exp(x), 
+                           M[[4]]$res$internal.marginals.hyperpar[[1]]),
+  range = inla.tmarginal(function(x) exp(x), 
+                         M[[4]]$res$internal.marginals.hyperpar[[2]]))
+
+
+pos.hyp_c = local.make.quantile.table(stat_cov, barr_cov, quantile.words)
+
+ggplot(pos.hyp_c, aes(x = model, y = q.5)) +
+  facet_wrap(~name, scales = &quot;free_y&quot;) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymax = q.975, ymin = q.025)) +
+  geom_errorbar(aes(ymax = q.9, ymin = q.1), col=&quot;black&quot;) +
+  xlab(NULL) + ylab(NULL) </code></pre>
+<p><img src="btopic128_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p>For more details see <span class="citation">(Bakka et al. 2016)</span>.</p>
+</div>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-tech125">
+<p>Bakka, H., J. Vanhatalo, J. Illian, D. Simpson, and H. Rue. 2016. “Accounting for Physical Barriers in Species Distribution Modeling with Non-Stationary Spatial Random Effects.” ArXiv preprint arXiv:1608.03787. Norwegian University of Science; Technology, Trondheim, Norway.</p>
+</div>
+<div id="ref-kallasvuo2016modeling">
+<p>Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016. “Modeling the Spatial Distribution of Larval Fish Abundance Provides Essential Information for Management.” <em>Canadian Journal of Fisheries and Aquatic Sciences</em>, no. ja. NRC Research Press.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

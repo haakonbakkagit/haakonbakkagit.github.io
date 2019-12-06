@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Francesco Serafini" />
+<meta name="author" content="Runbing Zheng" />
+
+
+<title>Spatio-Temporal Barrier Model</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Spatio-Temporal Barrier Model</h1>
+<h4 class="author">Francesco Serafini</h4>
+<h4 class="author">Runbing Zheng</h4>
+<h4 class="date">06 December, 2019</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this page, we show how to implement a Spatio-Temporal barrier model. We have already shown why and how to implement a barrier model without a temporal structure here [link archipelago webpage] (a barrier model is a non-stationary spatial model). Here, we extend what we did in the abovementioned webpage, taking into account a temporal structure. This is the most natural extension to which we can think, unfortunately, the world mutates with time. Fortunately, these changes are correlated with each other and <strong>INLA</strong> comes to help us.</p>
+<p>To give the reader a better understanding of this model we simulate data with a given spatio-temporal structure (the alternative would be to use real data). After this preliminary section, we fit the model using <strong>INLA</strong>. In the end, we made a comparison between the truth and what we have estimated along the way (knowing the truth is another reason to simulate). To use this model for real data, you just remove the simulation code and replace that with reading in the real data.</p>
+<p>A large part of the code is taken from SPDE tutorial of <span class="citation">Krainski et al. (n.d.)</span>, you can find it at <a href="http://www.r-inla.org/examples/tutorials/spde-tutorial" class="uri">http://www.r-inla.org/examples/tutorials/spde-tutorial</a>.</p>
+</div>
+<div id="preliminaries" class="section level1">
+<h1><span class="header-section-number">2</span> Preliminaries</h1>
+<p>In this section, we set up the study area and we build the mesh. In the next section, in which we generate data, we will explain the model more in detail.</p>
+<div id="set-up-the-study-area" class="section level2">
+<h2><span class="header-section-number">2.1</span> Set up the study area</h2>
+<p>First of all, we have to import the data and all the packages that we will need. If you need, you can download the data at <a href="https://haakonbakka.bitbucket.io/data/WebSiteData-Archipelago.RData" class="uri">https://haakonbakka.bitbucket.io/data/WebSiteData-Archipelago.RData</a>. For a description of the data see <span class="citation">Kallasvuo, Vanhatalo, and Veneranta (2016)</span> Data collection was funded by VELMU and Natural Resources Institute Finland (Luke).</p>
+<pre class="r"><code>library(INLA)
+library(fields)
+library(rgeos)
+library(sp)
+library(colorRamps)</code></pre>
+<pre><code>dir.create(&quot;data&quot;)
+download.file(url = &quot;https://haakonbakka.bitbucket.io/data/WebSiteData-Archipelago.RData&quot;, destfile = &quot;data/WebSiteData-Archipelago.RData&quot;)</code></pre>
+<pre class="r"><code>## Load data
+load(file = &quot;data/WebSiteData-Archipelago.RData&quot;)
+# - if you have saved the file locally
+
+## What is loaded
+# - poly.water is our study area
+# - df is our dataframe to be analysed
+# - dat is the orginial dataframe
+str(poly.water, 1)</code></pre>
+<pre><code>## Formal class &#39;SpatialPolygons&#39; [package &quot;sp&quot;] with 4 slots</code></pre>
+<p>For our purposes, we need only the shape file of the study area <span class="math inline">\(\texttt{poly.water}\)</span>. To speed up the code and to make the process lighter we consider only half of the original study area. To accomplish that we need basically two steps. First, select the study area in which we are interested. Second, intersect the selected study area with the entire one. We implement these two steps using function from <span class="math inline">\(\texttt{sp}\)</span> and <span class="math inline">\(\texttt{rgeos}\)</span> packages.</p>
+<pre class="r"><code># Find the boundaries of the reduced study area
+xmax = poly.water@bbox[1,2]
+xmin = xmax/2
+ymax = poly.water@bbox[2,2]
+
+# Define the reduced study area as a Polygon 
+study_area = Polygon(cbind(c(0, xmin, xmin, 0, 0),
+                           c(0, 0, ymax, ymax, 0)), hole = F)
+study_area = SpatialPolygons(list(Polygons(list(study_area),&#39;1&#39;)))
+
+# Intersect with the entire study area
+shape &lt;- gBuffer(poly.water, byid=TRUE, width=0) #for gIntersection operation
+shape2 &lt;- gIntersection(shape, study_area)
+poly.water = shape2
+
+
+# Take a look
+plot(poly.water, main = &#39;Reduced study area&#39;)</code></pre>
+<p><img src="btopic129_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="build-a-mesh" class="section level2">
+<h2><span class="header-section-number">2.2</span> Build a Mesh</h2>
+<p><span style="color:red"> Spoiler Alert</span> : for the spatial effect, we are assuming a process which is continuous in space.</p>
+<p>Problem: we don’t have yet the computational power to consider something really continuous and probably we’ll never have it. Then, after some (tons of) mathematical tricks, it turns out that we can consider a discretization of the space and approximate the continuous process with something discrete. This discretization of the study area is called <em>mesh</em> and it consists in splitting the study area into many little triangles. Fortunately, <strong>INLA</strong> does the job for us. You can find more detail on the mesh construction here [link mesh page].</p>
+<pre class="r"><code>set.seed(2018)
+set.inla.seed = 2018
+
+max.edge = 0.6
+bound.outer = 3.6
+prmesh1 = inla.mesh.2d(boundary = poly.water,
+ #                      loc=cbind(df$locx, df$locy),
+                       max.edge = c(1,5)*max.edge,
+                       cutoff = 0.06,
+                       offset = c(max.edge, bound.outer))
+
+# take a look
+plot(prmesh1, lwd = 0.7, main=&quot;Triangulation of the study area&quot;)
+title(main = &quot;Triangulation of the study area&quot;)</code></pre>
+<p><img src="btopic129_files/figure-html/unnamed-chunk-4-1.png" width="768" /></p>
+<pre class="r"><code>#points(df$locx, df$locy, pch = 21, bg = 2)</code></pre>
+</div>
+</div>
+<div id="data-simulation" class="section level1">
+<h1><span class="header-section-number">3</span> Data Simulation</h1>
+<p>Once we have finished with the preliminaries, let us go through this tricky generation process. This section is split in two part: the first is more technical and its purpose is to obtain an index column representing the mesh triangles that are on the barrier. This index column is used later and it’s essential for <strong>INLA</strong> to understand which triangles of the mesh are in the barrier and which are in the study area. This difference is the essence of this model, if you don’t know what we are talking about please check this other web page [link to archipelago barrier model ]. The second part contains the core of the simulation, the model used and the plots of the simulated data.</p>
+<div id="get-the-barrier-triangles" class="section level2">
+<h2><span class="header-section-number">3.1</span> Get the Barrier triangles</h2>
+<p>To find which triangles are in the barrier we proceed in the following way: first, find the barycenter of each triangle and then intersect the vector of barycenters with the barrier polygon (<span class="math inline">\(\texttt{poly.water}\)</span>). In this way, we obtain the index of the triangles outside the barrier, then, we just take the difference between the index vector of all triangles and the triangles outside the barrier and <em>les jeux sont faits</em>.</p>
+<pre class="r"><code># Total number of triangles 
+tl = length(prmesh1$graph$tv[,1])
+# Index vector of all triangles
+all.triangles = 1:tl
+
+# Matrix containing the location of the barycenters
+barycenters = matrix(0, nrow = tl, ncol = 2)
+for(t in 1:tl){
+  temp = prmesh1$loc[prmesh1$graph$tv[t, ], ]
+  barycenters[t,] = colMeans(temp)[c(1,2)]
+}
+
+# Transform it in SpatialPoints to intersect it with the barrier easily
+barycenters = SpatialPoints(barycenters)
+
+# Intersect
+not.barrier = over(poly.water, barycenters, returnList=T)
+not.barrier = unlist(not.barrier)
+
+# Difference
+barrier.triangles = setdiff(all.triangles, not.barrier)
+
+# This object will be usefull later, just to plot.
+poly.barrier = inla.barrier.polygon(prmesh1, barrier.triangles)</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
+## intersection at or near point 0 0</code></pre>
+<pre><code>## mesh.polys is invalid</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
+## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
+## intersection at or near point -3.6000000000000001 -0.71608452</code></pre>
+<pre><code>## mesh.polys is invalid</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
+## using set_RGEOS_CheckValidity(2L)</code></pre>
+</div>
+<div id="simulate-data" class="section level2">
+<h2><span class="header-section-number">3.2</span> Simulate Data</h2>
+<p>Once we have the triangles composing the barrier, we can start the simulation process. For each location, we are simulating data according to the following model:</p>
+<p><span class="math display">\[
+y_{it} = w_{it} + \hat{x}_{it} + \xi_{it}
+\]</span></p>
+<p>where the subscript <span class="math inline">\(i\)</span> and <span class="math inline">\(t\)</span> represents, respectively, the sample location and the time. The variable <span class="math inline">\(w_{it}\)</span> is a categorical variable, <span class="math inline">\(\hat{x}_{it}\)</span> is the spatio-temporal random effect and <span class="math inline">\(\xi_{it}\)</span> is a noise term. The random effect <span class="math inline">\(\hat{x}_{it}\)</span> is supposed to vary continuosly over space, it is a solution of a SPDE which, trust me, you don’t want to see. We approximate it with a <em>Gaussian Markov Random Field</em> (GMRF) with a Matern covariance function. Without being too technical a Matern covariance function means that the covariance between two points is a function of the distance between them, plus some other parameters that we are going to see soon.</p>
+<p>For the sake of simplicity, we consider only <span class="math inline">\(k = 4\)</span> time periods. Let us start the simulation from the spatio-temporal random effect. We have to simulate <span class="math inline">\(4\)</span> random field, correlated both in time and space. Hence, we extract <span class="math inline">\(4\)</span> independent samples <span class="math inline">\(\boldsymbol{x}\)</span> from a non-stationary (because of the barrier) GMRF with Matern covariance function and we combine them in order to obtain an AR(1) temporal structure with following formula:</p>
+<p><span class="math display">\[
+\hat{x}_t = \rho x_{t-1} + \sqrt{1-\rho^2} x_t
+\]</span></p>
+<p>To simulate such random field we need to specify at least three parameters. Two of them are related to the Matern covariance function: the range <span class="math inline">\(r\)</span> and the marginal variance <span class="math inline">\(\sigma^2\)</span>. The range <span class="math inline">\(r\)</span> could be interpreted as the distance between locations for which the covariance is around <span class="math inline">\(0.1\)</span>. The last parameter that we have to fix is <span class="math inline">\(\rho\)</span> in the above formula. We choose to set <span class="math inline">\(r = \sqrt{8}\)</span>, <span class="math inline">\(\sigma^2 = 1\)</span> and <span class="math inline">\(\rho = 0.7\)</span></p>
+<p>Let us start taking <span class="math inline">\(n = 1000\)</span> locations at random from the study area:</p>
+<pre class="r"><code>loc.data &lt;- spsample(poly.water, n = 1000, type = &quot;random&quot;)
+coords &lt;- loc.data@coords</code></pre>
+<pre class="r"><code>k &lt;- 4 
+range &lt;- sqrt(8)
+sigma &lt;- 1
+rho &lt;- 0.7
+
+# input parmaters for the INLA function
+theta &lt;- c(log(range),log(sigma))
+# mesh for the simulation
+simulation.mesh &lt;- prmesh1</code></pre>
+<p>The package <strong>INLA</strong> helps us to simulate from a non-stationary GMRF which approximates the solution of an SPDE. In order to do that, we need to create three objects. A <span class="math inline">\(\texttt{spde}\)</span> object, which takes into account the mesh structure and the barrier. A Matern precision matrix <span class="math inline">\(Q\)</span> (yes, everything is faster working with precision matrices), with range <span class="math inline">\(r\)</span> and <span class="math inline">\(\sigma^2\)</span> specified above, and a projection matrix <span class="math inline">\(A\)</span>. This matrix <span class="math inline">\(A\)</span> is essential to find the value of the random field in the data locations. In fact, from the simulation, we obtain the value of the random field on the mesh points, we need <span class="math inline">\(A\)</span> to project this values on the sample locations. We know that is not that easy, but, in the end, it’s three lines of code.</p>
+<pre class="r"><code># Create spde to simulate
+# Ignore range and sigma priors, the function doesn&#39;t work without, you can put
+# there everything
+simulation.spde &lt;- inla.barrier.pcmatern(mesh=simulation.mesh,
+                                         barrier.triangles = barrier.triangles,
+                                         prior.range = c(0.1,0.1), 
+                                         prior.sigma = c(0.1,0.1))
+  
+# Create precision  
+simulation.Q &lt;- inla.rgeneric.q(simulation.spde, &quot;Q&quot;, theta=theta)
+
+# Create projection matrix
+simulation.A &lt;- inla.mesh.project(mesh=simulation.mesh, loc=coords)$A</code></pre>
+<p>Now, we have all the elements needed for the simulation. Let us simulate four independent sample from the random field and aggregate them to build an AR(1) structure.</p>
+<pre class="r"><code># simulate 4 independent samples
+x &lt;- inla.qsample(k, simulation.Q, seed=0, constr=simulation.spde$f$extraconstr)
+
+# initialize a matrix
+x.hat = matrix(NA, nrow = nrow(simulation.A), ncol = ncol(x))
+
+# project each sample on the data locations
+for (j in 1:ncol(x)){
+  x.hat[, j] &lt;- drop(simulation.A%*%x[,j])
+}
+
+# aggregate to create an AR(1)
+for (j in 2:k){
+  x.hat[,j] &lt;- rho*x.hat[,j-1] + sqrt(1-rho^2)*x.hat[,j]
+}
+
+# Take a look
+
+rbPal &lt;- colorRampPalette(matlab.like2(100))
+par(mfrow=c(2,2), mar=c(0,1,1,0))
+for (j in 1:k){
+  Col &lt;- rbPal(100)[as.numeric(cut(x.hat[,j], breaks = 100))]
+  plot(coords, pch = 20, col = Col, xlab = &#39;&#39;, ylab = &#39;&#39;, 
+       main = paste0(&#39;t = &#39;, j), axes = F)
+  plot(poly.barrier, add = T, col = &#39;grey&#39;)
+}</code></pre>
+<p><img src="btopic129_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>The tricky part is over, only things missing are to simulate the categorical covariate <span class="math inline">\(\boldsymbol{w}\)</span> and to create our output <span class="math inline">\(\boldsymbol{y}\)</span>. In particular, we simulate <span class="math inline">\(\boldsymbol{w}\)</span> sampling <span class="math inline">\(n*k = 4000\)</span> values from the set <span class="math inline">\(\{-1, 0, 1\}\)</span>. For the noise we consider <span class="math inline">\(n*k\)</span> independent values extracted from <span class="math inline">\(N(0, 0.1)\)</span>.</p>
+<pre class="r"><code>set.seed(2)
+
+n &lt;- nrow(coords)
+# sample the categorical covariate
+w &lt;- sample(-1:1, n*k, replace=TRUE)
+# take a look
+table(w)</code></pre>
+<pre><code>## w
+##   -1    0    1 
+## 1389 1297 1314</code></pre>
+<pre class="r"><code>sd.y &lt;- 0.1
+# generate the target variable
+y &lt;- x.hat + w + rnorm(n*k, 0, sd.y) 
+
+w &lt;- factor(w)
+#see the mean  of y which have the same value of w
+tapply(y, w, mean)</code></pre>
+<pre><code>##      -1       0       1 
+## -1.1467  0.0052  0.8020</code></pre>
+<p>The last step: organize our data in a data frame. Sometimes, it may happen that we have different data locations for different times. To show that, we just drop half of the observations. The provided code still works in the case in which we have totally misaligned data points. In the below data frame, there is also an index variable representing the time at which each observation is recorded.</p>
+<pre class="r"><code>isel &lt;- sample(1:(n*k), n*k/2)
+dat &lt;- data.frame(y=as.vector(y),
+                  w=w,
+                  time=rep(1:k, each=n), #notice the time
+                  xcoo=rep(coords[,1], k),
+                  ycoo=rep(coords[,2], k))[isel, ]</code></pre>
+</div>
+</div>
+<div id="implementation" class="section level1">
+<h1><span class="header-section-number">4</span> Implementation</h1>
+<div id="model" class="section level2">
+<h2><span class="header-section-number">4.1</span> Model</h2>
+<p><span style="color:red"> Warning </span>: you are entering in a theoretical section.</p>
+<p>Once we have the data, we have to fit a model to retrieve the spatio-temporal effect and the model parameters. The model that we are going to implement is the following:</p>
+<p><span class="math display">\[
+Y_{it} \sim N(\eta_{it}, \tau^2_y)
+\]</span></p>
+<p>Where, <span class="math inline">\(\tau^2_y\)</span> is the precision and</p>
+<p><span class="math display">\[
+\eta_{it} = \beta_w w_{it} + u_{it}
+\]</span></p>
+<p>Here, <span class="math inline">\(\beta_w\)</span> is a coefficient that depends on the value of the categorical variable <span class="math inline">\(w\)</span>. The spatio-temporal random effect <span class="math inline">\(u_{it}\)</span>, as we said before, has an AR(1) structure:</p>
+<p><span class="math display">\[
+u_{it} = \rho u_{i(t-1)} + \xi_{it} \\ 
+\ \\
+\xi_{it} \sim GRF(r, \sigma)
+\]</span> Where <span class="math inline">\(r\)</span> is the range and <span class="math inline">\(\sigma\)</span> is the marginal standard deviation of the Gaussian random field. The most mindful readers will have surely notice that we have a bunch of free parameters, respectively, <span class="math inline">\(\tau^2_y, ~\rho, ~r\)</span> and <span class="math inline">\(\sigma\)</span>. What could we do with them? Fixing them is not an option, of course. It’s time to show our Bayesian soul: let us put some priors.</p>
+<p>In this example, we choose to use the so-called penalized complexity (PC) priors. Don’t worry, we are not going into details of that, the choice of the prior distributions is a broad, obscure and “not even close to being closed” topic. Here, we limit ourselves to expose the idea behind the PC priors. These priors inherit their name from the Occam’s razor principle, we would like to end up with the easiest model possible, called <em>base model</em>. For example, the base model for a random effect is the absence (variance equal zero) of the random effect. The role of the prior is to shrink the posterior toward the base model and the posterior will be far from the base model only if the data supports this hypothesis. As you can imagine, also the PC priors have parameters that need to be fixed (yes, this loop will never end). But, this time, we can choose the parameters of the PC priors imposing some probabilistic constraints, one constraint for each PC prior. The nature of those constraints is intuitive and depends on the application. In our example we impose the following constraints:</p>
+<ul>
+<li><p><span class="math inline">\(\text{Pr}(r &lt; 0.5) = 0.01\)</span></p></li>
+<li><p><span class="math inline">\(\text{Pr}(\sigma^2 &gt; 1) = 0.01\)</span></p></li>
+<li><p><span class="math inline">\(\text{Pr}(\rho &gt; 0) = 0.9\)</span></p></li>
+<li><p><span class="math inline">\(\text{Pr}(\tau^2_y &lt; 1) = 0.01\)</span></p></li>
+</ul>
+<p>You can find more details on PC priors and the main idea on <span class="citation">D. P. Simpson et al. (2014)</span> If you are interested in a detailed derivation of the PC priors for a Gaussian random field please check the work of <span class="citation">Fuglstad et al. (2017)</span></p>
+</div>
+<div id="inla" class="section level2">
+<h2><span class="header-section-number">4.2</span> INLA</h2>
+<p>We know that many of you have skipped the previous part, don’t worry, it’s not a big sin, read the model would be sufficient. Now, we are going to implement the above model using the <strong>INLA</strong> package which allows us to don’t study a lot of complicated and tangled theory and still implement very difficult models. As always, we start from the random effect. Given that, we are considering a spatial random effect that is a solution of an SPDE, we have to create an <span class="math inline">\(\texttt{spde}\)</span> object, very similar to the one used for the simulation. The only difference is that now, we have to specify the prior properly. We also create an index called <span class="math inline">\(\texttt{iset}\)</span> which is necessary to identify the spatio-temporal random effect. As a first argument the function <span class="math inline">\(\texttt{inla.spde.make.index}\)</span> takes the name for the random effect, with a momentaneous lack of fantasy we call it <span class="math inline">\(\texttt{spatio.temp}\)</span>. In the results, all the quantities relative to the spatio-temporal random effect goes under that name.</p>
+<pre class="r"><code>spde &lt;- inla.barrier.pcmatern(mesh=prmesh1,
+                              barrier.triangles = barrier.triangles,
+                              prior.range=c(0.5, 0.01), #P(range &lt; 0.5) = 0.01
+                              prior.sigma=c(1, 0.01)) #P(sigma &gt; 1) = 0.01
+
+# fix the other two priors
+rho.prior &lt;- list(theta=list(prior=&#39;pccor1&#39;, param=c(0, 0.9))) #P(rho &gt; 0) = 0.9
+theta.prior &lt;- list(prior=&#39;pc.prec&#39;, param=c(1, 0.01)) # P(tau &lt; 1) = 0.01
+
+# create an index to pass to the stack and to f() later
+iset &lt;- inla.spde.make.index(&#39;spatio.temp&#39;, n.spde = prmesh1$n, n.group = k)</code></pre>
+<p>Have we already talk about the fact that the locations relative to random effect and the data differ? In that situation writing a model correctly could be tricky, we have to pay attention to the projections and the locations may change from time to time. Fortunately, <strong>INLA</strong> does the job for us through the <span class="math inline">\(\texttt{stack}\)</span> object. We could look at the <span class="math inline">\(\texttt{stack}\)</span> as our model manager, we give to it the target variable, the effects (random and fixed) and the projection matrices and we don’t have to care about it anymore.</p>
+<pre class="r"><code># Create projection matrix (it includes also the time!)
+A &lt;- inla.spde.make.A(mesh=prmesh1, 
+                      loc=cbind(dat$xcoo, dat$ycoo),
+                      group=dat$time)
+
+# Build the stack
+stack &lt;- inla.stack(tag = &#39;stdata&#39;, 
+                   data = list(y=dat$y), # target variable 
+                   A = list(A,1), # projection matrices, 1 = no projection
+                   effects = list(iset, w = dat$w)) # list of effects</code></pre>
+<p>For the ones that have skipped the previous section and don’t scroll up and see the model, we write it again, in this way the reader can appreciate the simplicity with which is translated in the formula:</p>
+<p><span class="math display">\[
+Y_{it} \sim N(\eta_{it}, \tau^2_y) \\
+\eta_{it} = \beta_w w_{it} + u_{it}
+\]</span></p>
+<pre class="r"><code>formula &lt;- y ~ 0 + w +f(spatio.temp, model=spde, group=spatio.temp.group,
+                        control.group=list(model=&#39;ar1&#39;, hyper=rho.prior))</code></pre>
+<p>In the above formula, tha spatio-temporal random effect is specified using the function <span class="math inline">\(\texttt{f()}\)</span>. This function takes as input the index that we have created using <span class="math inline">\(\texttt{inla.spde.make.index()}\)</span>, the model (represented by the spde object) and with <span class="math inline">\(\texttt{control.group}\)</span> we specify the temporal structure that we are using.</p>
+<p>After all this way we are finally ready to fit our model. Here, we use a little trick: we specify the initial values of the parameters. The computational time is drastically reduced, from 8 minutes to 1. At the end of the chunk, we show how to retrieve those values, notice that to retrieve it you have to run the model without the last two options.</p>
+<pre class="r"><code>init = c(4.689,  0.977, -0.007,  1.714)
+res &lt;- inla(formula, data=inla.stack.data(stack),
+            control.predictor=list(compute=TRUE, A=inla.stack.A(stack)), 
+            control.family=list(hyper=list(theta=theta.prior)), 
+            control.fixed=list(expand.factor.strategy=&#39;inla&#39;),
+            control.compute = list(return.marginals=F, config=T),
+            control.inla= list(int.strategy = &quot;eb&quot;), # line to add to speed up
+            control.mode=list(restart=T, theta=init)) # line to add to speed up
+
+res$internal.summary.hyperpar$mode</code></pre>
+<pre><code>## [1]  4.524  0.978 -0.053  1.691</code></pre>
+</div>
+<div id="results" class="section level2">
+<h2><span class="header-section-number">4.3</span> Results</h2>
+<p>In this section, we take a look at the performances of our model and we show how to obtain some nice plots of the posterior distributions and the random effect. Let us start looking at the coefficient of the categorical variable <span class="math inline">\(\boldsymbol{w}\)</span>, they should reflect the values of the mean of the variable <span class="math inline">\(\boldsymbol{y}\)</span> for each category. As we can see they are pretty similar and the observed means are in <span class="math inline">\(95\)</span> confidence interval of the coefficients.</p>
+<pre class="r"><code>tapply(dat$y, dat$w, mean)  # Observed mean for each covariate level</code></pre>
+<pre><code>##    -1     0     1 
+## -1.23  0.17  0.79</code></pre>
+<pre class="r"><code>round(res$summary.fixed,4) # Coefficients of the categorical variable</code></pre>
+<pre><code>##       mean   sd 0.025quant 0.5quant 0.97quant   mode kld
+## w-1 -0.914 0.23      -1.37   -0.914     -0.48 -0.914   0
+## w0   0.075 0.23      -0.38    0.075      0.51  0.075   0
+## w1   1.081 0.23       0.63    1.081      1.51  1.081   0</code></pre>
+<div id="marginal-posterior-distribution-plot" class="section level3">
+<h3><span class="header-section-number">4.3.1</span> Marginal Posterior Distribution Plot</h3>
+<p>The function <span class="math inline">\(\texttt{inla()}\)</span> gives us many objects as output, <span class="math inline">\(51\)</span> to be precise. It’s like the Supermarket of your analysis, you can find everything you need in there. Of course, we are not going to review all the elements of the list. For now, we limit ourselves to the posterior distributions of the hyper-parameters <span class="math inline">\(\rho\)</span>, <span class="math inline">\(\tau^2_y\)</span>, <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(r\)</span>. In particular, we are interested in the marginal posterior distribution for each parameter. All of them are stored in <span class="math inline">\(\texttt{res\$marginals.hyper}\)</span>. Inside it, you can find:</p>
+<pre class="r"><code>names(res$marginals.hyper)</code></pre>
+<pre><code>## [1] &quot;Precision for the Gaussian observations&quot;
+## [2] &quot;Theta1 for spatio.temp&quot;                 
+## [3] &quot;Theta2 for spatio.temp&quot;                 
+## [4] &quot;GroupRho for spatio.temp&quot;</code></pre>
+<p>We just plot them in comparison with the true value of each parameter (red line). Here, Theta1 and Theta2 are the logarithm of the range <span class="math inline">\(r\)</span> and the marginal variance <span class="math inline">\(\sigma\)</span> respectively.</p>
+<pre class="r"><code>par(mfrow=c(2,2), mar=c(3,3,1,0.1), mgp=2:0)
+plot(res$marginals.hyper[[1]], type=&#39;l&#39;, 
+     xlab=names(res$marginals.hyper)[1], ylab=&#39;Density&#39;,xlim=c(0,200))
+abline(v=c(1/sd.y^2, log(range),
+           log(sigma), rho)[1], col=2)
+for (j in 2:4) {
+  plot(res$marginals.hyper[[j]], type=&#39;l&#39;, 
+       xlab=names(res$marginals.hyper)[j], ylab=&#39;Density&#39;)
+  abline(v=c(1/sd.y^2, log(range),
+             log(sigma), rho)[j], col=2) 
+}</code></pre>
+<p><img src="btopic129_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+</div>
+<div id="random-effect" class="section level3">
+<h3><span class="header-section-number">4.3.2</span> Random Effect</h3>
+<p>Just a couple of wards from the marginal distributions of the parameters we can find the posterior summaries of the spatio-temporal random effect. These summaries are contained in <span class="math inline">\(\texttt{res\$summary.random\$spatio.temp}\)</span>, in this object, you can find the main statistics about the posterior of the random effect.</p>
+<pre class="r"><code>names(res$summary.random$spatio.temp)</code></pre>
+<pre><code>## [1] &quot;ID&quot;         &quot;mean&quot;       &quot;sd&quot;         &quot;0.025quant&quot; &quot;0.5quant&quot;  
+## [6] &quot;0.97quant&quot;  &quot;mode&quot;       &quot;kld&quot;</code></pre>
+<p>Considering the mean as a posterior estimate we can plot the predicted spatio-temporal effect. To do that we have to project the values on a lattice, we can do it easily using the function <span class="math inline">\(\texttt{inla.mesh.projector()}\)</span>. The argument <span class="math inline">\(\texttt{dims}\)</span> represents the dimensions of the projection lattice. Then for each value of <span class="math inline">\(\texttt{iset\$spatio.temp.group}\)</span> (which is the time), we project the posterior mean of the random effect and plot it.</p>
+<pre class="r"><code>projgrid &lt;- inla.mesh.projector(prmesh1, 
+                                xlim=range(coords[,1]),
+                                ylim=range(coords[,2]), 
+                                dims=c(100,100)) #produce the projection grid
+
+#produce the prediction result for each time
+xmean &lt;- list()
+for (j in 1:k){
+  xmean[[j]] &lt;- inla.mesh.project(projgrid,
+                        res$summary.random$spatio.temp$mean[iset$spatio.temp.group==j])
+} 
+  
+#plot the prediction result
+
+par(mfrow=c(2,2), mar = c(1,1,1,1))
+for (i in 1:k){
+  image.plot(list(x = projgrid$x, y=projgrid$y, z = xmean[[i]]), xlim=c(0,10),
+             ylim=c(0,13), main = paste0(&#39;time = &#39;, i), axes = F, zlim=c(-10, 10))
+  plot(poly.barrier, add=T, col=&#39;grey&#39;)
+}</code></pre>
+<p><img src="btopic129_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>To check that the results are coherent with the true random effect, we plot both. We do it just for <span class="math inline">\(time = 1\)</span>, the results are pretty similar for the others times. As you can see, the plots are alike and we can conclude that our model is able to retrieve the simulated spatio-temporal structure.</p>
+<pre class="r"><code>par(mfrow=c(1,2), mar=c(1,1,1,1))
+
+# plot true one
+rbPal &lt;- colorRampPalette(matlab.like2(100))
+Col &lt;- rbPal(100)[as.numeric(cut(x.hat[,1], breaks = 100))]
+plot(coords, pch = 20, col = Col, xlab = &#39;&#39;, ylab = &#39;&#39;, cex = 1, 
+     axes = F, main = &#39;True&#39;)
+plot(poly.barrier, add = T, col  =&#39;grey&#39;)
+
+# plot estimate
+image.plot(list(x = projgrid$x, y=projgrid$y, z = xmean[[1]]), 
+           xlim=c(0,10), ylim=c(0,13), 
+           col = matlab.like2(100), axes = F, main = &#39;Posterior mean&#39;)
+plot(poly.barrier, add=T, col=&#39;grey&#39;, xlim = c(0,10))</code></pre>
+<p><img src="btopic129_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-fuglstad2017">
+<p>Fuglstad, Geir-Arne, Daniel Simpson, Finn Lindgren, and Håvard Rue. 2017. “Constructing Priors That Penalize the Complexity of Gaussian Random Fields.” <em>Journal of the American Statistical Association</em>, no. just-accepted. Taylor &amp; Francis.</p>
+</div>
+<div id="ref-kallasvuo2016modeling">
+<p>Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016. “Modeling the Spatial Distribution of Larval Fish Abundance Provides Essential Information for Management.” <em>Canadian Journal of Fisheries and Aquatic Sciences</em>, no. ja. NRC Research Press.</p>
+</div>
+<div id="ref-spdetutorial">
+<p>Krainski, ET, F Lindgren, D Simpson, and H Rue. n.d. “The R-Inla Tutorial on Spde Models.” <em>Http://Www.r-Inla.org/Examples/Tutorials/Spde-Tutorial</em>.</p>
+</div>
+<div id="ref-simpson2014penalising">
+<p>Simpson, Daniel P, Thiago G Martins, Andrea Riebler, Geir-Arne Fuglstad, Håvard Rue, and Sigrunn H Sørbye. 2014. “Penalising Model Component Complexity: A Principled, Practical Approach to Constructing Priors.” <em>arXiv Preprint arXiv:1403.4630</em>.</p>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

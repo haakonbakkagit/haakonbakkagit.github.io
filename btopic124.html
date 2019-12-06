@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>Unknown covariates are included in the Gaussian noise</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Unknown covariates are included in the Gaussian noise</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic124 updated 07. March 2018</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>This topic is about model misspecification, with unknown covariates and a Gaussian likelihood.</p>
+<div id="initialisation" class="section level2">
+<h2><span class="header-section-number">1.1</span> Initialisation</h2>
+<p>We load libraries, including INLA (<a href="btopic109.html">Installation and general troubleshooting</a>), and set random seed.</p>
+<pre class="r"><code>library(INLA)
+library(fields)
+library(ggplot2)
+set.seed(201803)</code></pre>
+</div>
+</div>
+<div id="the-true-model" class="section level1">
+<h1><span class="header-section-number">2</span> The true model</h1>
+<p>The data is generated by <span class="math display">\[y_i \sim \mathcal N(\eta_i, \sigma_\epsilon) \]</span> The linear predictor is <span class="math display">\[\eta_i = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + v_1 x_3,\]</span> The three <span class="math inline">\(\beta\)</span>s we want to infer from the data, and we know the two covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. However, we do not know the covariate <span class="math inline">\(x_3\)</span>, and so, we cannot infer <span class="math inline">\(v1\)</span>!</p>
+<div id="why-we-consider-this-problem" class="section level2">
+<h2><span class="header-section-number">2.1</span> Why we consider this problem</h2>
+<p>Does this happen in practice? (An unmeasured covariate?) Yes, nearly in all applications!</p>
+<p>What people do in most cases is ignore the unknown covariate(s), and fit a model to the data you have. From a statistical point of view, this is treating the <span class="math inline">\(v_1 x_3\)</span> as noise, and inferring the rest of the model. Next, we explore what happens when you do this.</p>
+</div>
+</div>
+<div id="simulating-a-dataset" class="section level1">
+<h1><span class="header-section-number">3</span> Simulating a dataset</h1>
+<p>Set the parameters and covariates. Assuming the covariates are scaled, we create covariates with a mean of 0 and a standard deviation near 1.</p>
+<pre class="r"><code>N = 500
+x1 = runif(N, min=-2, max=2)
+x2 = runif(N, min=-2, max=2)
+x3 = runif(N, min=-2, max=2)
+beta0 = 3
+beta1 = 0.7
+beta2 = -0.3
+v1 = 0.3
+sig.eps = 0.4</code></pre>
+<p>Simulate the truth.</p>
+<pre class="r"><code>eta = beta0 + beta1*x1 + beta2*x2 + v1*x3
+y = eta + sig.eps*rnorm(N)</code></pre>
+<p>Create the dataframe representing the data collected in the field. Note that we do not add <span class="math inline">\(x_3\)</span> as this is not measured (it was too expensive or it was never considered).</p>
+<pre class="r"><code>df = data.frame(y = y, x1=x1, x2=x2)</code></pre>
+</div>
+<div id="inference" class="section level1">
+<h1><span class="header-section-number">4</span> Inference</h1>
+<div id="model-1-the-model-we-use" class="section level2">
+<h2><span class="header-section-number">4.1</span> Model 1: The model we use</h2>
+<pre class="r"><code>formula = y ~ x1 + x2
+res1 = inla(formula, family = &quot;gaussian&quot;, data = df,
+            control.predictor = list(compute=T))</code></pre>
+<pre class="r"><code>res1$summary.fixed</code></pre>
+<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
+## (Intercept)  3.02 0.024       2.97     3.02      3.06  3.02 9.7e-08
+## x1           0.70 0.022       0.65     0.70      0.74  0.70 9.7e-08
+## x2          -0.31 0.021      -0.35    -0.31     -0.27 -0.31 9.7e-08</code></pre>
+</div>
+<div id="results" class="section level2">
+<h2><span class="header-section-number">4.2</span> Results</h2>
+<p>We see that the model recovers the true parameters! We do not expect to recover the true noise, as the term <span class="math inline">\(v_1x_3\)</span> has been added to it.</p>
+<pre class="r"><code>(sd.model.noise = sd(y-res1$summary.linear.predictor$mean))</code></pre>
+<pre><code>## [1] 0.53</code></pre>
+<pre class="r"><code>(sd.true.noise = sd(y-eta))</code></pre>
+<pre><code>## [1] 0.42</code></pre>
+<pre class="r"><code># - approximately equal to sig.eps
+(sd.v1x3 = sd(v1*x3))</code></pre>
+<pre><code>## [1] 0.34</code></pre>
+<pre class="r"><code>(sqrt(sd.true.noise^2 + sd.v1x3^2))</code></pre>
+<pre><code>## [1] 0.54</code></pre>
+<p>As expected, the two first numbers are not the same, but the first and the last is similar.</p>
+</div>
+<div id="model-2-the-true-model" class="section level2">
+<h2><span class="header-section-number">4.3</span> Model 2: The true model</h2>
+<pre class="r"><code>formula = y ~ x1 + x2 + x3
+res2 = inla(formula, family = &quot;gaussian&quot;, data = df,
+            control.predictor = list(compute=T))</code></pre>
+<pre class="r"><code>res2$summary.fixed</code></pre>
+<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
+## (Intercept)  3.01 0.019       2.98     3.01      3.05  3.01 9.7e-08
+## x1           0.71 0.017       0.67     0.71      0.74  0.71 9.7e-08
+## x2          -0.30 0.017      -0.33    -0.30     -0.27 -0.30 9.7e-08
+## x3           0.28 0.017       0.25     0.28      0.32  0.28 9.7e-08</code></pre>
+<p>With this model, the estimates are better, and the uncertainties smaller than with model 1.</p>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1><span class="header-section-number">5</span> Discussion</h1>
+<p>The example in this topic hints to the generally applicable approach of ignoring some unknown covariates and fitting a model to what data you have.</p>
+<p>In general, whether the estimates are unbiased and what variance you have depends on the dependency between the known and unknown covariates, and the size of the unknown covariates.</p>
+<p>[Please tip me about a few good citations that I can add here.]</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

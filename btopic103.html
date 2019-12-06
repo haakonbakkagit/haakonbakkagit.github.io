@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>Simulation and inference with the Barrier model</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Simulation and inference with the Barrier model</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic103 updated 06. October 2019</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this topic we show an example of the Barrier model, with simulation, inference and plotting. The example terrain/map/study-area has a barrier going from west to east, and a gap in the middle of the barrier.</p>
+<p>This page is (as usual) a self-contained example of a good solution.</p>
+<p>At the end follows sections on how to avoid errors when constructing an example like this, and some extra information on how to do things that are slightly different from this example.</p>
+<div id="initialisation" class="section level2">
+<h2><span class="header-section-number">1.1</span> Initialisation</h2>
+<p>We load the libraries and functions we need. <em>Attention:</em> You need to have a recent version of INLA (November 17th 2017 or later).</p>
+<p>You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>). Feel free to save the web location where the functions are defined as an R-file on your computer. We also set random seeds to be used later.</p>
+<pre class="r"><code>library(INLA)
+library(fields)
+library(rgdal)
+library(viridisLite)
+
+set.seed(2016)
+set.inla.seed = 2016</code></pre>
+</div>
+</div>
+<div id="polygons-and-the-mesh" class="section level1">
+<h1><span class="header-section-number">2</span> Polygons and the Mesh</h1>
+<p>We will create the representation of our spatial domain, i.e. the locations where the random effect is defined.</p>
+<p>We set up a square polygon <code>p</code> to define the barrier. In this example, I know I want to have a <span class="math inline">\([0, 10]\times [0, 10]\)</span> study area, and I construct the barrier to fit inside this. In general, to use these barrier models, you need the barrier region (e.g. land) to be represented by a polygon. In most cases, you will use shapefiles or maps or other sources for determining your barrier, as in <a href="btopic107.html">BTopic107</a>.</p>
+<p>Talking about polygons in general, however, is out of the scope of this tutorial. More information about polygons can be found in the R-packages <code>sp</code> and <code>maps</code>.</p>
+<pre class="r"><code>smalldist = 0.2
+# - the width of the opening in the barrier
+width = 0.5
+# - The width/thickness of the barrier
+
+local.square.polygon = function(xlim, ylim){
+# - output is a square
+  xlim = range(xlim); ylim = range(ylim)
+  corner1 = c(xlim[1], ylim[2])
+  corner2 = c(xlim[2], ylim[1])
+  poly = Polygon(rbind(corner1, c(corner1[1], corner2[2]), corner2, c(corner2[1], corner1[2]), corner1), hole = FALSE)
+  return(SpatialPolygons(list(Polygons(list(poly), ID = runif(1)))))
+}
+
+poly1 = local.square.polygon(xlim=c(-1, 5-smalldist/2), 
+                          ylim=5+width*c(-.5, .5))
+poly2 = local.square.polygon(xlim=c(5+smalldist/2, 11), 
+                          ylim=5+width*c(-.5, .5))
+poly.original = SpatialPolygons(c(poly1@polygons, poly2@polygons))
+
+plot(poly.original, main=&quot;Barrier area polygon&quot;)</code></pre>
+<p><img src="btopic103_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>First we set the input variables. Feel free to experiment with different values for <code>smalldist</code> and <code>width</code>, as changes can result in markedly different behavior.</p>
+<p>We set up the <code>mesh</code> which will be the numerical/discrete representation of the spatial study region. We will not describe the process of mesh construction in this section. Good mesh construction is a somewhat involved process see <a href="btopic104.html">BTopic104</a>. Some of you may know how to construct good meshes already, e.g. from<br />
+<a href="www.r-inla.org/examples/tutorials/spde-tutorial">the SPDE-tutorial</a>.</p>
+<pre class="r"><code>max.edge.length = 0.4
+# - The coarseness of the finite element approximation
+# - Corresponds to grid-square width in discretisations
+# - - Except that finite element approximations are better
+# - Should be compared to size of study area
+# - Should be less than a fourth of the estimated (posterior) 
+#   spatial range
+# - Up to 8x computational time when you halve this value</code></pre>
+<pre class="r"><code>loc1 = matrix(c(0,0, 10,0, 0,10, 10,10), 4, 2, byrow = T)
+# - This defines the extent of the interior part of the mesh
+# - In an application, if you want the mesh to depend on your 
+#   data locations, you may use those locations instead
+seg = inla.sp2segment(poly.original)
+# - Transforms a SpatialPolygon to an &quot;inla polygon&quot;
+mesh = inla.mesh.2d(loc=loc1, interior = seg, 
+                    max.e = max.edge.length, offset=1)
+# - The INLA mesh constructor, used for any INLA-SPDE model</code></pre>
+<p>The <code>interior</code> argument of <code>inla.mesh.2d</code> makes sure that the triangles in the mesh respect the boundary of our barrier.</p>
+<p>Next, we will pick out which triangles in the mesh belongs to the barrier area.</p>
+<pre class="r"><code>tl = length(mesh$graph$tv[,1])
+# - the number of triangles in the mesh
+posTri = matrix(0, tl, 2)
+for (t in 1:tl){
+  temp = mesh$loc[mesh$graph$tv[t, ], ]
+  posTri[t,] = colMeans(temp)[c(1,2)] 
+}
+posTri = SpatialPoints(posTri)
+# - the positions of the triangle centres
+
+barrier = over(poly.original, SpatialPoints(posTri), returnList=T)
+# - checking which mesh triangles are inside the barrier area
+barrier = unlist(barrier)
+poly.barrier = inla.barrier.polygon(mesh, barrier.triangles = barrier)</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
+## intersection at or near point -2 0.58578644000000002</code></pre>
+<pre><code>## mesh.polys is invalid</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
+## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
+## intersection at or near point -1 4.75</code></pre>
+<pre><code>## mesh.polys is invalid</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
+## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre class="r"><code># - the Barrier model&#39;s polygon
+# - in most cases this should be the same as poly.original</code></pre>
+<p>Then we define the <code>Omega</code> object which is the object that the code for the new Barrier model needs. We also define the <code>poly.barrier</code> which is the spatial polygon needed for plotting the boundaries of the barrier area.</p>
+<p>At this point, it is crucial to check that our mesh, and the two areas (normal area and barrier area) are correct. We make sure to always use <code>poly.barrier</code> to plot the barrier from now on, since this is the same as what is used by the algorithm (which may not be true for our original polygon <code>p</code>).</p>
+<p>In this figure we see the entire mesh. The grey background is for the barrier area. The light blur background is for the normal area. The blue and red squares are the boundaries of the barrier area. The black circles are our initial locations (here, we use them only to determine the extent of the mesh).</p>
+<pre class="r"><code>plot(mesh, main=&quot;Mesh and Omega&quot;)
+plot(poly.barrier, add=T, col=&#39;lightblue&#39;)
+plot(mesh, add=T)
+points(loc1)</code></pre>
+<p><img src="btopic103_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The triangles here are light blue (normal area) and grey (barrier area). The four circles are the mesh locations. The blue and red squares are a part of the <code>mesh</code> object.</p>
+<p>Next we define a function defining how to plot any spatial fields (for this example). We have also defined the part of space that is to be plotted, in any future plots, namely <code>xlim=ylim=c(2,8)</code>. (Since we only care about this region, the mesh extension is large enough. We discuss mesh extensions in a different topic)</p>
+<pre class="r"><code>local.plot.field = function(field, ...){
+  xlim = c(2, 8); ylim = xlim;
+  proj = inla.mesh.projector(mesh, xlim = xlim, 
+                             ylim = ylim, dims=c(300, 300))
+  # - Can project from the mesh onto a 300x300 grid 
+  #   for plots
+  field.proj = inla.mesh.project(proj, field)
+  # - Do the projection
+  image.plot(list(x = proj$x, y=proj$y, z = field.proj), 
+             xlim = xlim, ylim = ylim, col = plasma(17), ...)  
+  # - Use image.plot to get nice colors and legend
+}
+print(mesh$n)</code></pre>
+<pre><code>## [1] 2613</code></pre>
+<pre class="r"><code># - This is the appropriate length of the field variable</code></pre>
+<p>The input variable <code>field</code> must have the same length as there are mesh nodes in the mesh.</p>
+Next, we compute the Finite Element matrices needed to solve the SPDE for the non-stationary Barrier model.
+<span class="math display">\[\begin{align}
+u(s) - \nabla \cdot \frac{r^2}{8} \nabla u(s) &amp;=   r \sqrt{\frac{\pi}{2}} \sigma_u \mathcal{W}(s), \text{ for } s \in \Omega_n \\
+u(s) - \nabla \cdot \frac{r_b^2}{8} \nabla u(s) &amp;=   r_b \sqrt{\frac{\pi}{2}} \sigma_u \mathcal{W}(s), \text{ for } s \in \Omega_b,
+\end{align}\]</span>
+<p>To learn more about these equations, see the paper on Arxiv <span class="citation">(Bakka et al. 2016)</span>, and the appendix therein. Essentially, we are doing all the computations we can in advance, so that solving the system of equations happens quickly at each step of simulation and inference. We will not comment on the internal workings of this function now, but it will be described in detail in another topic.</p>
+<pre class="r"><code>barrier.model = inla.barrier.pcmatern(mesh, barrier.triangles = barrier, prior.range = c(1.44, 0.5), prior.sigma = c(0.7, 0.5), range.fraction = 0.1)
+# - Set up the inla model, including the matrices for solving the SPDE</code></pre>
+</div>
+<div id="simulate-data" class="section level1">
+<h1><span class="header-section-number">3</span> Simulate data</h1>
+<p>In this subsection, we simulate data. When simulating data, we are in a sense pretending to be nature, producing a set of observations for the human observers. We will do inference on this data further down on this page.</p>
+<p>First we set the ranges, with a range 0.3 on the first region, i.e. the barrier, and a range of 3 in the second region, i.e. the normal region. The range is the distance at which correlation is essentially zero. Then we compute the precision matrix <span class="math inline">\(Q\)</span> (inverse covariance matrix) for the spatial random field <span class="math display">\[u \sim \mathcal N(0, Q^{-1})\]</span></p>
+<pre class="r"><code>range = 3
+# - the spatial range parameter
+Q = inla.rgeneric.q(barrier.model, &quot;Q&quot;, theta = c(0, log(range)))
+# - the precision matrix for fixed ranges
+# - Q is a function of the hyperparameters theta = c( log(sigma), log(range1), log(range2),...)</code></pre>
+<p>Now, we sample a spatial field using the precision matrix <span class="math inline">\(Q\)</span>. This is done through a sparse Cholesky factorization <span class="citation">(H. Rue and Held 2005)</span>. Then we plot that field, adding the barrier area in grey on top. The value of the field on the barrier is of no interest, as there can never be observations there.</p>
+<pre class="r"><code>u = inla.qsample(n=1, Q=Q, seed = set.inla.seed)
+u = u[ ,1]
+# - access the first sample
+
+local.plot.field(u, main=&quot;The true (simulated) spatial field&quot;)
+plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
+<p><img src="btopic103_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code># - Overlay the barrier</code></pre>
+<p>Now we simulate the spatial locations and the data. We never have observation locations in the barrier region (e.g. no measurements of fish on land), so the easiest way to sample locations is to sample everywhere, and then just delete those samples that end up in the barrier region. The projector matrix is the function taking a field-defined-on-the-mesh into a field-defined-on-the-data-locations, see BTopic101.</p>
+<pre class="r"><code>num.try = 500 
+# - try to sample this number of data locations
+loc.try = matrix(runif(num.try*2, min=2, max=8), 
+                         num.try, 2)
+# - locations sampled inside the barrier will be removed 
+#   in a few lines
+temp = SpatialPoints(loc.try)
+loc.ok = is.na(over(temp, poly.barrier))
+# - only allow locations that are not inside the Barrier area
+loc.data = loc.try[loc.ok, ]
+A.data = inla.spde.make.A(mesh, loc.data)
+# - the projector matrix required for any spatial model
+# - this matrix can transform the field-defined-on-the-mesh 
+#   to the field-defined-on-the-data-locations
+c(dim(A.data), mesh$n, nrow(loc.data))</code></pre>
+<pre><code>## [1]  469 2613 2613  469</code></pre>
+<pre class="r"><code># - shows that the dimensions are correct
+u.data = A.data %*% u
+# - project the field from the finite element  
+#   representation to the data locations</code></pre>
+<p>Next we create the dataframe object.</p>
+<pre class="r"><code>df = data.frame(loc.data)
+# - df is the dataframe used for modeling
+names(df) = c(&#39;locx&#39;, &#39;locy&#39;)
+sigma.u = 1
+# - size of the random effect
+# - feel free to change this value
+sigma.epsilon = 0.2
+# - size of the iid noise in the Gaussian likelihood
+# - feel free to change this value
+df$y = drop(sigma.u*u.data + sigma.epsilon*rnorm(nrow(df)))
+# - sample observations with gaussian noise</code></pre>
+<p>We have now completed the simulation of the spatial dataset.</p>
+<pre class="r"><code>summary(df)</code></pre>
+<pre><code>##       locx          locy           y        
+##  Min.   :2.0   Min.   :2.0   Min.   :-2.87  
+##  1st Qu.:3.4   1st Qu.:3.7   1st Qu.:-0.96  
+##  Median :5.0   Median :5.5   Median :-0.30  
+##  Mean   :5.0   Mean   :5.1   Mean   :-0.29  
+##  3rd Qu.:6.5   3rd Qu.:6.7   3rd Qu.: 0.33  
+##  Max.   :8.0   Max.   :8.0   Max.   : 3.14</code></pre>
+<p>This is the entire dataframe, and is the only object we ‘know’, besides the spatial mesh and barrier, when we are performing inference.</p>
+</div>
+<div id="stationary-inla-model" class="section level1">
+<h1><span class="header-section-number">4</span> Stationary INLA model</h1>
+<p>The model in this subsection not the new model, but the standard spatial model in INLA. We add this for comparing the stationary and Barrier model. This means that the model in this subsection is not the model used for simulation (that model will come in the next subsection).</p>
+<p>The stack will be used both for the stationary model and for the Barrier model. This is just a way of organizing the different variables. We could have written this example without using the stack, but if you want to use this model for anything more advanced, you will need this stack functionality.</p>
+<pre class="r"><code>stk &lt;- inla.stack(data=list(y=df$y), A=list(A.data, 1),
+                  effects=list(s=1:mesh$n, 
+                               intercept=rep(1, nrow(df))), 
+                  remove.unused = FALSE, tag=&#39;est&#39;)
+# - this is the common stack used in INLA SPDE models
+# - see the SPDE-tutorial
+# - - http://www.r-inla.org/examples/tutorials/spde-tutorial</code></pre>
+<p>Next, we set up a standard INLA call for a stationary spatial effect. We use the PC prior for the Gaussian <span class="math inline">\(\sigma_\epsilon\)</span>. We start the numerical optimizer with a good value in <code>control.mode</code>, to reduce the computational time (you may remove this line, but it will take longer). We know where to start the optimizer because we have run this model one without that line. In your case, you may run a subset of your data to find good starting values, especially for space-time models.</p>
+<pre class="r"><code>model.stat = inla.spde2.pcmatern(mesh, prior.range = c(1, 0.5), prior.sigma = c(1, 0.5))
+# - Set up the model component for the spatial SPDE model: 
+#   Stationary Matern model
+# - I assume you are somewhat familiar with this model
+
+formula &lt;- y ~ 0 + intercept + f(s, model=model.stat)
+# - Remove the default intercept
+# - - Having it in the stack instead improves the numerical 
+#     accuracy of the INLA algorithm
+# - Fixed effects + random effects
+
+res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
+            control.predictor=list(A = inla.stack.A(stk)),
+            family = &#39;gaussian&#39;,
+            control.family = list(hyper = list(prec = list(
+              prior = &quot;pc.prec&quot;, fixed = FALSE, 
+              param = c(0.2,0.5)))),
+            control.mode=list(restart=T, theta=c(4,-1.7,0.25)))</code></pre>
+<p>We look at the standard  summary.</p>
+<pre class="r"><code>summary(res.stationary)</code></pre>
+<pre><code>## 
+## Call:
+##    c(&quot;inla(formula = formula, family = \&quot;gaussian\&quot;, data = 
+##    inla.stack.data(stk), &quot;, &quot; control.predictor = list(A = 
+##    inla.stack.A(stk)), control.family = list(hyper = list(prec = 
+##    list(prior = \&quot;pc.prec\&quot;, &quot;, &quot; fixed = FALSE, param = c(0.2, 
+##    0.5)))), control.mode = list(restart = T, &quot;, &quot; theta = c(4, -1.7, 
+##    0.25)))&quot;) 
+## Time used:
+##     Pre = 2.25, Running = 13.9, Post = 0.311, Total = 16.5 
+## Fixed effects:
+##           mean   sd 0.025quant 0.5quant 0.97quant  mode kld
+## intercept -0.2 0.59       -1.4    -0.22      0.97 -0.23   0
+## 
+## Random effects:
+##   Name     Model
+##     s SPDE2 model
+## 
+## Model hyperparameters:
+##                                          mean    sd 0.025quant 0.5quant
+## Precision for the Gaussian observations 26.17 2.731     21.240    26.03
+## Range for s                              3.39 0.818      2.223     3.24
+## Stdev for s                              1.38 0.280      0.965     1.33
+##                                         0.97quant  mode
+## Precision for the Gaussian observations     31.70 25.73
+## Range for s                                  5.27  2.92
+## Stdev for s                                  2.01  1.22
+## 
+## Expected number of effective parameters(stdev): 209.30(11.02)
+## Number of equivalent replicates : 2.24 
+## 
+## Marginal log-Likelihood:  -179.05</code></pre>
+<p>We plot the result of the stationary model in the next figure.</p>
+<pre class="r"><code>local.plot.field(res.stationary$summary.random$s$mean,
+          main=&quot;Spatial estimate with the stationary model&quot;)
+# - plot the posterior spatial marginal means
+# - we call this the spatial estimate, or the smoothed data
+plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
+<p><img src="btopic103_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<pre class="r"><code># - Posterior spatial estimate using the stationary model</code></pre>
+</div>
+<div id="barrier-model" class="section level1">
+<h1><span class="header-section-number">5</span> Barrier model</h1>
+<p>This is the same model as we used for simulating the data. Except that we have now “forgotten” the range <span class="math inline">\(r_b\)</span> in the barrier area. This range is never known, so it is unreasonable to use it for inference. However, using any small value for the range in the barrier region is OK, it does not need to be the “true value”. For more information about this, see appendix “Choosing barrier range” in <span class="citation">(Bakka et al. 2016)</span>. The Barrier model is a special case of the Different</p>
+<p>First we set up extra variables needed for my implementation of the new model. My implementation is based on “rgeneric” in INLA, see <code>\inlinecode{inla.doc(&quot;rgeneric&quot;)}</code>. This part of the code defines what range parameters belong to each area.</p>
+<pre class="r"><code>formula2 &lt;- y ~ 0 + intercept + f(s, model=barrier.model)
+# - The spatial model component is different from before
+# - The rest of the model setup is the same as in the stationary case!
+# - - e.g. the inla(...) call below is the same, 
+#     only this formula is different</code></pre>
+<p>Finally, we are ready to run inference on the simulated dataset. Similarly to the stationary case, you may remove the <code>control.mode</code> input. That will cause the model to run slightly slower. If you have trouble with inference in a different dataset, setting these values (the initial values for the algorithm) often solves the problem. Please note that these are the values for the internal parametrization, so <span class="math inline">\(\log(precision), \log(sigma), \log(range)\)</span>, see <code>result$internal.summary.hyperpar</code>.</p>
+<pre class="r"><code>res.barrier = inla(formula2, data=inla.stack.data(stk),
+       control.predictor=list(A = inla.stack.A(stk)),
+       family = &#39;gaussian&#39;,
+       control.family = list(hyper = list(prec = list(
+             prior = &quot;pc.prec&quot;, fixed = FALSE, 
+             param = c(0.2,0.5)))),
+       control.mode=list(restart=T, theta=c(3.2, 0.4, 1.6)))</code></pre>
+<pre class="r"><code>summary(res.barrier)</code></pre>
+<pre><code>## 
+## Call:
+##    c(&quot;inla(formula = formula2, family = \&quot;gaussian\&quot;, data = 
+##    inla.stack.data(stk), &quot;, &quot; control.predictor = list(A = 
+##    inla.stack.A(stk)), control.family = list(hyper = list(prec = 
+##    list(prior = \&quot;pc.prec\&quot;, &quot;, &quot; fixed = FALSE, param = c(0.2, 
+##    0.5)))), control.mode = list(restart = T, &quot;, &quot; theta = c(3.2, 0.4, 
+##    1.6)))&quot;) 
+## Time used:
+##     Pre = 1.7, Running = 21, Post = 0.288, Total = 23 
+## Fixed effects:
+##            mean   sd 0.025quant 0.5quant 0.97quant  mode kld
+## intercept -0.15 0.59       -1.3    -0.17         1 -0.19   0
+## 
+## Random effects:
+##   Name     Model
+##     s RGeneric2
+## 
+## Model hyperparameters:
+##                                           mean    sd 0.025quant 0.5quant
+## Precision for the Gaussian observations 24.179 2.433     19.740   24.061
+## Theta1 for s                             0.204 0.190     -0.136    0.191
+## Theta2 for s                             1.331 0.222      0.933    1.315
+##                                         0.97quant   mode
+## Precision for the Gaussian observations    29.065 23.832
+## Theta1 for s                                0.588  0.145
+## Theta2 for s                                1.781  1.259
+## 
+## Expected number of effective parameters(stdev): 182.12(11.65)
+## Number of equivalent replicates : 2.58 
+## 
+## Marginal log-Likelihood:  -156.54</code></pre>
+<p>We plot the result of the Barrier model in the next figure.</p>
+<pre class="r"><code>local.plot.field(res.barrier$summary.random$s$mean, 
+                 main=&quot;Spatial posterior for Barrier model&quot;)
+# - plot the posterior spatial marginal means
+# - we call this the spatial (smoothing) estimate
+plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
+<p><img src="btopic103_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r"><code># - Posterior spatial estimate using the Barrier model</code></pre>
+<p>Compare this plot to the plot “The true (simulated) field” and to the stationary solution “Posterior spatial estimate using the stationary model”. Depending on the simulated field (i.e. the random seeds), these figures may look very much the same, or be very different. Our experience is that, even when the spatial means look quite different, there may be a big difference in model fit or prediction evaluations. Feel free to also plot the quantiles and sd of the two posterior fields. For a discussion of the results we refer you to the main paper .</p>
+<div id="plotting-the-posterior-of-the-hyper-parameters" class="section level3">
+<h3><span class="header-section-number">5.0.1</span> Plotting the posterior of the hyper-parameters</h3>
+<p>For how to plot the posterior of the hyper-parameters in the stationary model, see <a href="btopic108.html">BTopic108</a>.</p>
+<pre class="r"><code>res.barrier$summary.hyperpar</code></pre>
+<pre><code>##                                         mean   sd 0.025quant 0.5quant
+## Precision for the Gaussian observations 24.2 2.43      19.74    24.06
+## Theta1 for s                             0.2 0.19      -0.14     0.19
+## Theta2 for s                             1.3 0.22       0.93     1.32
+##                                         0.97quant  mode
+## Precision for the Gaussian observations     29.07 23.83
+## Theta1 for s                                 0.59  0.14
+## Theta2 for s                                 1.78  1.26</code></pre>
+<p>This shows the ordering of the hyper-parameters, and is how we know what index to use later in the plots.</p>
+To plot the hyper-parameters in the Barrier model, we must know the transformations.
+<span class="math display">\[\begin{align}
+\sigma &amp;= e^ {\theta_1} \quad \text{is the marginal standard deviation} \\
+r &amp;= e^ {\theta_2} \quad \text{is the spatial range}
+\end{align}\]</span>
+<p>For the parameter <span class="math inline">\(\sigma\)</span>, the code is as follows (the dashed line is the prior, with an arbitrary scaling).</p>
+<pre class="r"><code>tmp = inla.tmarginal(function(x) exp(x), res.barrier$marginals.hyperpar[[2]]) 
+plot(tmp, type = &quot;l&quot;, xlab = &quot;sigma&quot;, ylab = &quot;Density&quot;)
+xvals = seq(0, 10, length.out=1000)
+lambda = 0.99; lines(xvals, 3*exp(-lambda*xvals), lty=&#39;dashed&#39;)
+abline(v=1, col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic103_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p>For the parameter <span class="math inline">\(r\)</span>, the code is as follows (the dashed line is the prior, with an arbitrary scaling).</p>
+<pre class="r"><code>tmp = inla.tmarginal(function(x) exp(x), res.barrier$marginals.hyperpar[[3]]) 
+plot(tmp, type = &quot;l&quot;, xlab = &quot;r&quot;, ylab = &quot;Density&quot;)
+xvals = seq(0, 10, length.out=1000)
+lambda = 1.00; lines(xvals, 3*exp(-lambda*xvals), lty=&#39;dashed&#39;)
+abline(v=range, col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic103_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+</div>
+</div>
+<div id="comments" class="section level1">
+<h1><span class="header-section-number">6</span> Comments</h1>
+<p>The example ends here. The following sections are comments to this example.</p>
+<div id="mistakes-to-avoid" class="section level2">
+<h2><span class="header-section-number">6.1</span> Mistakes to avoid</h2>
+<p>I will not discuss potential mistakes from the definition of the mesh or the barrier, as that is included in other topics. Make sure that you do not mix up what area is the barrier, and what is the normal.</p>
+</div>
+<div id="how-to-use-this-as-a-model-component-in-other-models" class="section level2">
+<h2><span class="header-section-number">6.2</span> How to use this as a model component in other models</h2>
+<p>Here, I outline how to do things that are slightly different.</p>
+<p>To add more covariates in the model, add them in the <code>inla.stack</code>. See the <a href="http://www.r-inla.org/examples/tutorials/spde-tutorial">SPDE-tutorial</a> for more information on this .</p>
+<p>You can easily use other likelihoods, by changing the  argument of the -call. See  for a description of these. Please make sure you choose good priors for any hyper-parameters in the likelihood (the choice we made in the code here is aarbitrary and not good).</p>
+<p>You can also add different random effects to the formula (see info about latent models on ). When you use additional random effects, you must include them into the stack, similarly to how the intercept is here included in the stack. For examples of this, use the SPDE tutorial .</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-tech125">
+<p>Bakka, H., J. Vanhatalo, J. Illian, D. Simpson, and H. Rue. 2016. “Accounting for Physical Barriers in Species Distribution Modeling with Non-Stationary Spatial Random Effects.” ArXiv preprint arXiv:1608.03787. Norwegian University of Science; Technology, Trondheim, Norway.</p>
+</div>
+<div id="ref-rue2005book">
+<p>Rue, Håvard, and Leonard Held. 2005. <em>Gaussian Markov Random Fields: Theory and Applications</em>. Vol. 104. Monographs on Statistics and Applied Probability. London: Chapman &amp; Hall.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Francesco Serafini" />
+
+<meta name="date" content="2018-02-13" />
+
+<title>How to build the mesh</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">How to build the mesh</h1>
+<h4 class="author">Francesco Serafini</h4>
+<h4 class="date">13 February 2018</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this page we will illustrate what is a mesh, why we need it and how easy it is to build it using the R-<strong>INLA</strong> package. During the following overview we will also show some useful tips to plot it. We will focus only on the two dimensional case which is the most used in practice.</p>
+</div>
+<div id="a-bit-of-theory" class="section level1">
+<h1><span class="header-section-number">2</span> A bit of theory</h1>
+<div id="what-is-mesh-and-why-we-need-it" class="section level2">
+<h2><span class="header-section-number">2.1</span> What is mesh and why we need it</h2>
+<p>When we are dealing with process defined over a continuos domain, one can express a large class of random fields as solution of stochastic partial differential equations (SPDEs). In R-<strong>INLA</strong> this solution is approximated using high dimensional basis representation with simple local basis function. Those basis functions are defined over a triangulation of the domain; this triangulation is the mesh.</p>
+</div>
+<div id="trade-off" class="section level2">
+<h2><span class="header-section-number">2.2</span> Trade off</h2>
+<p>Defining the mesh for a given problem is a trade-off between approximation accuracy and computational cost. The more triangles we have, the more our approximation is precise but we have to pay for it in terms of computational time. The desired mesh would have small triangles where the data is dense, larger where the data is more sparse and even more large triangles where there are no observations. We will see how to fix the parameter in order to do that.</p>
+</div>
+<div id="boundary" class="section level2">
+<h2><span class="header-section-number">2.3</span> Boundary</h2>
+<p>Solutions of SPDEs on bounded domains are costructed imposing boundary conditions. In particular for 2D problems the R-<strong>INLA</strong> implementation uses Neumann boundaries. This class of conditions increase the variance near the boundaries. Then, if we are modelling a stationary field is important to extend the domain in order to make this effect neglegible. On the other hand, if there is physical boundary this effect may be desiderable.</p>
+</div>
+</div>
+<div id="mesh-construction" class="section level1">
+<h1><span class="header-section-number">3</span> Mesh construction</h1>
+<p>The basic low level function to create a mesh is <span class="math inline">\(\texttt{inla.mesh.create()}\)</span>, the most used high level functions are <span class="math inline">\(\texttt{inla.mesh.1d()}\)</span>, <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> and <span class="math inline">\(\texttt{inla.nonconvex.hull()}\)</span>. We will explain the use of the last two.</p>
+<div id="the-textttinla.mesh.2d-function" class="section level2">
+<h2><span class="header-section-number">3.1</span> The <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> function</h2>
+<p>This is the main function for the costruction of a two dimensional mesh. In order to make as clear as possible the role of the parameters we will use a simple example.<br />
+Let’s generate some locations from which generate the mesh.</p>
+<pre class="r"><code>set.seed(1)
+n = 20
+x_loc = cbind(runif(n), runif(n))</code></pre>
+<div id="nonoptional-argument" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> Nonoptional argument</h3>
+<p>The function <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> requires at least two of this three argument to run:</p>
+<ul>
+<li><p><strong>loc</strong> or <strong>loc.domain</strong>: the function requires informations about the spatial domain given by spatial points or given by the domain extent.</p></li>
+<li><p><strong>max.edge</strong> : the maximum edge length must be specified. If it is a two-dimensional vector then the first component is for the intern and the second for the part outside the boundary. Noe that it uses the same scale unit as the coordinates.</p></li>
+</ul>
+<p>Now our first mesh can be constructed:</p>
+<pre class="r"><code>mesh1 = inla.mesh.2d(loc = x_loc, max.edge = 0.1)
+mesh2 = inla.mesh.2d(loc = x_loc, max.edge = c(0.1, 0.4))
+mesh3 = inla.mesh.2d(loc.domain = x_loc, max.edge = c(0.1, 0.4))</code></pre>
+<p><img src="btopic126_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="optional-argument" class="section level3">
+<h3><span class="header-section-number">3.1.2</span> Optional argument</h3>
+<ul>
+<li><p><strong>offset</strong> : it specifies how much the domain will be estended in the outer and inner part. If negative it is interpreted as a factor relative to the approximate data diameter. If positive it is the extension distance on same scale unit to the coordinates provided.</p></li>
+<li><p><strong>cutoff</strong> : it specifies the minimum distance allowed between points. It means that if the distance between two points is less than the supplied value then they are replaced by a single vertex. Its very useful in case of clustered data points because it avoids building many small triangles arround clustered points.</p></li>
+<li><p><strong>min.angle</strong>: it specifies the minimum internal angle of the triangles. This could be a two-dimensional vector with the same meaning of the others. Take in mind that we would like to have a mesh with triangles as regular as possible.</p></li>
+<li><p><strong>n</strong>, <strong>interior</strong> : The argument <code>n</code> is the initial number of points on the extended boundary. The interior is a list of segments to specify <code>interior</code> constraints, each one of <em>inla.mesh.segment class</em>.</p></li>
+</ul>
+</div>
+<div id="examples" class="section level3">
+<h3><span class="header-section-number">3.1.3</span> Examples</h3>
+<p>Here there are some examples using different parameters settings. To highlight the differences between examples only the first five points are going to be used. First define the mesh using points</p>
+<pre class="r"><code>x_loc_reduce = x_loc[1:5,]
+m1 &lt;- inla.mesh.2d(x_loc_reduce, max.edge=c(0.5, 0.5))
+m2 &lt;- inla.mesh.2d(x_loc_reduce, max.edge=c(0.5, 0.5), cutoff = 0.1)
+
+m3 &lt;- inla.mesh.2d(x_loc_reduce, max.edge=c(0.1, 0.5), cutoff = 0.1)
+m4 &lt;- inla.mesh.2d(x_loc_reduce, max.edge=c(0.1, 0.5), cutoff = 0.1,
+                   offset=c(0, 0.3))
+m5 &lt;- inla.mesh.2d(x_loc_reduce, max.edge=c(0.1, 0.5), cutoff = 0.1,
+                   offset=c(0.2, 0.3))
+m6 &lt;- inla.mesh.2d(x_loc_reduce, max.edge=c(0.1, 0.5), cutoff = 0.1,
+                   offset=c(0.2, 0.7), min.angle = 10)</code></pre>
+<p><img src="btopic126_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Lets comment the above meshes. As we have said before a mesh to be a good one needs regular triangles, the triangles of m1 are concentrated around the data points. In m2 we had a <em>cutoff</em> and it seems better than before but still we have too big triangles in the interior. Remember that bigger triangles means poorer approximations. So we reduce the <em>max.edge</em> on the interior to get a nicer triangulation. Once we are satisfy we can set the <em>offset</em> depending on the model we are dealing with.</p>
+<p>On the other hand we can define a mesh specifying the boundary. In order to do that we need a set of points which contains the locations of interesent.</p>
+<pre class="r"><code>boundary = cbind(c(0.2,0.2,1,1), c(0.1,1,1,0.1))
+
+m7 &lt;- inla.mesh.2d(, boundary, max.edge=c(0.3, 0.5), 
+                   offset=c(0.03, 0.5), cutoff=0.1)
+m8 &lt;- inla.mesh.2d(, boundary, max.edge=c(0.3, 0.5), n=5, 
+                   offset=c(.05,.1))
+m9 &lt;- inla.mesh.2d(, boundary, max.edge=c(.3, 0.5), n=7, 
+                   offset=c(.01,.3))
+m10 &lt;- inla.mesh.2d(, boundary, max.edge=c(.3, 0.5), n=4, 
+                   offset=c(.05,.3))</code></pre>
+<p><img src="btopic126_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>In the above examples the parameter <em>n</em> influences the initial number of extension points. In some situation changing it could help the convergence of the procedure. Be careful because changing <em>n</em> could result in an appropriate mesh. For example m7 doesn’t seems so good for the treated domain.</p>
+</div>
+<div id="play-by-yourself-with-shiny-apps" class="section level3">
+<h3><span class="header-section-number">3.1.4</span> Play by yourself with Shiny Apps</h3>
+<p>You can use the ShinyApp in the INLA package to play with the mesh.</p>
+<pre><code>meshbuilder()</code></pre>
+</div>
+</div>
+<div id="non-convex-hull-meshes" class="section level2">
+<h2><span class="header-section-number">3.2</span> Non-convex Hull Meshes</h2>
+<p>In the previous section we have seen how to build a convex mesh. In order to build a non-convex mesh one could still use the function <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> but a non-convex boundary has to be specified. Build a non-convex hull is very easy in R-<strong>INLA</strong> using the function <span class="math inline">\(\texttt{inla.nonconvex.hull()}\)</span>. This function take as parameters the target points and the <em>degree</em> of convexity, convavity and resolution.</p>
+<pre class="r"><code>bnd9 = inla.nonconvex.hull(x_loc, convex = 0.05)
+bnd10 = inla.nonconvex.hull(x_loc, convex = 0.09)
+bnd11 = inla.nonconvex.hull(x_loc, convex = 0.2)
+
+m9 = inla.mesh.2d(boundary = bnd9, max.edge = 0.05)
+m10 = inla.mesh.2d(boundary = bnd10, max.edge = 0.05)
+m11 = inla.mesh.2d(boundary = bnd11, max.edge = 0.05)</code></pre>
+<p><img src="btopic126_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>The parameters of the <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> work exactly in the same way as shown in the previous section. We include some more example just to clarify as much as possible the role of the paramters.</p>
+<pre class="r"><code>m9 = inla.mesh.2d(boundary = bnd9, max.edge = c(0.09, 0.4), cutoff = c(0.01, 0.01))
+m10 = inla.mesh.2d(boundary = bnd10, max.edge = c(0.09, 0.4), 
+                   offset = c(0, -0.2))
+m11 = inla.mesh.2d(boundary = bnd11, max.edge = c(0.09, 0.4), 
+                   min.angle = 0.05)</code></pre>
+<p><img src="btopic126_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="beyond-the-plane" class="section level2">
+<h2><span class="header-section-number">3.3</span> Beyond the plane</h2>
+<p>The meshes that we have seen untill now were defined on a plane. With the more low level function <span class="math inline">\(\texttt{inla.mesh.create()}\)</span> one could be much more sofisticated meshes. For the following example we build a globe, the parameter specify the number of sub-segment to use in the splitting of the icosahedron.</p>
+<pre class="r"><code>globe1 = inla.mesh.create(globe = 1)
+globe2 = inla.mesh.create(globe = 4)
+globe3 = inla.mesh.create(globe = 10)</code></pre>
+<p><img src="btopic126_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+</div>
+<div id="plotting" class="section level1">
+<h1><span class="header-section-number">4</span> Plotting</h1>
+<p>One of the most interesting tool, provided by R-<strong>INLA</strong>, for plotting spatial fields defined on a mesh is the possibility of project our data on different domain.<br />
+First of all we need a field and given a mesh is very easy to sample from it. We skip the technical details about sampling and the connection between the mesh and the field.</p>
+<pre class="r"><code>set.seed(2)
+mesh = inla.mesh.2d(x_loc, max.edge = c(0.1,0.5))
+spde = inla.spde2.matern(mesh, loc = x_loc)
+Q = inla.spde.precision(spde, theta = c(0,0))
+sample = inla.qsample(n = 2, Q)</code></pre>
+<p>Once we have a sample we need to project it on the desired domain. The function <span class="math inline">\(\texttt{inla.mesh.projector()}\)</span> does the job for us. In particular it is a mapping between the coefficients of the basis functions for the mesh nodes and the points on the regular grid. Lets consider an easy example: evaluate the field on a regular lattice (which is the default option of <span class="math inline">\(\texttt{inla.mesh.projector()}\)</span>). In the following example we have considered three different regular lattices changing only the dimensions. First of all we have to project the mesh</p>
+<pre class="r"><code>proj &lt;- inla.mesh.projector(mesh, dims = c(100, 100))
+proj2 &lt;- inla.mesh.projector(mesh, dims = c(50, 50))
+proj3 &lt;- inla.mesh.projector(mesh, dims = c(10, 10))</code></pre>
+<p>Then we have to project the sample on the new domain</p>
+<pre class="r"><code>sample_proj = inla.mesh.project(proj, field = sample[,1])
+sample_proj2 = inla.mesh.project(proj2, field = sample[,1])
+sample_proj3 = inla.mesh.project(proj3, field = sample[,1])</code></pre>
+<p>Finally we can use any matrix-based plotting tool. Note that increasing the dimension of the lattice more detailed plots are obtained.</p>
+<pre class="r"><code>par(mfrow = c(1,3))
+image(proj$x, proj$y, sample_proj , xlim = c(0,1), ylim = c(0,1),
+      xlab = &#39;&#39;,ylab = &#39;&#39;)
+contour(proj$x, proj$y, sample_proj, add = T)
+
+image(proj2$x, proj2$y, sample_proj2, xlim = c(0,1), ylim = c(0,1),
+      xlab = &#39;&#39;,ylab = &#39;&#39;)
+contour(proj2$x, proj2$y, sample_proj2, add = T)
+
+image(proj3$x, proj3$y, sample_proj3, xlim = c(0,1), ylim = c(0,1),
+      xlab = &#39;&#39;,ylab = &#39;&#39;)
+contour(proj3$x, proj3$y, sample_proj3, add = T)</code></pre>
+<p><img src="btopic126_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>The <span class="math inline">\(\texttt{inla.mesh.projector()}\)</span> also supports several type of projection for spherical domain. In the following example we sample from a spherical SPDE and then perform a Mollwide projection and the more classical longitude-latitude projection.</p>
+<pre class="r"><code>par(mfrow = c(1,2))
+set.seed(123)
+mesh2 &lt;- inla.mesh.create(globe = 10)
+spde.glob = inla.spde2.matern(mesh2, loc = mesh2$loc)
+Q.glob = inla.spde.precision(spde.glob, theta = c(0, 0))
+x.glob = inla.qsample(n = 2, Q.glob)
+
+proj2a &lt;- inla.mesh.projector(mesh2, projection = &quot;longlat&quot;,
+                                   dims = c(361, 181))
+proj2b &lt;- inla.mesh.projector(mesh2, projection = &quot;mollweide&quot;,
+                                   dims = c(361, 181))
+
+image(proj2b$x, proj2b$y, inla.mesh.project(proj2b, field = x.glob[,1]), main = &#39;Mollwide Projection&#39;, xlab = &#39;&#39;, ylab = &#39;&#39;)
+contour(proj2b$x, proj2b$y, inla.mesh.project(proj2b, field = x.glob[,1]), add = T)
+
+image(proj2a$x, proj2a$y, inla.mesh.project(proj2a, field = x.glob[,1]), main = &#39;Long-Lat projection&#39;, xlab = &#39;&#39;, ylab = &#39;&#39;)
+contour(proj2a$x, proj2a$y, inla.mesh.project(proj2a, field = x.glob[,1]), add = T)</code></pre>
+<p><img src="btopic126_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

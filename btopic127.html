@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Francesco Serafini" />
+<meta name="author" content="Runbing Zheng" />
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>Polygons and Coastlines</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Polygons and Coastlines</h1>
+<h4 class="author">Francesco Serafini</h4>
+<h4 class="author">Runbing Zheng</h4>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">updated XX March 2018</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this page we explain how to build polygons with the <code>INLA</code> and <code>sp</code> packages. This functionality is very useful in particular when we are dealing with physical barriers, which are important in statistical models on maps (spatial statistics). On this page we show several practical examples of how to deal with polygons. After that we show how to create polygons representing a geographical area of interest, how to build a mesh on this area, and how to get some nice plot from Google Maps.</p>
+</div>
+<div id="polygons" class="section level1">
+<h1><span class="header-section-number">2</span> Polygons</h1>
+<div id="physical-boundaries" class="section level2">
+<h2><span class="header-section-number">2.1</span> Physical Boundaries</h2>
+<p>In many real spatial model we have to deal with areas with physical boundaries. Let us think about data coming from sensors placed in the sea recording a signal which doesn’t propagate on the earth. In this situation any island represents a physical boundary that we have to take into account when modeling. Pay attention to the boundary effect (link mesh page: <a href="https://haakonbakka.bitbucket.io/btopic126.html#21_what_is_mesh_and_why_we_need_it" class="uri">https://haakonbakka.bitbucket.io/btopic126.html#21_what_is_mesh_and_why_we_need_it</a>) On the other hand we could think of the opposite situation: We are interested in what happens on land and do not care about the sea. This is a pretty common situation in epidemiology in which we are interested in the diffusion of a certain disease where people live.</p>
+</div>
+<div id="mesh-with-holes" class="section level2">
+<h2><span class="header-section-number">2.2</span> Mesh with holes</h2>
+<p>More in general, having a mesh with holes is useful in many other situations. Let us think about the following scenario: we have an area in which the data is missing. We can’t simply ignore that part of the total area. One possible solution is to treat it as an hole and then build a mesh with larger triangles on the missing data area, and still consider the process as a continuous process (in order to not be affected by the boundary effect).</p>
+</div>
+<div id="basic-polygon" class="section level2">
+<h2><span class="header-section-number">2.3</span> Basic Polygon</h2>
+<p>Let us create a simple study area composed of two parts. The first one has a hole and the second is non-convex. We can do that using the <span class="math inline">\(\texttt{Polygons()}\)</span> function of the <code>sp</code> package (Pebesma and Bivand, 2005) which creates an object of class Polygons. This function needs just two arguments:</p>
+<ul>
+<li><p><code>coords</code> : 2 column numeric matrix with the coordinates of the vertices of the polygon.</p></li>
+<li><p><code>hole</code> : logical value for setting polygon as hole or not.</p></li>
+</ul>
+<p>Similar code could be found in “The R-INLA tutorial on SPDE models, 2017”. Before starting let us import all the libraries that we are going to use.</p>
+<pre class="r"><code>library(INLA)
+library(rgdal)
+library(rgeos)
+library(ggmap)</code></pre>
+<p>Let us define our first polygon:</p>
+<pre class="r"><code># First polygon
+pl1 &lt;- Polygon(cbind(c(0,15,15,0,0), c(5,0,20,20,5)), hole=FALSE)
+# Hole in the first polygon
+h1 &lt;- Polygon(cbind(c(5,12,10,5,5), c(7,7,15,15,7)), hole=TRUE)
+# Second polygon
+pl2 &lt;- Polygon(cbind(c(15,20,20,30,30,15,15), c(10,10,0,0,20,20,10)), hole=FALSE)</code></pre>
+<p>The function <span class="math inline">\(\texttt{SpatialPolygons()}\)</span> is used to create a single object containing the two above polygons. The function takes as argument a list of lists and gives as output an object of class <code>SpatialPolygons</code>.</p>
+<pre class="r"><code>sp &lt;- SpatialPolygons(list(Polygons(list(pl1, h1), &#39;0&#39;), 
+                           Polygons(list(pl2), &#39;1&#39;))) 
+
+mesh &lt;- inla.mesh.2d(boundary=sp, max.edge=2)</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>As we said before one could be interested in building a finer mesh on the areas of interest and a poorer one in the other regions of the study area. It is possible to do that just expanding the study area.</p>
+<pre class="r"><code>mesh2 &lt;- inla.mesh.2d(boundary=sp, max.edge=c(1,4))</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+</div>
+<div id="polygons-from-coastlines" class="section level1">
+<h1><span class="header-section-number">3</span> Polygons from coastlines</h1>
+<p>As we said before in many applications in geographical statistics it is necessary to deal with coastlines. In this section we show how to use world coastlines data in order to build a mesh in an area of interest. We consider the case where we are interested in something progating in the sea, the other case is easily deducible. If you are interested on how to <strong>build a mesh given a coastline</strong> please check this site:</p>
+<p><a href="https://haakonbakka.bitbucket.io/btopic104.html" class="uri">https://haakonbakka.bitbucket.io/btopic104.html</a></p>
+<div id="download-coastlines-data" class="section level2">
+<h2><span class="header-section-number">3.1</span> Download Coastlines Data</h2>
+<p>First of all we need to downlad the shape file of the coastlines. The data is available on this webpage:</p>
+<p><a href="http://openstreetmapdata.com/data/coast" class="uri">http://openstreetmapdata.com/data/coast</a></p>
+<p>We will take “Large simplified polygons not split, use for zoom level 0-9” as an example, to show how to get region polygons from this dataset. We import the data using <code>rgdal</code> library:<br />
+Notice that the <code>dsn</code> need to point to the file directory with the downloaded files.</p>
+<p>We try to make all the code in this tutorial with <code>eval=TRUE</code>, so that you can run it. However, the next few code chunks are with <code>eval=FALSE</code>, and you cannot simply run them. This is because we cannot make the world shapefile accessible from this website (you have to go to <a href="http://openstreetmapdata.com/data/coast" class="uri">http://openstreetmapdata.com/data/coast</a>). After you have downloaded the correct data, you can manually run the code chunks (note that they are somewhat time consuming). Further down on this page we go back to <code>eval=TRUE</code>.</p>
+<pre class="r"><code>shape &lt;- readOGR(dsn = &quot;.&quot;, layer = &quot;simplified_land_polygons&quot;)</code></pre>
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;.&quot;, layer: &quot;simplified_land_polygons&quot;
+## with 63019 features
+## It has 1 fields
+## Integer64 fields read as strings:  FID</code></pre>
+<p>We cannot plot <code>shape</code> using directly the <span class="math inline">\(\texttt{ plot()}\)</span> function because it requires a lot of time to render. Have in mind that we are talking about more than sixty thousands polygons! One way to render a nice plot is to save it directly as a png; this little trick almost always works.</p>
+<pre class="r"><code>png(&quot;fig/btopic127/shapeplot1.png&quot;, width = 480*4, height=480*4)
+plot(shape)
+dev.off()
+
+# Open the saved file to see the following plot</code></pre>
+<p><img src="fig/btopic127/shapeplot1.png" width = "500" alt="The study area" align=center /></p>
+</div>
+<div id="transform-the-shapefile-and-select-an-area" class="section level2">
+<h2><span class="header-section-number">3.2</span> Transform the shapefile and select an area</h2>
+<p>Once we have the shapefile is useful to perform a latitude longitude projection. In this way we will be able to select the area of interested using the coordinates.</p>
+<pre class="r"><code>shape2 &lt;- spTransform(shape, CRS(&quot;+proj=longlat +datum=WGS84&quot;))</code></pre>
+<p>Take a look, just to check whats going on</p>
+<pre class="r"><code>png(&quot;fig/btopic127/shapeplot2.png&quot;, width = 480*4, height=480*4)
+plot(shape2)
+dev.off()</code></pre>
+<p><img src="fig/btopic127/shapeplot2.png" width = "500" alt="The study area" align=center /></p>
+<p>Now we can select the area of interest using the coordinates. Notice that the longitude and latitude can be easily retrivied using Google Maps (by clicking a point on the map and reading off the coordinates).<br />
+As an example we select some islands in the south of Greece.</p>
+<pre class="r"><code>png(&quot;fig/btopic127/shapeplot3.png&quot;, width = 480*4, height=480*4)
+plot(shape2, xlim=c(22.80, 26.85), ylim=c(34.88, 38.06))
+dev.off()</code></pre>
+<p><img src="fig/btopic127/shapeplot3.png" width = "500" alt="The study area" align=center /></p>
+</div>
+<div id="creating-polygons" class="section level2">
+<h2><span class="header-section-number">3.3</span> Creating Polygons</h2>
+<p>Now that we have an area of interest we can start building our polygons. The first thing we need is a polygon representing the study area. This will be our starting point (representing the sea) and then we will add holes (islands) to it.</p>
+<pre class="r"><code># You can run this code chunk
+pl1 &lt;- Polygon(cbind(c(22.80, 22.80, 26.85, 26.85, 22.80), 
+                     c(38.06, 34.88, 34.88, 38.06, 38.06)), hole=FALSE)
+sp &lt;- SpatialPolygons(list(Polygons(list(pl1), &#39;0&#39;)), 
+                      proj4string =CRS(&quot;+proj=longlat +datum=WGS84&quot;))</code></pre>
+<p>The next step is to create polygons representing the islands; in the end we will turn this polygons into holes. In order to create the polygons, we need to intersect our square polygon with the shapefile. Warning: This operation can take roughly half an hour to run. This gets even worse if you are working with large areas. To intersect the polygon with the shape file we used functions from the <code>rgeos</code> library.</p>
+<pre class="r"><code>shape3 &lt;- gBuffer(shape2, byid=TRUE, width=0) #for gIntersection operation
+shape4 &lt;- gIntersection(shape3, sp) #this is the heavy guy
+shape5 = gSimplify(shape4, tol=0.001) #use tol to control the precision</code></pre>
+<p>Notice that:</p>
+<ul>
+<li><p>For a large area, <code>shape4</code> is Large SpatialPolygonsDataFrame and needs <code>@polyobj</code> to get the Spatial Polygons for the following operation.</p></li>
+<li><p>For a small area, <code>shape4</code> is Formal class SpatialPolygons. So we can just use it.</p></li>
+<li><p>The function <span class="math inline">\(\texttt{gSimplify()}\)</span> gives us a more regular and light shape file. Working with this file makes the mesh more regular and reduces the computational time (recommended for large area).</p></li>
+</ul>
+<p>Now that we have a simplified version of our shapefile of interest we can save it. In this way, in the future we can simply import it and work directly on the area of interest. Note that to be saved the file should be a <code>SpatialPolygonsDataFrame</code>. The following code will create a folder call “temp” with the shape file inside.</p>
+<pre class="r"><code>shape_df = as(shape5, &#39;SpatialPolygonsDataFrame&#39;)
+writeOGR(shape_df, layer = &#39;shape5&#39;,&#39;temp/&#39; ,driver=&quot;ESRI Shapefile&quot;)</code></pre>
+<p>To import the shape file we can use the same command as before. From now on, until the end of the page, you can run the code (we use ‘eval=TRUE’). [add where to download the shape file TODO: Haakon]</p>
+<pre class="r"><code>shape5 &lt;- readOGR(dsn = &quot;data/btopic127/&quot;, layer = &quot;shape5&quot;)</code></pre>
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;/Users/bakkahc/Documents/GitHub/hc-private-code-and-web/web/webpage-source/data/btopic127&quot;, layer: &quot;shape5&quot;
+## with 1 features
+## It has 1 fields</code></pre>
+<p>Finally, we are ready to build our mesh with holes.</p>
+<pre class="r"><code># create a polygon representing the area of interest
+pll = Polygon(sp@polygons[[1]]@Polygons[[1]]@coords, hole = F)
+
+# number of polygons representing the islands
+n_poly = length(shape5@polygons[[1]]@Polygons)
+idx = seq(1:n_poly)
+
+# create a list of holes
+hole_list = lapply(idx, function(n) Polygon(shape5@polygons[[1]]@Polygons[[n]]@coords, hole = T)) 
+
+# create the final Spatial Polygons
+new_sp = SpatialPolygons(list(Polygons(append(hole_list, pll),&#39;1&#39;)))
+
+# take a look
+plot(new_sp)</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-16-1.png" width="1440" /></p>
+</div>
+<div id="build-a-mesh" class="section level2">
+<h2><span class="header-section-number">3.4</span> Build a mesh</h2>
+<p>With the polygon on hand, we can easily create a mesh using <code>INLA</code>. We can just use the same code as before:</p>
+<pre class="r"><code>mesh_poly = inla.mesh.2d(boundary = new_sp, max.edge = 0.2)
+
+plot(mesh_poly, main = &#39;&#39;)</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-17-1.png" width="768" /></p>
+<p>Lets extend the study area. See the [link on mesh page] to see how to specify the parameters to build a nice mesh.</p>
+<pre class="r"><code>mesh_poly2 = inla.mesh.2d(boundary = new_sp, max.edge = c(0.1, 0.4),
+                          min.angle = c(0.1, 10),
+                          cutoff = c(0.02))
+
+plot(mesh_poly2, main = &#39;&#39;)</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-18-1.png" width="768" /></p>
+</div>
+</div>
+<div id="plotting-maps" class="section level1">
+<h1><span class="header-section-number">4</span> Plotting Maps</h1>
+<div id="map-from-google" class="section level2">
+<h2><span class="header-section-number">4.1</span> Map from Google</h2>
+<p>This last section is dedicated to how to use the shape file to have a nice plot using the <code>ggmap</code> library. Let us import the map from Google.</p>
+<pre class="r"><code>try({
+  glgmap = get_map(location = shape5@bbox, maptype= &quot;terrain&quot;, zoom = 7)
+  p = ggmap(glgmap) #p is the plot of glgmap
+  print(p)
+})</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-19-1.png" width="576" /></p>
+<p>If the code fails in compilation, we manually insert the plot below. <img src="fig/btopic127/ggmap1.jpg" width = "300" alt="The study area" align=center /></p>
+<p>We now highlight the area of interest.</p>
+<pre class="r"><code>try({
+  p1 = p + xlab(&quot;Longitude&quot;) + ylab(&quot;Latitude&quot;) 
+  p2 = p1 + geom_polygon(data = fortify(shape5),
+                       aes(long, lat, group = group),
+                       fill = &quot;orange&quot;, colour = &quot;red&quot;, alpha = 0.2)
+  p3 = p2 + geom_polygon(data = fortify(sp),
+                       aes(long, lat, group = group),
+                       fill = NA, colour = &quot;black&quot;, alpha = 1)
+  print(p3)
+})</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-20-1.png" width="576" /></p>
+<p>If the code fails in compilation, we manually insert the plot below.</p>
+<p><img src="fig/btopic127/ggmap2.jpg" width = "300" alt="The study area" align=center /></p>
+</div>
+<div id="transform-the-data-to-utm" class="section level2">
+<h2><span class="header-section-number">4.2</span> Transform the Data to UTM</h2>
+<p>UTM is one of the most common map projections today. The most important attribute of UTM is that it represents the size of the area accurately. Let us transform the shape file into this format.<br />
+The procedure is the same as before, and we use the same function used for latitude longitude projection.</p>
+<pre class="r"><code>shape_utm = spTransform(shape5, CRS(&quot;+proj=utm +zone=35S ellps=WGS84&quot;)) 
+
+plot(shape_utm)</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-21-1.png" width="768" /></p>
+<p>We see that the obtained map is a little bit crooked. It depends on the UTM/WGS84 projection. Looking at the code we had to specify a zone in the <span class="math inline">\(\texttt{CRS()}\)</span> function. The specification of the zone influences the relation between longitude and latitude. Unfortunately, the area that we have chosen is between two different UTM zones, 34S and 35S. To find UTM zones anywhere in the world check <a href="http://www.dmap.co.uk/utmworld.htm" class="uri">http://www.dmap.co.uk/utmworld.htm</a>. In the above example we can use either of 34S and 35S, beacuse they both contain a large part of the study area.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

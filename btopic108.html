@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>A first example of spatial data modeling (Calcium data)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">A first example of spatial data modeling (Calcium data)</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic108 updated 10 Sept 2018</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>This topic is a simple example of a spatial model for a real dataset. It is meant as a first introduction to spatial models in INLA. An overview of spatial modeling in INLA can be found in <span class="citation">Bakka et al. (2018)</span>.</p>
+<p>I recommend looking at at least one of the Basic INLA topics, e.g. <a href="btopic102.html">BTopic102</a>, if you are not already familiar with INLA.</p>
+<p>In this topic we do not compare different models or meshes.</p>
+<div id="initialisation-and-dependency" class="section level2">
+<h2><span class="header-section-number">1.1</span> Initialisation and dependency</h2>
+<p>We load the libraries and functions we need. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
+<pre class="r"><code>library(INLA); library(sp); library(fields)
+library(geoR)
+library(viridisLite)
+# - for better colours
+rm(list=ls())
+options(width=70, digits=2)</code></pre>
+</div>
+<div id="data" class="section level2">
+<h2><span class="header-section-number">1.2</span> Data</h2>
+<pre class="r"><code>data(&#39;ca20&#39;)
+class(ca20)</code></pre>
+<pre><code>## [1] &quot;geodata&quot;</code></pre>
+<pre class="r"><code>summary(ca20)</code></pre>
+<pre><code>## Number of data points: 178 
+## 
+## Coordinates summary
+##     east north
+## min 4957  4829
+## max 5961  5720
+## 
+## Distance summary
+##  min  max 
+##   43 1138 
+## 
+## Borders summary
+##     east north
+## min 4920  4800
+## max 5990  5800
+## 
+## Data summary
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      21      43      50      51      58      78 
+## 
+## Covariates summary
+##     altitude   area   
+##  Min.   :3.3   1: 13  
+##  1st Qu.:5.2   2: 49  
+##  Median :5.7   3:116  
+##  Mean   :5.5          
+##  3rd Qu.:6.0          
+##  Max.   :6.6          
+## 
+## Other elements in the geodata object
+## [1] &quot;reg1&quot; &quot;reg2&quot; &quot;reg3&quot;</code></pre>
+</div>
+<div id="data-citations" class="section level2">
+<h2><span class="header-section-number">1.3</span> Data citations</h2>
+<p>For a description of the data see <code>?ca20</code> and references therein.</p>
+</div>
+</div>
+<div id="data-1" class="section level1">
+<h1><span class="header-section-number">2</span> Data</h1>
+<div id="re-scaling-and-re-naming" class="section level2">
+<h2><span class="header-section-number">2.1</span> Re-scaling and re-naming</h2>
+<p>First we scale and re-name the data, so that we are consistent with the conventions used in the other topics.</p>
+<pre class="r"><code>df = data.frame(y = ca20$data, locx = ca20[[1]][ , 1], locy = ca20[[1]][ , 2], ca20[[3]])
+spatial.scaling = 100
+df$locx = (df$locx - min(df$locx))/spatial.scaling
+df$locy = (df$locy - min(df$locy))/spatial.scaling
+df$altitude = df$altitude - mean(df$altitude)
+df$y = df$y-50</code></pre>
+<p>If you are curious about this re-scaling, see the comments at the end.</p>
+</div>
+<div id="exploring-the-data" class="section level2">
+<h2><span class="header-section-number">2.2</span> Exploring the data</h2>
+<p>First we do simple summary and compute the correlations.</p>
+<pre class="r"><code>summary(df)</code></pre>
+<pre><code>##        y              locx           locy        altitude     area   
+##  Min.   :-29.0   Min.   : 0.0   Min.   :0.0   Min.   :-2.22   1: 13  
+##  1st Qu.: -7.0   1st Qu.: 3.3   1st Qu.:2.4   1st Qu.:-0.32   2: 49  
+##  Median :  0.5   Median : 5.4   Median :3.7   Median : 0.13   3:116  
+##  Mean   :  0.7   Mean   : 5.3   Mean   :4.0   Mean   : 0.00          
+##  3rd Qu.:  8.0   3rd Qu.: 7.4   3rd Qu.:5.3   3rd Qu.: 0.48          
+##  Max.   : 28.0   Max.   :10.0   Max.   :8.9   Max.   : 1.08</code></pre>
+<pre class="r"><code>head(df)</code></pre>
+<pre><code>##    y locx locy altitude area
+## 1  2  7.5 0.00     0.58    3
+## 2  7  7.7 0.46     0.53    3
+## 3 22  7.9 0.93     0.78    3
+## 4 24  8.1 1.40     1.08    3
+## 5 18  8.2 1.86     1.08    3
+## 6 -5  8.4 2.33     0.23    3</code></pre>
+<pre class="r"><code>cor(cbind(df[, 1:4], as.numeric(df[ , 5])))</code></pre>
+<pre><code>##                          y   locx  locy altitude as.numeric(df[, 5])
+## y                    1.000 -0.049 -0.52     0.30                0.49
+## locx                -0.049  1.000  0.25    -0.42               -0.28
+## locy                -0.520  0.249  1.00    -0.75               -0.83
+## altitude             0.297 -0.418 -0.75     1.00                0.63
+## as.numeric(df[, 5])  0.485 -0.280 -0.83     0.63                1.00</code></pre>
+<p>Next we plot the relationship between <code>altitude</code> and the response.</p>
+<pre class="r"><code>plot(df$altitude, df$y)
+abline(lm(df$y~df$altitude), col=&quot;red&quot;)</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="spatial-plot" class="section level2">
+<h2><span class="header-section-number">2.3</span> Spatial plot</h2>
+<pre class="r"><code>quilt.plot(x=df$locx,y=df$locy,z=df$y,nx=40,ny=40, col = plasma(101),
+           main = &quot;Data&quot;)</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+</div>
+<div id="create-mesh-and-a-matrix" class="section level1">
+<h1><span class="header-section-number">3</span> Create mesh and A matrix</h1>
+<p>The mesh is the discretization of the <a href="words.html#the-detailed-list">domain</a> (study area). The domain is divided up into small triangles. This is similar to creating a raster or a grid over space.</p>
+<pre class="r"><code>max.edge = 0.5
+mesh &lt;- inla.mesh.2d(
+  loc=df[ , c(&#39;locx&#39;, &#39;locy&#39;)],
+  offset = c(0.5, 1.5),
+  max.edge=c(max.edge, max.edge*3),
+  # discretization accuracy
+  cutoff=max.edge/5)
+# cutoff removes locations that are too close, good to have &gt;0</code></pre>
+<p>Mesh construction is a detailed topic that I recommend you read after having finished the current topic. You can use the function <code>meshbuilder()</code> to learn about mesh construction. <a href="btopic104.html">You can also read about mesh construction here</a>.</p>
+<p>Next we plot the mesh (and the data).</p>
+<pre class="r"><code>plot(mesh, asp=1)
+points(df[ , c(&#39;locx&#39;, &#39;locy&#39;)], col=&#39;red&#39;)
+axis(1); axis(2)</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>We see that the mesh looks reasonable, there is a fine mesh where there is data, we have an outer boundary, and there are no “weird” patterns.</p>
+<p>To connect the measurement locations to the mesh representation, we need the so-called A-matrix.</p>
+<pre class="r"><code>A = inla.spde.make.A(mesh=mesh, loc=data.matrix(df[ , c(&#39;locx&#39;, &#39;locy&#39;)]))
+dim(A)</code></pre>
+<pre><code>## [1]  178 1069</code></pre>
+<pre class="r"><code>A[1:2, 100:200]</code></pre>
+<pre><code>## 2 x 101 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                                                     
+## [1,] . . . . . . . . . . . . . . 1 . . . . . . . . . . . . . . . . .
+## [2,] . . . . . . . . . . . . . . 0 1 . . . . . . . . . . . . . . . .
+##                                                                     
+## [1,] . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+## [2,] . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+##                                                                     
+## [1,] . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+## [2,] . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+##               
+## [1,] . . . . .
+## [2,] . . . . .</code></pre>
+<pre class="r"><code># - to see what A represents</code></pre>
+</div>
+<div id="the-stack" class="section level1">
+<h1><span class="header-section-number">4</span> The stack</h1>
+<p>The stack is a complicated way of supplying the data (and covariates and effects) to INLA. For more complex spatial models, the stack is incredibly helpful, as the alternative is worse (you would have to construct the total model <span class="math inline">\(A\)</span> matrix by hand).</p>
+<pre class="r"><code>Xcov = data.frame(intercept=1, altitude=df$altitude)
+# - could add: area1 = (df$area==1)*1, area2 = (df$area==2)*1
+# - - expands the factor covariates
+# - ensure that all entries are numeric!
+Xcov = as.matrix(Xcov)
+colnames(Xcov)</code></pre>
+<pre><code>## [1] &quot;intercept&quot; &quot;altitude&quot;</code></pre>
+<pre class="r"><code>stack &lt;- inla.stack(tag=&#39;est&#39;,
+                    # - Name (nametag) of the stack
+                    # - Here: est for estimating
+                    data=list(y=df$y),
+                    effects=list(
+                      # - The Model Components
+                      s=1:mesh$n,
+                      # - The &quot;s&quot; is means &quot;spatial&quot;
+                     Xcov=Xcov),
+                      # - The second is all fixed effects
+                    A = list(A, 1)
+                    # - First projector matrix is for &#39;s&#39;
+                    # - second is for &#39;fixed effects&#39;
+                    )</code></pre>
+<p>We could have asked INLA to expand the covariates internally, but this way is easier to keep track of. The naming “s” is somewhat arbitrary, but it must correspond to the letter we use in the <code>formula</code> (later).</p>
+</div>
+<div id="the-model" class="section level1">
+<h1><span class="header-section-number">5</span> The model</h1>
+<p>First we define the spatial Model Component (random effect). The prior for the parameters / random effect is a (Gaussian) Matérn prior with range <span class="math inline">\(r\)</span> and prior marginal standard deviation <span class="math inline">\(\sigma\)</span>. The <span class="math inline">\(r\)</span> and <span class="math inline">\(\sigma\)</span> are hyper-parameters. We start with defining the prior median for these hyper-parameters.</p>
+<pre class="r"><code>prior.median.sd = 1; prior.median.range = 7
+# - diff(range(mesh$loc[, 1]))/2
+# - sd(df$y)/10
+# - thisk about these, and experiment!
+spde = inla.spde2.pcmatern(mesh, prior.range = c(prior.median.range, .5), prior.sigma = c(prior.median.sd, .5), constr = T)</code></pre>
+<p>The <code>spde</code> object is the spatial model on the underlying mesh, including hyper-priors. (It is possible to sample from this prior.) However, to connect it to the model on the data locations, we need the A-matrix (which is in the <code>stack</code> object).</p>
+<p>Next we define the predictor.</p>
+<pre class="r"><code>formula = y ~ -1 + Xcov + f(s, model=spde)
+# - Remove standard intercept
+# - Fixed effects + random effects</code></pre>
+<p>Here we are saying that the predictor for <span class="math inline">\(y\)</span>, namely <span class="math inline">\(\eta\)</span>, is a sum of model components. With a Gaussian likelihood: <span class="math inline">\(y = \eta + \epsilon\)</span>, where <span class="math inline">\(\epsilon\)</span> is an iid Gaussian noise vector. Optional: Add the two <code>area1</code> and <code>area2</code> covariates to this formula.</p>
+<p>Next we define the observation likelihood (also known as <a href="words.html">Stage 1</a>). You will often see this in the INLA call, but, for increased clarity/readability, I prefer to do it separately.</p>
+<pre class="r"><code>prior.median.gaus.sd = 5.5
+# - Think about this value
+# - Remember sd(df$y)
+family = &#39;gaussian&#39;
+control.family = list(hyper = list(prec = list(
+  prior = &quot;pc.prec&quot;, fixed = FALSE, param = c(prior.median.gaus.sd,0.5))))</code></pre>
+<p>In total, this says that the observation likelihood is Gaussian, with a parameter <span class="math inline">\(\sigma\)</span>, and that the prior is exponential <span class="math display">\[\pi(\sigma) = \lambda e^{-\lambda x}, \]</span> where <span class="math inline">\(\lambda\)</span> is determined by setting the median <span class="math inline">\(\log(2)/\lambda\)</span> at <code>prior.median.gaus.sd</code>.</p>
+</div>
+<div id="running-inla" class="section level1">
+<h1><span class="header-section-number">6</span> Running INLA</h1>
+<pre class="r"><code>res &lt;- inla(formula, data=inla.stack.data(stack),
+            control.predictor=list(A = inla.stack.A(stack), compute=T),
+            # compute=T to get posterior for fitted values
+            family = family,
+            control.family = control.family,
+            #control.compute = list(config=T, dic=T, cpo=T, waic=T), 
+            # - Model comparisons
+            control.inla = list(int.strategy=&#39;eb&#39;),
+            # - faster computation
+            #control.inla = list(int.strategy=&#39;grid&#39;),
+            # - More accurate integration over hyper-parameters
+            verbose=F)</code></pre>
+<p>To see detailed output while the inla call is running, please set <code>verbose=TRUE</code>. The <code>control.xxx</code> comments illustrate a few optional statements to the inla call. There are many other options available.</p>
+<div id="first-results" class="section level2">
+<h2><span class="header-section-number">6.1</span> First results</h2>
+<pre class="r"><code>summary(res)</code></pre>
+<pre><code>## 
+## Call:
+##    c(&quot;inla(formula = formula, family = family, data = 
+##    inla.stack.data(stack), &quot;, &quot; verbose = F, control.predictor = 
+##    list(A = inla.stack.A(stack), &quot;, &quot; compute = T), 
+##    control.family = control.family, control.inla = 
+##    list(int.strategy = \&quot;eb\&quot;))&quot; ) 
+## Time used:
+##     Pre = 2.55, Running = 4.45, Post = 0.243, Total = 7.25 
+## Fixed effects:
+##       mean  sd 0.025quant 0.5quant 0.97quant mode kld
+## Xcov1 0.21 1.8       -3.4     0.21       3.6 0.21   0
+## Xcov2 2.14 1.9       -1.5     2.14       5.6 2.14   0
+## 
+## Random effects:
+##   Name     Model
+##     s SPDE2 model
+## 
+## Model hyperparameters:
+##                                          mean    sd 0.025quant
+## Precision for the Gaussian observations 0.028 0.007      0.017
+## Range for s                             3.187 0.868      1.788
+## Stdev for s                             9.454 1.563      6.808
+##                                         0.5quant 0.97quant  mode
+## Precision for the Gaussian observations    0.027     0.043 0.025
+## Range for s                                3.088     5.063 2.900
+## Stdev for s                                9.304    12.758 8.994
+## 
+## Expected number of effective parameters(stdev): 63.75(0.00)
+## Number of equivalent replicates : 2.79 
+## 
+## Marginal log-Likelihood:  -647.85 
+## Posterior marginals for the linear predictor and
+##  the fitted values are computed</code></pre>
+</div>
+</div>
+<div id="marginals-for-fixed-effects" class="section level1">
+<h1><span class="header-section-number">7</span> Marginals for fixed effects</h1>
+<pre class="r"><code>for (i in 1:length(res$marginals.fixed)) {
+  tmp = inla.tmarginal(function(x) x, res$marginals.fixed[[i]]) 
+  plot(tmp, type = &quot;l&quot;, xlab = paste(&quot;Fixed effect marginal&quot;, i, &quot;:&quot;, res$names.fixed[i]), ylab = &quot;Density&quot;)
+}</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-16-1.png" width="672" /><img src="btopic108_files/figure-html/unnamed-chunk-16-2.png" width="672" /></p>
+</div>
+<div id="marginals-for-hyper-parameters-effects" class="section level1">
+<h1><span class="header-section-number">8</span> Marginals for hyper-parameters effects</h1>
+<p>We plot the hyper-parameters by referring to their indexed numbering. How do we know which is chich? We look at <code>summary(res)</code>, alternatively <code>res$summary.hyperpar</code>, and the order in which they appear.</p>
+<p>Here, we plot the posterior and prior for the hyper-parameter of inverse range. Inverse range is where we put the exponential prior, and “simpler” models have smaller inverse range (longer range). We can also plot the range (by replacing <code>-x</code> by <code>x</code> in the transformation).</p>
+<pre class="r"><code>tmp = inla.tmarginal(function(x) exp(-x), res$internal.marginals.hyperpar[[2]]) 
+plot(tmp, type = &quot;l&quot;, xlab = &quot;inverse range&quot;, ylab = &quot;Density&quot;)
+xvals = seq(0, 10, length.out=1000)
+lambda = -log(.5)/(1/prior.median.range); lines(xvals, 6*exp(-lambda*xvals), lty=&#39;dashed&#39;)</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Next we plot the posterior size parameter <span class="math inline">\(\sigma_u\)</span> of the spatial random effect, together with the prior.</p>
+<pre class="r"><code>tmp = inla.tmarginal(function(x) exp(x), res$internal.marginals.hyperpar[[3]]) 
+plot(tmp, type = &quot;l&quot;, xlab = expression(sigma[u]), ylab = &quot;Density&quot;)
+xvals = seq(1, 20, length.out=1000)
+lambda = -log(.5)/prior.median.sd; lines(xvals, 20*exp(-lambda*xvals), lty=&#39;dashed&#39;)</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>Next we plot the posterio and prior of the size of the iid noise term (called <span class="math inline">\(\sigma_\epsilon\)</span> or <span class="math inline">\(\sigma_g\)</span>). Unfortunately, the default parametrisation is <span class="math inline">\(\tau = \sigma^{-2}\)</span>, for historical reasons, and we have to transform back to <span class="math inline">\(\sigma\)</span>.</p>
+<pre class="r"><code>tmp = inla.tmarginal(function(x) exp(-0.5*x), res$internal.marginals.hyperpar[[1]]) 
+plot(tmp, ty = &quot;l&quot;, xlab = expression(sigma[iid]), yla = &quot;Density&quot;)
+xvals = seq(0, 10, length.out=1000)
+lambda = -log(.5)/prior.median.gaus.sd; lines(xvals, .5*exp(-lambda*xvals), lty=&#39;dashed&#39;)</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+<div id="the-spatial-field" class="section level1">
+<h1><span class="header-section-number">9</span> The spatial field</h1>
+<p>Plotting the posterior of the parameters in a random effect is much harder than plotting the hyper-parameters. This is because the dimension of the parameters <span class="math inline">\(u_i, f_i, \epsilon_i\)</span> is usually close to the number of observations <span class="math inline">\(y_i\)</span>. Because of this, we almost never plot the marginals (which we find in <code>res$marginals.random</code>), but we plot the summaries (like mean, sd, and quantiles).</p>
+<div id="a-function-for-plotting" class="section level2">
+<h2><span class="header-section-number">9.1</span> A function for plotting</h2>
+<p>We define a function for plotting spatial fields for this application.</p>
+<pre class="r"><code>local.plot.field = function(field, mesh, xlim=c(0,11), ylim=c(0,9), ...){
+  stopifnot(length(field) == mesh$n)
+  # - error when using the wrong mesh
+  proj = inla.mesh.projector(mesh, xlim = xlim, 
+                             ylim = ylim, dims=c(300, 300))
+  # - Can project from the mesh onto a 300x300 plotting grid 
+  field.proj = inla.mesh.project(proj, field)
+  # - Do the projection
+  image.plot(list(x = proj$x, y=proj$y, z = field.proj), 
+             xlim = xlim, ylim = ylim, col = plasma(101), ...)  
+}</code></pre>
+</div>
+<div id="plotting-the-spatial-mean-field" class="section level2">
+<h2><span class="header-section-number">9.2</span> Plotting the spatial mean field</h2>
+<p>This is the spatial estimate, or spatial smoothing. Note that this is only <span class="math inline">\(u(s)\)</span>, and does not include covariates or intercept.</p>
+<pre class="r"><code>local.plot.field(res$summary.random[[&#39;s&#39;]][[&#39;mean&#39;]], mesh)
+lines(5+c(-0.5, 0.5)*(res$summary.hyperpar[2, &#39;0.5quant&#39;]), c(1,1)*5, lwd=3)
+# - add on the estimated range
+axis(1); axis(2)</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r"><code># - the transformed axes
+# - could have used the original scale</code></pre>
+</div>
+<div id="plotting-the-spatial-uncertainty" class="section level2">
+<h2><span class="header-section-number">9.3</span> Plotting the spatial uncertainty</h2>
+<p>This is the spatial uncertainty, the marginal standard deviations. Note that this is only for <span class="math inline">\(u(s)\)</span>, and does not include covariates or intercept.</p>
+<pre class="r"><code>local.plot.field(res$summary.random$s$sd, mesh)
+axis(1); axis(2)</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p>The reason we see all the small squares is that we do a linear interpolation of the standard deviations between the mesh nodes when we plot the field. If you overlay the mesh, <code>plot(mesh, add=T)</code>, you will see this clearly. (This is not considered to be a big issue.)</p>
+</div>
+<div id="plotting-the-fitted-values" class="section level2">
+<h2><span class="header-section-number">9.4</span> Plotting the fitted values</h2>
+<pre class="r"><code>quilt.plot(x=df$locx,y=df$locy,z=res$summary.fitted.values$mean[1:nrow(df)],nx=40,ny=40, col = plasma(101), main=&quot;Fitted values&quot;, 
+           zlim = range(df$y))</code></pre>
+<p><img src="btopic108_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+</div>
+</div>
+<div id="comments" class="section level1">
+<h1><span class="header-section-number">10</span> Comments</h1>
+<div id="further-reading" class="section level2">
+<h2><span class="header-section-number">10.1</span> Further reading</h2>
+<p>You can read about mesh construction in <a href="btopic104.html">topic 104</a>.</p>
+<p>You can see many advanced examples in the SPDE tutorial: www.r-inla.org/examples/tutorials/spde-tutorial.</p>
+</div>
+<div id="scaling-the-data-and-covariates" class="section level2">
+<h2><span class="header-section-number">10.2</span> Scaling the data and covariates</h2>
+<p>For easier interpretation, and to remove some coding mistakes, we do some re-scaling of data and covariates.</p>
+<div id="why-scale-the-spatial-field" class="section level3">
+<h3><span class="header-section-number">10.2.1</span> Why scale the spatial field?</h3>
+<p>We scale the x-and y-axis of the spatial field mainly for convenience. A secondary reason is that default code and implementation is made for a reasonable scale, and may in some instances fail if the values on the axes are unreasonable (this is not just true for INLA). We keep the original data, so that we can plot the results according to the original values, see <code>?axis</code>.</p>
+</div>
+<div id="why-can-we-scale-the-covariate" class="section level3">
+<h3><span class="header-section-number">10.2.2</span> Why can we scale the covariate?</h3>
+<p>Any (linear) re-scaling of the covariates results in a different re-scaling in the coefficients and the intercept. The priors for the fixed effects are intended to be “almost uniform”, <span class="math inline">\(\mathcal N(0, 1000)\)</span>. This implicitly assumes that the covariates are on a scale that gives values “near” 1 (this “near” can be quite far away). We chose to only subtract the mean of <code>altitude</code> and not multiply it with a constant, since <code>sd(df$altitude)</code> is near 1.</p>
+</div>
+<div id="why-can-we-scale-the-observations-y" class="section level3">
+<h3><span class="header-section-number">10.2.3</span> Why can we scale the observations <code>y</code>?</h3>
+<p>The minus 50 goes right into the intercept, since we are going to use a Gaussian likelihood (with no link function). The prior for the intercept is “almost uniform”, which does not change when shifting it by 50.</p>
+<p>We could have multiplied the observations with some constant, but we chose not to, as <code>sd(df$y)</code> is “near” 1 (it’s actually 11, but that is close enough for this purpose). Such a multiplication would be eqivalent to measuring the Calcium with a different unit, e.g. changing “kilograms” to “42grams”, and should have no impact on the conclusions/decisions.</p>
+</div>
+<div id="additional-reason-for-scaling" class="section level3">
+<h3><span class="header-section-number">10.2.4</span> Additional reason for scaling</h3>
+<p>When performing high dimensional matrix operations, you may encounter numerical issues if there is a very different scaling between different parts of the matrix.</p>
+</div>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-bakka2018spatial">
+<p>Bakka, Haakon, Håvard Rue, Geir-Arne Fuglstad, Andrea Riebler, David Bolin, Elias Krainski, Daniel Simpson, and Finn Lindgren. 2018. “Spatial Modelling with R-Inla: A Review.” <em>arXiv Preprint arXiv:1802.06350</em>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

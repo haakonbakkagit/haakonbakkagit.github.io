@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Runbing Zheng (and Haakon Bakka)" />
+
+
+<title>Analysing unemployment data with the AR1 Model</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Analysing unemployment data with the AR1 Model</h1>
+<h4 class="author">Runbing Zheng (and Haakon Bakka)</h4>
+<h4 class="date">BTopic115 updated 22. May 2019</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this webside, we would like to show what the AR(1) model is and how to use INLA to analyse practical data with AR(1) model. We focus on the priors and posteriors for the hyper-parameters on the AR1 process. We do not discuss the data, nor claim that the final model is a good model for the dataset. We mainly highlight difficulties with overfitting and show some technical tools to resolve it.</p>
+<div id="initialisation" class="section level2">
+<h2><span class="header-section-number">1.1</span> Initialisation</h2>
+<p>We load libraries, including INLA (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
+<pre class="r"><code>library(INLA)
+library(shiny)</code></pre>
+</div>
+<div id="the-shiny-app" class="section level2">
+<h2><span class="header-section-number">1.2</span> The Shiny App</h2>
+<p>Whenever you are asked to run the shiny app <strong>shiny-ar1.R</strong> you need to do the following. Please note that new folders and files are created in the current working folder! This step is not needed if you are viewing the website offline (after downloading repository).</p>
+<p>Please be aware: The shiny app has not been checked in detail for errors.</p>
+<pre><code>## Copy the source file for the Shiny app
+dir.create(&quot;shiny/&quot;)
+download.file(url = &quot;https://haakonbakka.bitbucket.io/shiny/shiny-ar1.R&quot;, destfile = &quot;shiny/shiny-ar1.R&quot;)
+</code></pre>
+<p>Run the shiny app, and select the second dataset.</p>
+<pre><code>runApp(&#39;shiny/shiny-ar1.R&#39;)</code></pre>
+<p>We recommend starting up a new R process, for example directly from the Terminal, and running the Shiny app in this.</p>
+</div>
+<div id="the-data" class="section level2">
+<h2><span class="header-section-number">1.3</span> The data</h2>
+<pre><code>## Copy the data files
+dir.create(&quot;data&quot;)
+download.file(url = &quot;https://haakonbakka.bitbucket.io/data/harmonised-unemployment-rates-mo.csv&quot;, destfile = &quot;data/harmonised-unemployment-rates-mo.csv&quot;)
+download.file(url = &quot;https://haakonbakka.bitbucket.io/data/temperature-data&quot;, destfile = &quot;data/temperature-data&quot;)</code></pre>
+</div>
+</div>
+<div id="introduction-of-ar1-model" class="section level1">
+<h1><span class="header-section-number">2</span> Introduction of AR(1) Model</h1>
+<div id="arp-model" class="section level2">
+<h2><span class="header-section-number">2.1</span> 1.0. AR(p) Model</h2>
+<p>For time series, the autoregressive(AR) model is a representation of a type of random process, which specifies that the output variable depends linearly on its own previous values and a stochastic term.</p>
+<p>The notation AR(p) indicateds an autoregressive model of order p, and the AR(p) model is defined as</p>
+<p><span class="math display">\[ x_t=\sum_{i=1}^p\varphi_i x_{t-i}+\varepsilon_t \]</span></p>
+<p>where <span class="math inline">\(\varphi_i,...,\varphi_p\)</span> are the parameters of the model, and <span class="math inline">\(\varepsilon_t\)</span> is white noise.</p>
+</div>
+<div id="ar1-model" class="section level2">
+<h2><span class="header-section-number">2.2</span> AR(1) Model</h2>
+<p>Particularly, when <span class="math inline">\(p=1\)</span>, the formula of AR(1) model for the Gaussian vector <span class="math inline">\(x=(x_1,...,x_n)\)</span> is defined as</p>
+<p><span class="math display">\[ x_i=\rho x_{i-1}+\varepsilon_i;\quad\varepsilon_i\sim\mathcal{N}(0,\tau^{-1})\quad i=2,...,n \]</span> and the initial value is</p>
+<p><span class="math display">\[ x_1\sim\mathcal{N}(0,(\tau(1-\rho^2))^{-1}) \]</span> where <span class="math display">\[ |\rho|&lt;1 \]</span></p>
+</div>
+<div id="hyper-parameters-of-ar1-model" class="section level2">
+<h2><span class="header-section-number">2.3</span> Hyper-parameters of AR(1) Model</h2>
+<p>We assume <span class="math inline">\(\kappa\)</span> is the marginal precision, which is the precision of <span class="math inline">\(u_t\)</span>. And its formula is</p>
+<p><span class="math display">\[ \kappa=\tau(1-\rho^2). \]</span></p>
+<p>The hyperparameter <span class="math inline">\(\theta_1\)</span> is represented as</p>
+<p><span class="math display">\[ \theta_1=\log(\kappa) \]</span></p>
+<p>The hyperparameter <span class="math inline">\(\theta_2\)</span> is represented as</p>
+<p><span class="math display">\[ \theta_2=\log\left(\frac{1+\rho}{1-\rho}\right) \]</span></p>
+<p>and the prior is defined on <span class="math inline">\(\theta=(\theta_1,\theta_2)\)</span>.</p>
+</div>
+</div>
+<div id="introduction-of-the-data" class="section level1">
+<h1><span class="header-section-number">3</span> Introduction of the Data</h1>
+<p>We show two types of data in this webpage and the shiny app.</p>
+<p><strong>1. The temperature data of <em>Trondheim</em> in Norway, from October 1st, 2016 to October 30th, 2017</strong>:</p>
+<p>  We obtain the data from <a href="http://www.yr.no/place/Norway/S%C3%B8r-Tr%C3%B8ndelag/Trondheim/Trondheim/detailed_statistics.html">http://www.yr.no/place/Norway/S%C3%B8r-Tr%C3%B8ndelag/Trondheim/Trondheim/detailed_statistics.html</a>.</p>
+<p><strong>2. The standardised unemployment data for females in Norway, from Mar. 2000 to Jan. 2012</strong>:</p>
+<p>  We obtain the data from <a href="https://datamarket.com/en/data/set/19rf/#!ds=19rf!prs=2:prt=8:pru=a&amp;display=line&amp;s=8i1" class="uri">https://datamarket.com/en/data/set/19rf/#!ds=19rf!prs=2:prt=8:pru=a&amp;display=line&amp;s=8i1</a> and <a href="http://data.is/1xV9PPs" class="uri">http://data.is/1xV9PPs</a>.</p>
+<p>We only use the Unemployment data here, but both datasets are found in the shiny app.</p>
+</div>
+<div id="quick-fitting-of-ar1-model-to-the-data" class="section level1">
+<h1><span class="header-section-number">4</span> Quick Fitting of AR(1) Model to the Data</h1>
+<div id="read-the-data" class="section level2">
+<h2><span class="header-section-number">4.1</span> Read the data</h2>
+<pre class="r"><code>temp = read.csv(&quot;data/harmonised-unemployment-rates-mo.csv&quot;)
+n = nrow(temp)
+data = data.frame(y = temp[,2], t=1:n)
+dates &lt;- temp[,1]</code></pre>
+</div>
+<div id="plot-the-data" class="section level2">
+<h2><span class="header-section-number">4.2</span> Plot the Data</h2>
+<pre class="r"><code>plot(dates, data$y, lwd=2,
+    xlab=&#39;month&#39;, ylab=&#39;Unemployment Rates&#39;)
+lines(dates,data$y)
+abline(h=2*(-8:9), lty=2, col=gray(.5))</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre><code>Please run shiny-ar1.R and open tab 1 to plot the data.</code></pre>
+</div>
+<div id="observation-likelihood" class="section level2">
+<h2><span class="header-section-number">4.3</span> Observation Likelihood</h2>
+<pre class="r"><code>family &lt;- &quot;gaussian&quot;</code></pre>
+<p>This specifies which likelihood we are going to use for the data. In this case, we use gaussian likelihood, which means</p>
+<p><span class="math display">\[y_t\sim\mathcal{N}(\eta_t,\tau_y^{-1}) \]</span> where <span class="math inline">\(y_t\)</span> referts the temperature of <span class="math inline">\(t\)</span> index, <span class="math inline">\(\tau_y\)</span> is the precision for the Gaussian observation, and <span class="math inline">\(\eta_t\)</span> is the linear part.</p>
+<p>We assume</p>
+<p><span class="math display">\[ \eta_t= \beta_0+u_t \]</span></p>
+<p>where <span class="math inline">\(\beta_0\)</span> is the intercept, which is a constant, <span class="math inline">\(u_t\)</span> is a stochastic process.</p>
+<p>We will use AR(1) model to fit <span class="math inline">\(u_t\)</span> and get <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\tau_y\)</span> at the same time.</p>
+</div>
+<div id="formula" class="section level2">
+<h2><span class="header-section-number">4.4</span> Formula</h2>
+<pre class="r"><code>formula1 &lt;- y~ f(t,model=&#39;ar1&#39;)</code></pre>
+<p>This specifies the formula, which means we want use AR(1) model in this case and just use the default setting here. See <code>inla.doc(&quot;ar1&quot;)</code> for details.</p>
+</div>
+<div id="call-inla" class="section level2">
+<h2><span class="header-section-number">4.5</span> Call INLA</h2>
+<p>Next we run the inla-call, where we just collect variables we have defined.</p>
+<pre class="r"><code>res1 &lt;- inla(formula=formula1,data=data,family=family)</code></pre>
+<p>We use inla to calculate the posterior of the hyperparameters, i.e. <span class="math inline">\(\pi(\theta|y)\)</span>.</p>
+<p>And then we can get <span class="math inline">\(\pi(\kappa|y)\)</span> and <span class="math inline">\(\pi(\rho|y)\)</span> from it by certain transformations.</p>
+</div>
+<div id="look-at-results" class="section level2">
+<h2><span class="header-section-number">4.6</span> Look at Results</h2>
+<pre class="r"><code>summary(res1)</code></pre>
+<pre><code>## 
+## Call:
+##    &quot;inla(formula = formula1, family = family, data = data)&quot; 
+## Time used:
+##     Pre = 1.67, Running = 0.43, Post = 0.167, Total = 2.27 
+## Fixed effects:
+##             mean   sd 0.025quant 0.5quant 0.97quant mode kld
+## (Intercept)  8.5 0.69        7.1      8.6       9.8  8.6   0
+## 
+## Random effects:
+##   Name     Model
+##     t AR1 model
+## 
+## Model hyperparameters:
+##                                             mean       sd 0.025quant
+## Precision for the Gaussian observations 1.86e+04 1.84e+04   1267.822
+## Precision for t                         2.62e-01 8.20e-02      0.123
+## Rho for t                               8.93e-01 3.40e-02      0.822
+##                                         0.5quant 0.97quant     mode
+## Precision for the Gaussian observations 1.32e+04  6.38e+04 3466.879
+## Precision for t                         2.57e-01  4.31e-01    0.243
+## Rho for t                               8.95e-01  9.49e-01    0.900
+## 
+## Expected number of effective parameters(stdev): 142.96(0.05)
+## Number of equivalent replicates : 1.00 
+## 
+## Marginal log-Likelihood:  -199.90</code></pre>
+<p>This summary shows many of the results, including the distribution of the intercept, precision for the Gaussian observations, precision for t and the Rho for t, i.e. <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\tau&#39;\)</span> ,<span class="math inline">\(\kappa\)</span> and <span class="math inline">\(\rho\)</span> in above formulas.</p>
+</div>
+<div id="look-at-the-quick-fitting-result-an-overfitting-situation" class="section level2">
+<h2><span class="header-section-number">4.7</span> Look at the Quick Fitting Result (an Overfitting Situation)</h2>
+<pre class="r"><code>plot(res1$summary.random$t[ ,&quot;mean&quot;]+res1$summary.fixed$mean[1],ylab=&quot;fitting result&quot;,type=&quot;l&quot;)
+points(data$y, col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>In this image, the black points are the fitting result and the blue points are the real data. We can see that the two kinds of points almost overlap everywhere, which means the model result and the data are almost the same.</p>
+<p>This situation is called overfitting and we do not want to have such situation. We will try to amend it.</p>
+</div>
+</div>
+<div id="fix-overfitting-by-fixing-theta_1" class="section level1">
+<h1><span class="header-section-number">5</span> Fix overfitting by Fixing <span class="math inline">\(\theta_1\)</span></h1>
+<div id="the-reason-for-fixing-theta_1" class="section level2">
+<h2><span class="header-section-number">5.1</span> The reason for Fixing <span class="math inline">\(\theta_1\)</span></h2>
+<p>We assume <span class="math inline">\(\sigma\)</span> is the standard deviation of <span class="math inline">\(u_t,t=1,2...\)</span>, so the method to amend the overfitting is to reduce the <span class="math inline">\(\sigma\)</span>, since it could decrease the degree of the curve oscillation.</p>
+<p>But we cannot change <span class="math inline">\(\sigma\)</span> directly, so we have to find the relationship between <span class="math inline">\(\sigma\)</span> and the hyperparameters.</p>
+<p>Firstly, we can get the expression of <span class="math inline">\(\sigma\)</span>.</p>
+<p>Because <span class="math display">\[ u_t=\rho u_{t-1}+\varepsilon_t,\]</span></p>
+<p><span class="math display">\[cov(u_t,u_t)=cov(\rho u_{t-1}+\varepsilon_t,\rho u_{t-1}+\varepsilon_t)\]</span> <span class="math display">\[\sigma^2=\rho^2\sigma^2+\frac{1}{\tau}\]</span></p>
+<p>Then, we have</p>
+<p><span class="math display">\[\frac{1}{\sigma}=\tau(1-\rho^2)\]</span></p>
+<p>And as mentioned above, we know</p>
+<p><span class="math display">\[ \kappa=\tau(1-\rho^2). \]</span></p>
+<p>We now know the relationship between <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(\kappa\)</span> is</p>
+<p><span class="math display">\[ \sigma=\frac{1}{\sqrt{\kappa}}\]</span></p>
+<p>Thus, we need to increase the value of <span class="math inline">\(\kappa\)</span> in order to decrease <span class="math inline">\(\sigma\)</span>.</p>
+<p>In addition,</p>
+<p><span class="math display">\[ \theta_1=\log(\kappa)=-\frac{1}{2}\log\sigma \]</span></p>
+<p>Therefore, we can amend the overfitting by increasing the value of <span class="math inline">\(\theta_1\)</span>.</p>
+</div>
+<div id="fix-theta_1-and-look-the-result" class="section level2">
+<h2><span class="header-section-number">5.2</span> Fix <span class="math inline">\(\theta_1\)</span> and Look the Result</h2>
+<p>With little calculation on basis of the results in 3.6 part, we could get the current distribution of <span class="math inline">\(\theta_1\)</span> as following.</p>
+<p><strong>For unemployment rates data</strong>:</p>
+<p>  mean: -1.350927</p>
+<p>  0.025quant: -2.106196 0.5quant: -1.375948 0.975quant: -0.8234837</p>
+<p>For example, we can try to fix it by setting initial value of <span class="math inline">\(\theta_1\)</span> as 0.5.</p>
+<pre class="r"><code>hyper2 = list(theta1=list(initial=0.5, fixed=T))
+formula2 &lt;- y~ f(t,model=&#39;ar1&#39;,hyper=hyper2)
+  
+res2 &lt;- inla(formula=formula2,data=data,family=family)
+plot(data$y, col=&quot;blue&quot;,
+     ylab=&quot;fitting result&quot;)
+lines(res2$summary.random$t[ ,&quot;mean&quot;]+res2$summary.fixed$mean[1])</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>The blue point is the data, and the black line is the fitting result. Now it can reflect the tendency of the data better. And the graph of this code is also the default situation in the following Shiny App.</p>
+<p>This Shiny App also shows the fitting result corresponding different fixed values of <span class="math inline">\(\theta_1\)</span>.</p>
+<pre><code>Please run shiny-ar1.R and open Tab 2</code></pre>
+</div>
+</div>
+<div id="fix-overfitting-by-pc-prior" class="section level1">
+<h1><span class="header-section-number">6</span> Fix Overfitting by PC Prior</h1>
+<p>In the above measure to solve the overfitting, we set <span class="math inline">\(\theta_1\)</span> as a fixed value, which is an effective way. But the problem is that by doing this, the data would not affect the distribution of <span class="math inline">\(\theta_1\)</span> any more. So let’s see an alternative approach which can eliminate this problem.</p>
+<div id="what-is-pc-prior" class="section level2">
+<h2><span class="header-section-number">6.1</span> What is PC Prior</h2>
+<p>Broadly speaking, Penalised Complexity or PC priors, are informative priors. PC priors are very flexible, since we can control them by specifying parameters of them. And because of the principle used to build them, such priors are useful in some practical situations.</p>
+<p>So we try to use PC priors here.</p>
+<p>And there is an important concept about PC priors. Every PC prior has the base-model. And the definition of “base-model” is that <em>for a model component with density <span class="math inline">\(\pi(x|\xi)\)</span> controlled by a flexibility parameter <span class="math inline">\(\xi\)</span>, the base model is the “simplest” model in the class. For notational clarity, we will take this to be the model corresponding to <span class="math inline">\(\xi = 0\)</span>. It will be common for <span class="math inline">\(\xi\)</span> to be non-negative. The flexibility parameter is often a scalar, or a number of independent scalars, but it can also be a vector-valued parameter</em>.</p>
+<p>You are able to get more information about PC priors in <a href="https://arxiv.org/pdf/1403.4630.pdf" class="uri">https://arxiv.org/pdf/1403.4630.pdf</a> .</p>
+</div>
+<div id="the-pc-priors-we-use-for-theta_1-and-theta_2" class="section level2">
+<h2><span class="header-section-number">6.2</span> The PC Priors We Use for <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span></h2>
+<p>We choose a pc.prec for <span class="math inline">\(\theta_1\)</span> and pc.cor1 for <span class="math inline">\(\theta_2\)</span>.</p>
+<p>The “pc.prec” is the PC prior for precision, and the “pc.cor1” is the PC prior for the correlation <span class="math inline">\(\rho\)</span> with <span class="math inline">\(\rho=1\)</span> as the base-model.</p>
+<p><strong>pc.prec</strong>:</p>
+<p>“pc.prec” refers PC prior for precision. And this PC prior for the precision <span class="math inline">\(\kappa\)</span> has density</p>
+<p><span class="math display">\[ \pi(\kappa)=\frac{\lambda}{2}\kappa^{-3/2}\exp\left(-\lambda\kappa^{-1/2}\right),\tau&gt;0\]</span></p>
+<p>for <span class="math inline">\(\tau&gt;0\)</span>, where <span class="math display">\[\lambda=-\frac{\ln(\alpha)}{u}\]</span></p>
+<p>and <span class="math inline">\((u,\alpha)\)</span> are the parameters to this prior. The interpretation of <span class="math inline">\((u,\alpha)\)</span> is that</p>
+<p><span class="math display">\[Prob(\sigma&gt;u)=\alpha,u&gt;0,0&lt;\alpha&lt;1,\]</span></p>
+<p>where the standard deviation is <span class="math inline">\(\sigma=1/\sqrt{\kappa}\)</span>.</p>
+<p>By the way, since <span class="math inline">\(\sigma=\frac{1}{\sqrt{\kappa}}\)</span>,we also have <span class="math inline">\(\pi(\sigma)=\lambda e^{-\lambda\sigma}\)</span>.</p>
+<p>Please see <code>inla.doc(&quot;pc.prec&quot;)</code> for further details.</p>
+<p>The PC prior for precision is as following with different values of parameters <span class="math inline">\((u,\alpha)\)</span>.</p>
+<pre><code>Please run shiny-ar1.R and open Tab 3</code></pre>
+<p><strong>pc.cor1</strong>:</p>
+<p>“pc.cor1” refers the PC prior for the correlation <span class="math inline">\(\rho\)</span> with <span class="math inline">\(\rho=1\)</span> as the base-model.</p>
+<p>This prior is the PC prior for the correlation <span class="math inline">\(\rho\)</span> where <span class="math inline">\(\rho\)</span> as the base-model. The density for <span class="math inline">\(\rho\)</span> is</p>
+<p><span class="math display">\[ \pi(\rho)=\frac{\lambda\exp(-\lambda\mu(\rho))}{1-\exp(-\sqrt{2}\lambda)}J(\rho)\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\mu(\rho)=\sqrt{1-\rho}\]</span></p>
+<p>and</p>
+<p><span class="math display">\[J(\rho)=\frac{1}{2\mu(\rho)}\]</span></p>
+<p>The parameter <span class="math inline">\(\lambda\)</span> is defined through</p>
+<p><span class="math display">\[ Prob(\rho&gt;u)=\alpha,-1&lt;u&lt;1,\sqrt{\frac{1-u}{2}}&lt;\alpha&lt;1\]</span></p>
+<p>where <span class="math inline">\((u,\alpha)\)</span> are the parameters to this prior.</p>
+<p>Please see <code>inla.doc(&quot;pc.cor1&quot;)</code> for further details.</p>
+<p>The PC prior for the correlation <span class="math inline">\(\rho\)</span> where <span class="math inline">\(\rho\)</span> as the base-model is as following with different values of parameters <span class="math inline">\((u,\alpha)\)</span>.</p>
+<pre><code>Please run shiny-ar1.R and open Tab 4</code></pre>
+<p>We should notice that some values of the parameters are legtimate, while some are illegtimate.</p>
+</div>
+<div id="fit-new-model" class="section level2">
+<h2><span class="header-section-number">6.3</span> Fit New Model</h2>
+<pre class="r"><code>family &lt;- &quot;gaussian&quot;
+
+hyper3 &lt;- list(theta1 = list(prior=&quot;pc.prec&quot;, param=c(0.06, 0.008)),
+                    theta2 = list(prior=&quot;pc.cor1&quot;, param=c(0.9, 0.9)) )
+formula3 &lt;- y~ f(t,model=&#39;ar1&#39;,hyper=hyper3)
+res3 &lt;- inla(formula=formula3,data=data,family=family,
+             control.predictor = list(compute=T))
+
+plot(data$y, col=&quot;blue&quot;,
+     ylab=&quot;fitting result&quot;)
+lines(res3$summary.random$t[ ,&quot;mean&quot;]+res3$summary.fixed$mean[1])</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>The fitting result is also fine.</p>
+<p><em>Remark:</em></p>
+<p>We set “pc.cor1” as the prior of the <span class="math inline">\(\theta_2\)</span>, but we might aware that <span class="math inline">\(\theta_2\)</span> is not the correlation in AR(1) model. In fact,</p>
+<p><span class="math display">\[ \theta_2=\log\left(\frac{1+\rho}{1-\rho}\right) \]</span></p>
+<p>where the <span class="math inline">\(\rho\)</span> is the correlation in the model.</p>
+<p>The actual process in INLA is as following:</p>
+<p>  1. Transform the prior of <span class="math inline">\(\rho\)</span> to the prior of <span class="math inline">\(\theta_2\)</span>, which is hidden.</p>
+<p>  2. Computer the posterior of <span class="math inline">\(\theta_2\)</span> on the basis of the prior of it by INLA. And the posterior of <span class="math inline">\(\theta_2\)</span> is stored in <code>res3$internal.marginals.hyperpar</code> and called `<code>Log precision for t</code>.</p>
+<p>  3. Transform the posterior of <span class="math inline">\(\theta_2\)</span> to the posterior of <span class="math inline">\(\rho\)</span>, which is stored in <code>res3$marginals.hyperpar</code> and called `<code>Rho for t</code>.</p>
+</div>
+<div id="more-results-of-the-model" class="section level2">
+<h2><span class="header-section-number">6.4</span> More Results of the Model</h2>
+<div id="plot-the-random-effect-quantiles" class="section level3">
+<h3><span class="header-section-number">6.4.1</span> Plot the Random Effect Quantiles</h3>
+<p><strong>For temperature data</strong>:</p>
+<p>We get all the following results, when we set <span class="math inline">\(u=0.06, \alpha=0.01\)</span> in pc.prec, <span class="math inline">\(u=0.9, \alpha=0.9\)</span> in pc.cor1.</p>
+<p><strong>For unemployment rates data</strong>:</p>
+<p>We get all the following results, when we set <span class="math inline">\(u=0.06, \alpha=0.008\)</span> in pc.prec, <span class="math inline">\(u=0.9, \alpha=0.9\)</span> in pc.cor1.</p>
+<pre class="r"><code>plot(1:n, res3$summary.random$t$`0.97`, col=&quot;red&quot;, type=&quot;l&quot;,
+   ylim=c(-6,6),xlab=&quot;measurement number&quot;, ylab = &quot;quantiles&quot;)
+lines(1:n, res3$summary.random$t$`0.5quant`)
+lines(1:n, res3$summary.random$t$`0.02`, col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="plot-the-marginal-of-hyper-parameters" class="section level3">
+<h3><span class="header-section-number">6.4.2</span> Plot the Marginal of Hyper-parameters</h3>
+<p>In following graphs, the real lines represent posterior distributions, and the dotted lines represent prior distributions. What’s more, we use some constants to make certain prior distributions visible.</p>
+<pre class="r"><code>m.sigma = inla.tmarginal(fun=function(x)x^(-0.5),marginal = 
+                           res3$marginals.hyperpar$`Precision for t`)
+plot(m.sigma, type=&quot;l&quot;, xlab = expression(sigma), ylab = &quot;Probability density&quot;)
+xvals = seq(0.5, 1.5, length.out=1000)
+lambda=-log(0.008)/0.06
+lines(xvals, 1e30*lambda*exp(-lambda*xvals), lty=&#39;dashed&#39;)</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>This is the prior and posterior distribution of the marginal standard deviation.</p>
+<pre class="r"><code>m.rho &lt;- inla.tmarginal(fun=function(x)x,marginal = 
+                            res3$marginals.hyperpar$`Rho for t`)
+plot(m.rho, type=&quot;l&quot;, xlab = expression(rho), ylab = &quot;Probability density&quot;)
+xvals = seq(0.5, 1, length.out=1000)
+lines(xvals, 5*inla.pc.dcor1(xvals, 0.9 , 0.9 , log = FALSE), lty=&#39;dashed&#39;)</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>This is the prior and posterior distribution of <span class="math inline">\(\rho\)</span> for <span class="math inline">\(u_t\)</span>. We can see <span class="math inline">\(\rho\)</span> is closed to 1, which means <span class="math inline">\(u_t\)</span> depends on <span class="math inline">\(u_{t-1}\)</span> largely.</p>
+</div>
+<div id="plot-the-marginal-of-parameters" class="section level3">
+<h3><span class="header-section-number">6.4.3</span> Plot the Marginal of Parameters</h3>
+<pre class="r"><code>m.t.70 &lt;- inla.tmarginal(fun = function(x) x, marginal = 
+                             res3$marginals.random$t$index.70)
+# - m.t.70 is one of the marginals for the parameters beloning to the plate iid effect
+# - it is number 70, which corresponds to plate=70, which is our 70th row of data
+plot(m.t.70, type=&quot;l&quot;, xlab = &quot;marginal t nr 70&quot;, ylab = &quot;Probability density&quot;)</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>We observe one prior and posterior distribution of the random effects of which the index is 200.</p>
+</div>
+<div id="plot-the-marginal-of-a-fixed-effect" class="section level3">
+<h3><span class="header-section-number">6.4.4</span> Plot the Marginal of a Fixed Effect</h3>
+<pre class="r"><code>m.theta3 &lt;- inla.tmarginal(fun=function(x)x,marginal = 
+                            res3$marginals.fixed$`(Intercept)`)
+plot(m.theta3, type=&quot;l&quot;, xlab = &quot;intercept&quot;, ylab = &quot;Probability density&quot;)</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>This is the posterior distribution of intercept. The prior is flat.</p>
+</div>
+</div>
+<div id="fit-the-model-with-different-priors-of-the-parameters" class="section level2">
+<h2><span class="header-section-number">6.5</span> Fit the Model with Different Priors of the Parameters</h2>
+<p>We set <span class="math inline">\(\alpha=0.01\)</span> in pc.prec, and <span class="math inline">\(u=0.9, \alpha=0.9\)</span> in pc.cor1, while you can change the value of <span class="math inline">\(u\)</span> in pc.prec, then you will get the fitting result in the following Shiny App.</p>
+<pre><code>Please run shiny-ar1.R and open tab 5</code></pre>
+</div>
+<div id="plot-residuals" class="section level2">
+<h2><span class="header-section-number">6.6</span> Plot residuals</h2>
+<pre class="r"><code>hist(data$y - res3$summary.fitted.values$mean, breaks = 50)</code></pre>
+<p><img src="btopic115_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="references" class="section level2">
+<h2><span class="header-section-number">6.7</span> References</h2>
+<ul>
+<li><p>Robert H. Shumway, and David S. Stoffer. Time Series Analysis and Its Applications. New York: Springer, 2011</p></li>
+<li><p><a href="https://haakonbakka.bitbucket.io/btopic102.html" class="uri">https://haakonbakka.bitbucket.io/btopic102.html</a></p></li>
+<li><p>inla.doc(“ar1”), inla.doc(“pc.prec”), inla.doc(“pc.cor1”) in package INLA</p></li>
+<li><p><a href="http://www.r-inla.org/examples/tutorials/spde-tutorial" class="uri">http://www.r-inla.org/examples/tutorials/spde-tutorial</a></p></li>
+<li><p><a href="https://arxiv.org/pdf/1403.4630.pdf" class="uri">https://arxiv.org/pdf/1403.4630.pdf</a></p></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Autoregressive_model" class="uri">https://en.wikipedia.org/wiki/Autoregressive_model</a></p></li>
+</ul>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

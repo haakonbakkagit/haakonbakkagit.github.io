@@ -12,7 +12,7 @@
 
 
 
-<title>Online Course Topics for Bayesian Modeling</title>
+<title>The topics organised according to content</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -298,52 +298,77 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Online Course Topics for Bayesian Modeling</h1>
+<h1 class="title toc-ignore">The topics organised according to content</h1>
 
 </div>
 
 
-<div id="general" class="section level2">
-<h2>General</h2>
-<p>This website is for hosting material related to Bayesian modeling, GAMs, the statistical tool R-INLA, the SPDE approach, and my own research.</p>
-<p>This website is always under development.</p>
-<p>The website was recently moved from Bitbucket to Github (Dec 2019). This was mainly because Bitbucket support is ending for hg, and I like Githubs git interface.</p>
-</div>
-<div id="warning-on-r-versions" class="section level2">
-<h2>Warning on r versions</h2>
-<p>I recently updated to R 3.6, and had to change some of the scripts because of this.</p>
-</div>
-<div id="the-.r-files" class="section level2">
-<h2>The .R files</h2>
-<p>In any BTopic, go to the web-page address (e.g. command+l), replace the .html with .R, and this should give the same R file. It is a lot easier to get the code this way than to copy-paste line by line!</p>
-</div>
-<div id="what-can-you-use-this-webpage-for" class="section level2">
-<h2>What can you use this webpage for?</h2>
-<p>I get questions like: Can I use this for</p>
+<p>Here I categorise the tutorial pages according to type of content. Organising the topics in a useful way is a long term goal. Please see <a href="alltopics.html">All topics</a> for a chronological list of everything.</p>
+<div id="stream-1-basic-inla" class="section level3">
+<h3>Stream 1: Basic INLA</h3>
 <ul>
-<li>Teaching?</li>
-<li>Send it to others?</li>
-<li>As a basis for my own code?</li>
-<li>Include code in my presentations?</li>
+<li><a href="./btopic109.html">Installation and general troubleshooting</a></li>
+<li>Application: <a href="./btopic102.html">Seeds example</a></li>
+<li>Simulation-inference <a href="./btopic117.html">Time series and non-linear effects</a></li>
+<li>Small time-series example <a href="./btopic116.html">Unemployment data example</a></li>
+<li>Detailed time-series example (same dataset as the previous): <a href="./btopic115.html">Analysing unemployment data with the AR1 Model</a></li>
 </ul>
-<p>The answers to all of these is “yes”. Please add an acknowledgement of this webpage when you do so.</p>
-<p>However, if you are inspired to write papers based on some of the ideas you see here, I may already be doing that. I would be happy to hear from you, and I can clarify if we are working on the same idea.</p>
 </div>
-<div id="online-offline-use-and-older-versions" class="section level2">
-<h2>Online / Offline use and older versions</h2>
-<p>The online webpage is at [<a href="https://haakonbakkagit.github.io/" class="uri">https://haakonbakkagit.github.io/</a>].</p>
-<p>To use this webpage offline, download the github repository at [<a href="https://github.com/haakonbakkagit/haakonbakkagit.github.io" class="uri">https://github.com/haakonbakkagit/haakonbakkagit.github.io</a>], open the folder and click on index.html.</p>
-<p>To find older versions of the code for any reason, use the same link and look through the history of the repo.</p>
+<div id="stream-2-understanding-inla" class="section level3">
+<h3>Stream 2: Understanding INLA</h3>
+<ul>
+<li><a href="./btopic120.html">Basic computations with precision matrix: AR1 example</a></li>
+<li><a href="./btopic121.html">How INLA deals with hyper-parameters: 1D Reconstruction example</a></li>
+</ul>
 </div>
-<div id="philosophy-of-this-website" class="section level2">
-<h2>Philosophy (of this website)</h2>
-<p>The explanations in this website are through pictures, figures and computer code.</p>
-<p>The text on the website is informal, trying to paint a picture and give the right notions, ideas and intuition. If you want rigorous mathematics, see the papers that are referenced/linked throughout the website. The goal of a paper is usually to be precise and impressive, but the goal of these pages is to make things look simple and to speak to your intuition.</p>
-<p>Why am I using html and not pdf? Because I want to use hyperlinks! I want you to be able to open new tabs, and use the “back” arrow in your browser. To open a figure in a new tab (and you can look at two figures side by side in two windows). I want to integrate other websites and content, e.g. youtube videos.</p>
+<div id="stream-3-basic-spde" class="section level3">
+<h3>Stream 3: Basic SPDE</h3>
+<ul>
+<li>Application: <a href="./btopic108.html">Measuring calcium content in soil samples</a></li>
+<li>Simulation-inference: <a href="./btopic122.html">A simple spatial model</a></li>
+<li><a href="./btopic114.html">How to make a bad mesh</a></li>
+</ul>
 </div>
-<div id="plan" class="section level2">
-<h2>Plan</h2>
-<p>Plan for the site: Add topics as requested by you, and to fill the gaps in the topic organisation.</p>
+<div id="stream-4-barrier-model" class="section level3">
+<h3>Stream 4: Barrier model</h3>
+<ul>
+<li>Application: <a href="./btopic107.html">Fish in an archipelago</a></li>
+<li>Simulation-inference: <a href="./btopic103.html">Fish in an archipelago</a></li>
+<li><a href="./btopic104.html">Mesh creating with coastlines</a></li>
+<li><a href="./btopic110.html">Surface reconstruction with the Barrier model</a></li>
+</ul>
+</div>
+<div id="stream-5-priors-and-hyper-priors" class="section level3">
+<h3>Stream 5: Priors and hyper-priors</h3>
+<ul>
+<li>Future topic: Visualising spatial priors</li>
+<li>Future topic: Visualising priors vs visualising hyper-priors</li>
+<li>Future topic: Computing results not in the prior model structure</li>
+</ul>
+</div>
+<div id="stream-6-predictions-and-model-comparison" class="section level3">
+<h3>Stream 6: Predictions and model comparison</h3>
+<ul>
+<li><a href="./btopic113.html">Multivariate predictions on held-out data - binomial example</a></li>
+<li>Requested: Predictions with Gaussian likelihood (no topic)</li>
+</ul>
+</div>
+<div id="stream-7-model-misspecification" class="section level3">
+<h3>Stream 7: Model misspecification</h3>
+<ul>
+<li>Missing covariate in Gaussian: <a href="./btopic124.html">Unknown covariates are included in the Gaussian noise</a></li>
+<li>Missing covariate in Poisson: <a href="./btopic125.html">What I think about overdispersed Poisson</a></li>
+</ul>
+</div>
+<div id="stream-8-developing-a-model" class="section level3">
+<h3>Stream 8: Developing a model</h3>
+<p>This is a planned future stream. The applied models found in these, and other, tutorials are “developed products”. Any model you see was not the first model the author tried, but he/she tried several models before presenting any result. In this stream I want to have a step by step description of how you can go about the process of developing a model for a particular application.</p>
+</div>
+<div id="other-material" class="section level3">
+<h3>Other material</h3>
+<ul>
+<li><a href="./btopic119.html">A set of exercises</a></li>
+</ul>
 </div>
 
 

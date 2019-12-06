@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>Ramsay’s horseshoe and the Barrier model</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Ramsay’s horseshoe and the Barrier model</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic110 updated 6. May 2017</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this topic we use Ramsay’s horseshoe to compare the Barrier model to other solutions of the barrier problem.</p>
+<div id="initialisation" class="section level2">
+<h2><span class="header-section-number">1.1</span> Initialisation</h2>
+<p>We load the libraries and functions we need. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>). Feel free to save the web location where the functions are defined as an R-file on your computer. We also set random seeds to be used later.</p>
+<pre class="r"><code>library(INLA)
+library(mgcv)
+library(fields)
+library(rgeos)
+
+set.seed(2016)</code></pre>
+</div>
+<div id="input" class="section level2">
+<h2><span class="header-section-number">1.2</span> Input</h2>
+<pre class="r"><code>N.loc = 100
+# - number of locations
+# - 100 in the soap-film paper (Wood)
+sigma.eps = 0.1
+# - measurement noise
+# - Wood uses 0.1, 1, and 10
+global.zlim=c(-1, 1)*4.3</code></pre>
+</div>
+<div id="code-from-the-mgcv-library-fs.test" class="section level2">
+<h2><span class="header-section-number">1.3</span> Code from the <code>mgcv</code> library <code>?fs.test</code></h2>
+<pre class="r"><code>## plot the function, and its boundary...
+fsb &lt;- fs.boundary()
+m&lt;-300;n&lt;-150 
+xm &lt;- seq(-1,4,length=m);yn&lt;-seq(-1,1,length=n)
+xx &lt;- rep(xm,n);yy&lt;-rep(yn,rep(m,n))
+tru = fs.test(xx,yy, b = 1)
+tru.matrix &lt;- matrix(tru,m,n) ## truth
+image.plot(xm,yn,tru.matrix,xlab=&quot;x&quot;,ylab=&quot;y&quot;, asp=1)
+lines(fsb$x,fsb$y,lwd=3)
+contour(xm,yn,tru.matrix,levels=seq(global.zlim[1], global.zlim[2],len=20),add=TRUE, col=&quot;white&quot;, drawlabels = F)</code></pre>
+<p><img src="btopic110_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>range(tru, na.rm = T)</code></pre>
+<pre><code>## [1] -4.2  4.2</code></pre>
+</div>
+</div>
+<div id="data" class="section level1">
+<h1><span class="header-section-number">2</span> Data</h1>
+<pre class="r"><code>dat = data.frame(y = tru, locx = xx, locy=yy)
+dat = dat[!is.na(dat$y), ]
+df = dat[sample(1:nrow(dat), size=N.loc) ,]
+df$y = df$y + rnorm(N.loc)*sigma.eps
+str(df)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    100 obs. of  3 variables:
+##  $ y   : num  -2.554 -3.616 2.817 -1.618 -0.993 ...
+##  $ locx: num  1.726 2.863 2.194 1.007 0.087 ...
+##  $ locy: num  -0.235 -0.369 0.49 -0.396 -0.436 ...</code></pre>
+<pre class="r"><code>summary(df)</code></pre>
+<pre><code>##        y             locx           locy      
+##  Min.   :-4.2   Min.   :-0.8   Min.   :-0.89  
+##  1st Qu.:-1.9   1st Qu.: 0.5   1st Qu.:-0.42  
+##  Median :-0.2   Median : 1.5   Median :-0.16  
+##  Mean   : 0.0   Mean   : 1.4   Mean   : 0.00  
+##  3rd Qu.: 2.5   3rd Qu.: 2.5   3rd Qu.: 0.53  
+##  Max.   : 4.3   Max.   : 3.4   Max.   : 0.88</code></pre>
+</div>
+<div id="polygons-and-the-mesh" class="section level1">
+<h1><span class="header-section-number">3</span> Polygons and the Mesh</h1>
+<pre class="r"><code>p = Polygon(cbind(fsb$x, fsb$y))
+p = Polygons(list(p), ID = &quot;none&quot;)
+poly = SpatialPolygons(list(p))
+plot(poly)
+points(df$locx, df$locy)
+axis(1); axis(2)</code></pre>
+<p><img src="btopic110_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>max.edge = 0.2
+bound.outer = 1.5
+mesh = inla.mesh.2d(boundary = poly,
+                     loc=cbind(df$locx, df$locy),
+                    max.edge = c(1,5)*max.edge,
+                    #cutoff = 0.1,
+                    cutoff = 0.04,
+                    # 0.1 is fast and bad, 0.04 ok?
+                    offset = c(max.edge, bound.outer))
+
+plot(mesh, main=&quot;Our mesh&quot;, lwd=0.5)</code></pre>
+<p><img src="btopic110_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>mesh$n</code></pre>
+<pre><code>## [1] 750</code></pre>
+</div>
+<div id="stack-and-a-matrix" class="section level1">
+<h1><span class="header-section-number">4</span> Stack and A matrix</h1>
+<pre class="r"><code>A.i.s = inla.spde.make.A(mesh, loc=cbind(df$locx, df$locy))
+stk = inla.stack(data=list(y=df$y), 
+                    effects=list(s=1:mesh$n,
+                                 m = rep(1, nrow(df))),
+                   A=list(A.i.s, 1),
+                    remove.unused = FALSE, tag=&#39;est&#39;) </code></pre>
+</div>
+<div id="stationary-model" class="section level1">
+<h1><span class="header-section-number">5</span> Stationary model</h1>
+<p>To set up the stationary spatial model, we first define the spatial Model Component.</p>
+<pre class="r"><code>prior.range = c(1, .5)
+prior.sigma = c(3, 0.01)
+spde = inla.spde2.pcmatern(mesh, prior.range=prior.range, prior.sigma=prior.sigma)
+# - We put the prior median at approximately 0.5*diff(range(df$locy))
+# - - this is roughly the extent of our study area
+# - The prior probability of marginal standard deviation 3 or more is 0.01.</code></pre>
+<p>Then we define the formula.</p>
+<pre class="r"><code>M = list()
+M[[1]] = list(shortname=&quot;stationary-model&quot;)
+M[[1]]$formula = y~ -1+m + f(s, model=spde)</code></pre>
+</div>
+<div id="barrier-models" class="section level1">
+<h1><span class="header-section-number">6</span> Barrier models</h1>
+<p>First we divide up the mesh accoring to our study area polygon.</p>
+<pre class="r"><code>tl = length(mesh$graph$tv[,1])
+# - the number of triangles in the mesh
+posTri = matrix(0, tl, 2)
+for (t in 1:tl){
+  temp = mesh$loc[mesh$graph$tv[t, ], ]
+  posTri[t,] = colMeans(temp)[c(1,2)] 
+}
+posTri = SpatialPoints(posTri)
+# - the positions of the triangle centres
+
+normal = over(poly, SpatialPoints(posTri), returnList=T)
+# - checking which mesh triangles are inside the normal area
+barrier.tri = setdiff(1:tl, unlist(normal))
+# - the triangles inside the barrier area
+
+poly.barrier = inla.barrier.polygon(mesh, barrier.triangles = barrier.tri)</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
+## intersection at or near point -0.90000000000000002 0</code></pre>
+<pre><code>## mesh.polys is invalid</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
+## consider using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
+## intersection at or near point -2.3999999999999999 -0.47688736999999998</code></pre>
+<pre><code>## mesh.polys is invalid</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
+## consider using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre class="r"><code>plot(poly.barrier, col=&quot;grey&quot;, main=&quot;The barrier region (in grey)&quot;)</code></pre>
+<p><img src="btopic110_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>barrier.model = inla.barrier.pcmatern(mesh, barrier.triangles = barrier.tri, prior.range = prior.range, prior.sigma = prior.sigma)
+# - Set up the inla model, including the matrices for solving the SPDE</code></pre>
+<pre class="r"><code>M[[2]] = list(shortname=&quot;barrier-model&quot;)
+M[[2]]$formula = y~ -1+m + f(s, model=barrier.model)</code></pre>
+</div>
+<div id="neumann-model-where-the-mesh-stops-at-the-boundary" class="section level1">
+<h1><span class="header-section-number">7</span> Neumann Model (where the mesh stops at the boundary)</h1>
+<p>This is similar to FELSPLINE, as it uses the Neumann boundary condition!</p>
+<pre class="r"><code>mesh2 = inla.mesh.2d(boundary=poly,
+                    max.edge = max.edge,
+                    #cutoff = 0.1,
+                    cutoff = 0.04)
+
+plot(mesh2, main=&quot;The second mesh&quot;, lwd=0.5)</code></pre>
+<p><img src="btopic110_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>mesh2$n</code></pre>
+<pre><code>## [1] 504</code></pre>
+<div id="this-stack-and-a-matrix" class="section level2">
+<h2><span class="header-section-number">7.1</span> This Stack and A matrix</h2>
+<pre class="r"><code>A.i.s2 = inla.spde.make.A(mesh2, loc=cbind(df$locx, df$locy))
+stk2 = inla.stack(data=list(y=df$y), 
+                    effects=list(s=1:mesh2$n,
+                                 m = rep(1, nrow(df))),
+                   A=list(A.i.s2, 1),
+                    remove.unused = FALSE, tag=&#39;est&#39;) </code></pre>
+</div>
+<div id="this-model" class="section level2">
+<h2><span class="header-section-number">7.2</span> This model</h2>
+<p>To set up the stationary spatial model, we first define the spatial Model Component.</p>
+<pre class="r"><code>spde2 = inla.spde2.pcmatern(mesh2, prior.range=prior.range, prior.sigma=prior.sigma)</code></pre>
+<p>Then we define the formula.</p>
+<pre class="r"><code>M[[3]] = list(shortname=&quot;neumann-model&quot;)
+M[[3]]$formula = y~ -1+m + f(s, model=spde2)
+M[[3]]$stack = stk2</code></pre>
+</div>
+</div>
+<div id="running-all-the-models" class="section level1">
+<h1><span class="header-section-number">8</span> Running all the models</h1>
+<p>Set up the initial values.</p>
+<pre class="r"><code>## Initial values
+# - speeds up computations
+# - improves accuracy of computations
+# - set these to NULL the first time you run the model
+M[[1]]$init = c(4.942,1.006,0.851)
+M[[2]]$init = c(4.511,0.521,2.391)
+M[[3]]$init = NULL</code></pre>
+<p>Next, we run the inference for the our models. Note that this can take up to 30 minutes!</p>
+<pre class="r"><code>hyper.iid = list(prec = list(prior = &#39;pc.prec&#39;, param = prior.sigma)) 
+# - use the same prior for noise sigma and spatial field sigma
+
+start.time &lt;- Sys.time()
+for (i in 1:length(M)){
+    print(paste(&quot;Running:  &quot;, M[[i]]$shortname))
+  stack = stk
+  if (!is.null(M[[i]]$stack)) stack = M[[i]]$stack
+    M[[i]]$res = inla(M[[i]]$formula,
+                      data=inla.stack.data(stack),
+                      control.predictor=list(A=inla.stack.A(stack)),
+                      family=&quot;gaussian&quot;, 
+                      control.family = list(hyper = hyper.iid),
+                      #control.family = list(hyper = hyper.fixed),
+                      control.inla= list(int.strategy = &quot;eb&quot;),
+                      #verbose=T,
+                      control.mode=list(restart=T, theta=M[[i]]$init))  
+}</code></pre>
+<pre><code>## [1] &quot;Running:   stationary-model&quot;
+## [1] &quot;Running:   barrier-model&quot;
+## [1] &quot;Running:   neumann-model&quot;</code></pre>
+<pre class="r"><code>end.time &lt;- Sys.time()
+time.taken &lt;- end.time - start.time
+# - time: ca 1 min</code></pre>
+<p>The initial values that we set <code>M[[i]]$init</code>:</p>
+<pre class="r"><code>for (i in 1:length(M)){
+  print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
+}</code></pre>
+<pre><code>## [1] &quot;4.713,0.927,0.833&quot;
+## [1] &quot;4.727,0.493,2.399&quot;
+## [1] &quot;4.4,2.362,-0.203&quot;</code></pre>
+<div id="summaries" class="section level2">
+<h2><span class="header-section-number">8.1</span> Summaries</h2>
+<pre class="r"><code>summary(M[[1]]$res)</code></pre>
+<pre><code>## 
+## Call:
+##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data 
+##    = inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
+##    inla.stack.A(stack)), control.family = list(hyper = 
+##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
+##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
+## Time used:
+##     Pre = 2.24, Running = 1.63, Post = 0.177, Total = 4.05 
+## Fixed effects:
+##   mean  sd 0.025quant 0.5quant 0.97quant mode kld
+## m 0.28 1.4       -2.5     0.28       2.9 0.28   0
+## 
+## Random effects:
+##   Name     Model
+##     s SPDE2 model
+## 
+## Model hyperparameters:
+##                                           mean     sd 0.025quant
+## Precision for the Gaussian observations 131.40 82.081      36.09
+## Range for s                               2.75  0.634       1.79
+## Stdev for s                               2.47  0.507       1.69
+##                                         0.5quant 0.97quant  mode
+## Precision for the Gaussian observations   111.44    329.38 80.27
+## Range for s                                 2.64      4.17  2.44
+## Stdev for s                                 2.40      3.60  2.24
+## 
+## Expected number of effective parameters(stdev): 89.95(0.00)
+## Number of equivalent replicates : 1.11 
+## 
+## Marginal log-Likelihood:  -101.16</code></pre>
+<pre class="r"><code>summary(M[[2]]$res)</code></pre>
+<pre><code>## 
+## Call:
+##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data 
+##    = inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
+##    inla.stack.A(stack)), control.family = list(hyper = 
+##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
+##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
+## Time used:
+##     Pre = 1.69, Running = 3.64, Post = 0.194, Total = 5.52 
+## Fixed effects:
+##   mean  sd 0.025quant 0.5quant 0.97quant mode kld
+## m  3.3 2.7       -1.9      3.3       8.3  3.3   0
+## 
+## Random effects:
+##   Name     Model
+##     s RGeneric2
+## 
+## Model hyperparameters:
+##                                            mean     sd 0.025quant
+## Precision for the Gaussian observations 118.081 30.710      69.81
+## Theta1 for s                              0.543  0.326      -0.07
+## Theta2 for s                              2.454  0.355       1.78
+##                                         0.5quant 0.97quant    mode
+## Precision for the Gaussian observations  113.996    185.81 106.253
+## Theta1 for s                               0.532      1.18   0.493
+## Theta2 for s                               2.442      3.15   2.399
+## 
+## Expected number of effective parameters(stdev): 49.43(0.00)
+## Number of equivalent replicates : 2.02 
+## 
+## Marginal log-Likelihood:  15.28</code></pre>
+<pre class="r"><code>summary(M[[3]]$res)</code></pre>
+<pre><code>## 
+## Call:
+##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data 
+##    = inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
+##    inla.stack.A(stack)), control.family = list(hyper = 
+##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
+##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
+## Time used:
+##     Pre = 2.29, Running = 0.949, Post = 0.13, Total = 3.37 
+## Fixed effects:
+##   mean   sd 0.025quant 0.5quant 0.97quant mode kld
+## m  4.3 0.11        4.1      4.3       4.5  4.3   0
+## 
+## Random effects:
+##   Name     Model
+##     s SPDE2 model
+## 
+## Model hyperparameters:
+##                                           mean     sd 0.025quant
+## Precision for the Gaussian observations 83.272 16.259     56.063
+## Range for s                             12.718  4.299      7.095
+## Stdev for s                              0.946  0.278      0.567
+##                                         0.5quant 0.97quant   mode
+## Precision for the Gaussian observations    81.66    117.92 78.520
+## Range for s                                11.77     22.91 10.066
+## Stdev for s                                 0.89      1.59  0.782
+## 
+## Expected number of effective parameters(stdev): 26.86(0.00)
+## Number of equivalent replicates : 3.72 
+## 
+## Marginal log-Likelihood:  26.59</code></pre>
+</div>
+<div id="logfiles" class="section level2">
+<h2><span class="header-section-number">8.2</span> Logfiles</h2>
+<p>To understand how well the computations of the posterior worked, we look at the logfiles.</p>
+<pre class="r"><code>#M[[i]]$res$logfile</code></pre>
+</div>
+</div>
+<div id="plot-posterior-spatial-fields" class="section level1">
+<h1><span class="header-section-number">9</span> Plot posterior spatial fields</h1>
+<pre class="r"><code>local.plot.field = function(field, mesh, xlim, ylim, zlim, n.contours=10, ...){
+  stopifnot(length(field) == mesh$n)
+  # - error when using the wrong mesh
+  if (missing(xlim)) xlim = poly@bbox[1, ] 
+  if (missing(ylim)) ylim = poly@bbox[2, ]
+  # - choose plotting region to be the same as the study area polygon
+  proj = inla.mesh.projector(mesh, xlim = xlim, 
+                             ylim = ylim, dims=c(300, 300))
+  # - Can project from the mesh onto a 300x300 grid 
+  #   for plots
+  field.proj = inla.mesh.project(proj, field)
+  # - Do the projection
+  if (missing(zlim)) zlim = range(field.proj)
+  image.plot(list(x = proj$x, y=proj$y, z = field.proj), 
+             xlim = xlim, ylim = ylim, asp=1, ...)  
+  contour(x = proj$x, y=proj$y, z = field.proj,levels=seq(zlim[1], zlim[2],length.out = n.contours),add=TRUE, drawlabels=F, col=&quot;white&quot;)
+  # - without contours it is very very hard to see what are equidistant values
+}</code></pre>
+<pre class="r"><code>for (i in 1:3) {
+  field = M[[i]]$res$summary.random$s$mean + M[[i]]$res$summary.fixed[&#39;m&#39;, &#39;mean&#39;]
+  
+  if (i %in% c(1,2)) {
+    local.plot.field(field, mesh, main=paste(), zlim=global.zlim)
+  } else {
+    local.plot.field(field, mesh2, zlim=global.zlim)
+  }
+  plot(poly.barrier, add=T, border=&quot;black&quot;, col=&quot;white&quot;)
+  points(df$locx, df$locy)
+}</code></pre>
+<p><img src="btopic110_files/figure-html/unnamed-chunk-25-1.png" width="672" /><img src="btopic110_files/figure-html/unnamed-chunk-25-2.png" width="672" /><img src="btopic110_files/figure-html/unnamed-chunk-25-3.png" width="672" /></p>
+</div>
+<div id="rmse-comparison" class="section level1">
+<h1><span class="header-section-number">10</span> RMSE comparison</h1>
+<pre class="r"><code>## Truth on the grid
+summary(dat)</code></pre>
+<pre><code>##        y             locx           locy      
+##  Min.   :-4.2   Min.   :-0.9   Min.   :-0.89  
+##  1st Qu.:-2.0   1st Qu.: 0.2   1st Qu.:-0.48  
+##  Median : 0.1   Median : 1.3   Median : 0.00  
+##  Mean   : 0.1   Mean   : 1.3   Mean   : 0.00  
+##  3rd Qu.: 2.1   3rd Qu.: 2.3   3rd Qu.: 0.48  
+##  Max.   : 4.2   Max.   : 3.4   Max.   : 0.89</code></pre>
+<pre class="r"><code>## Remember
+# M[[1]] is the stationary, M[[2]] is the barrier model
+
+A.grid = inla.spde.make.A(mesh, loc=cbind(dat$locx, dat$locy))
+for (i in 1:3) {
+  if (i==3) {
+    ## Different mesh for neumann model
+    A.grid = inla.spde.make.A(mesh2, loc=cbind(dat$locx, dat$locy))
+  }
+  M[[i]]$est = drop(A.grid %*% M[[i]]$res$summary.random$s$mean) +
+               M[[i]]$res$summary.fixed[&quot;m&quot;, &quot;mean&quot;]
+  M[[i]]$rmse = sqrt(mean((M[[i]]$est-dat$y)^2))
+  M[[i]]$mae = mean(abs(M[[i]]$est-dat$y))
+  M[[i]]$mae.sd = sd(abs(M[[i]]$est-dat$y))/sqrt(length(M[[i]]$est))
+}
+
+## Display results
+data.frame(name=unlist(lapply(M, function(x) c(x$shortname))),
+           rmse=unlist(lapply(M, function(x) c(x$rmse))),
+           mae=unlist(lapply(M, function(x) c(x$mae))),
+           mae.sd=unlist(lapply(M, function(x) c(x$mae.sd))))</code></pre>
+<pre><code>##               name  rmse   mae  mae.sd
+## 1 stationary-model 0.346 0.190 0.00169
+## 2    barrier-model 0.075 0.057 0.00028
+## 3    neumann-model 0.152 0.056 0.00082</code></pre>
+</div>
+<div id="comments-and-additional" class="section level1">
+<h1><span class="header-section-number">11</span> Comments and additional</h1>
+<div id="related-topics" class="section level2">
+<h2><span class="header-section-number">11.1</span> Related topics</h2>
+<p>Both <a href="btopic103.html">BTopic103</a> and <a href="btopic107.html">BTopic107</a> is relevant to the current topic.</p>
+</div>
+<div id="references" class="section level2">
+<h2><span class="header-section-number">11.2</span> References</h2>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

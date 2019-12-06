@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>Predictions with iid effects - binomial example</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Predictions with iid effects - binomial example</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic112 updated 23. May 2017</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this topic we discuss how to do predictions with parts of the linear predictor. We use a general approach that should be applicable to all prediction scenarios.</p>
+<p>The goal is to learn how to build up simulations for model fit and predictions. There are more convenient approaches if you only want to summarise or plot part of the posterior.</p>
+<p>We recommend reading <a href="btopic102.html">btopic102</a> first, as this explains the data and the model.</p>
+<div id="initialise-r-session" class="section level2">
+<h2><span class="header-section-number">1.1</span> Initialise R session</h2>
+<p>We load any packages and set global options. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
+<pre class="r"><code>library(INLA)
+rm(list=ls())
+options(width=70, digits=2)
+set.seed(2017)</code></pre>
+</div>
+</div>
+<div id="load-data-rename-rescale" class="section level1">
+<h1><span class="header-section-number">2</span> Load data, rename, rescale</h1>
+<pre class="r"><code>data(Seeds)
+df = data.frame(y = Seeds$r, Ntrials = Seeds$n, Seeds[, 3:5])</code></pre>
+</div>
+<div id="model" class="section level1">
+<h1><span class="header-section-number">3</span> Model</h1>
+<div id="observation-likelihood" class="section level2">
+<h2><span class="header-section-number">3.1</span> Observation Likelihood</h2>
+<pre class="r"><code>family1 = &quot;binomial&quot;
+control.family1 = list(control.link=list(model=&quot;logit&quot;))
+# number of trials is df$Ntrials</code></pre>
+</div>
+<div id="formula" class="section level2">
+<h2><span class="header-section-number">3.2</span> Formula</h2>
+<pre class="r"><code>hyper1 = list(theta = list(prior=&quot;pc.prec&quot;, param=c(1,0.01)))
+formula1 = y ~ x1 + x2 + f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
+</div>
+</div>
+<div id="call-inla" class="section level1">
+<h1><span class="header-section-number">4</span> Call INLA</h1>
+<pre class="r"><code>res1 = inla(formula=formula1, data=df, 
+            family=family1, Ntrials=Ntrials, 
+            control.family=control.family1,
+            control.predictor=list(compute=T),
+            control.compute=list(config=T))</code></pre>
+<div id="look-at-results" class="section level2">
+<h2><span class="header-section-number">4.1</span> Look at results</h2>
+<pre class="r"><code>summary(res1)</code></pre>
+<pre><code>## 
+## Call:
+##    c(&quot;inla(formula = formula1, family = family1, data = df, 
+##    Ntrials = Ntrials, &quot;, &quot; control.compute = list(config = T), 
+##    control.predictor = list(compute = T), &quot;, &quot; control.family = 
+##    control.family1)&quot;) 
+## Time used:
+##     Pre = 1.77, Running = 0.173, Post = 0.177, Total = 2.12 
+## Fixed effects:
+##              mean   sd 0.025quant 0.5quant 0.97quant  mode kld
+## (Intercept) -0.39 0.18      -0.73    -0.39    -0.044 -0.40   0
+## x1          -0.35 0.23      -0.82    -0.35     0.055 -0.33   0
+## x2           1.03 0.22       0.60     1.03     1.442  1.04   0
+## 
+## Random effects:
+##   Name     Model
+##     plate IID model
+## 
+## Model hyperparameters:
+##                       mean      sd 0.025quant 0.5quant 0.97quant mode
+## Precision for plate 111.06 1231.31       2.98    10.91    225.97 6.06
+## 
+## Expected number of effective parameters(stdev): 9.91(2.94)
+## Number of equivalent replicates : 2.12 
+## 
+## Marginal log-Likelihood:  -68.44 
+## Posterior marginals for the linear predictor and
+##  the fitted values are computed</code></pre>
+</div>
+</div>
+<div id="draw-posterior-samples" class="section level1">
+<h1><span class="header-section-number">5</span> Draw posterior samples</h1>
+<pre class="r"><code>n.samples = 1000
+samples = inla.posterior.sample(n.samples, result = res1)</code></pre>
+<p>This function draws posterior samples from the linear predictor and all its components. The samples from the hyper-parameters are only samples from the integration grid (which represents the only hyper-parameter values to compute the posterior of all the latent variables).</p>
+<div id="the-structure-of-the-samples" class="section level2">
+<h2><span class="header-section-number">5.1</span> The structure of the samples</h2>
+<p>The <code>samples</code> is a list of posterior samples, let us look at the first sample.</p>
+<pre class="r"><code>str(samples[[1]])</code></pre>
+<pre><code>## List of 3
+##  $ hyperpar: Named num 5.43
+##   ..- attr(*, &quot;names&quot;)= chr &quot;Precision for plate&quot;
+##  $ latent  : num [1:45, 1] -0.5536 -0.7183 -0.8834 0.2447 -0.0555 ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. ..$ : chr [1:45] &quot;Predictor:1&quot; &quot;Predictor:2&quot; &quot;Predictor:3&quot; &quot;Predictor:4&quot; ...
+##   .. ..$ : chr &quot;sample1&quot;
+##  $ logdens :List of 3
+##   ..$ hyperpar: num -2.66
+##   ..$ latent  : num 85.7
+##   ..$ joint   : num 83</code></pre>
+<p>Here, <code>$hyperpar</code> is the part of the first sample representing the hyper-parameters, <code>$latent</code> represents all the latent variables, and <code>$logdens</code> is the prior and posterior log probability densities. The <code>$latent</code>, however, is quite complicated.</p>
+<pre class="r"><code>t(samples[[1]]$latent)</code></pre>
+<pre><code>##         Predictor:1 Predictor:2 Predictor:3 Predictor:4 Predictor:5
+## sample1       -0.55       -0.72       -0.88        0.24      -0.055
+##         Predictor:6 Predictor:7 Predictor:8 Predictor:9 Predictor:10
+## sample1         1.2         1.3           1         1.1         0.51
+##         Predictor:11 Predictor:12 Predictor:13 Predictor:14
+## sample1          1.1        -0.45        -0.48        -0.71
+##         Predictor:15 Predictor:16 Predictor:17 Predictor:18
+## sample1       -0.013        -0.56        -0.46         0.17
+##         Predictor:19 Predictor:20 Predictor:21 plate:1 plate:2
+## sample1        0.017         0.46         0.25   -0.56   -0.72
+##         plate:3 plate:4 plate:5 plate:6 plate:7 plate:8 plate:9
+## sample1   -0.87    0.25  -0.057   0.091    0.22  -0.095  -0.017
+##         plate:10 plate:11 plate:12 plate:13 plate:14 plate:15
+## sample1    -0.61  5.2e-05     0.32     0.29    0.054     0.76
+##         plate:16 plate:17 plate:18 plate:19 plate:20 plate:21
+## sample1     0.21    -0.82    -0.18    -0.35      0.1    -0.11
+##         (Intercept):1  x1:1 x2:1
+## sample1       -0.0047 -0.76  1.1</code></pre>
+<pre class="r"><code># - transposed for shorter printing
+# - this is a column vector</code></pre>
+<p>Here, the names show which part of the latent field these sample values are from. First comes the Predictor, wich is <span class="math inline">\(\eta\)</span> the linear predictor, then comes the random effect named <code>plate</code>, with its values at each plate level. Then comes the fixed effects (one of them is called <code>(Intercept)</code>).</p>
+</div>
+<div id="how-to-access-the-right-part-of-latent" class="section level2">
+<h2><span class="header-section-number">5.2</span> How to access the right part of <code>$latent</code></h2>
+<p>The difficulty now is making generic code that will work for very complex models. E.g. in a spatial model, it would be horrific to have to read all the names and figure which was which.</p>
+<p>I will now create a generic code though the use of a hidden part of the INLA result object.</p>
+<pre class="r"><code>res1$misc$configs$contents</code></pre>
+<pre><code>## $tag
+## [1] &quot;Predictor&quot;   &quot;plate&quot;       &quot;(Intercept)&quot; &quot;x1&quot;         
+## [5] &quot;x2&quot;         
+## 
+## $start
+## [1]  1 22 43 44 45
+## 
+## $length
+## [1] 21 21  1  1  1</code></pre>
+<p>Here, you see the names of the latent components, and their start index and their length. Using this, we can find the indices for <code>plate</code> in the following way.</p>
+<pre class="r"><code>contents = res1$misc$configs$contents
+effect = &quot;plate&quot;
+id.effect = which(contents$tag==effect)
+# - the numerical id of the effect
+ind.effect = contents$start[id.effect]-1 + (1:contents$length[id.effect])
+# - all the indices for the effect
+# - these are the indexes in the sample[[1]]$latent !</code></pre>
+<p>The first sample from <code>plate</code>, and all the samples from <code>plate</code> can then be found.</p>
+<pre class="r"><code>## See an example for the first sample
+samples[[1]]$latent[ind.effect, , drop=F]</code></pre>
+<pre><code>##           sample1
+## plate:1  -5.6e-01
+## plate:2  -7.2e-01
+## plate:3  -8.7e-01
+## plate:4   2.5e-01
+## plate:5  -5.7e-02
+## plate:6   9.1e-02
+## plate:7   2.2e-01
+## plate:8  -9.5e-02
+## plate:9  -1.7e-02
+## plate:10 -6.1e-01
+## plate:11  5.2e-05
+## plate:12  3.2e-01
+## plate:13  2.9e-01
+## plate:14  5.4e-02
+## plate:15  7.6e-01
+## plate:16  2.1e-01
+## plate:17 -8.2e-01
+## plate:18 -1.8e-01
+## plate:19 -3.5e-01
+## plate:20  1.0e-01
+## plate:21 -1.1e-01</code></pre>
+<pre class="r"><code>## Draw this part of every sample
+samples.effect = lapply(samples, function(x) x$latent[ind.effect])</code></pre>
+</div>
+<div id="matrix-output" class="section level2">
+<h2><span class="header-section-number">5.3</span> Matrix output</h2>
+<p>We create a more readable version of these samples.</p>
+<pre class="r"><code>s.eff = matrix(unlist(samples.effect), byrow = T, nrow = length(samples.effect))
+# - s.eff means samples.effect, just as a matrix
+colnames(s.eff) = rownames(samples[[1]]$latent)[ind.effect]
+# - retrieve names from original object
+summary(s.eff)</code></pre>
+<pre><code>##     plate:1         plate:2         plate:3         plate:4     
+##  Min.   :-1.75   Min.   :-0.95   Min.   :-1.29   Min.   :-0.61  
+##  1st Qu.:-0.45   1st Qu.:-0.21   1st Qu.:-0.47   1st Qu.: 0.05  
+##  Median :-0.26   Median :-0.06   Median :-0.30   Median : 0.20  
+##  Mean   :-0.28   Mean   :-0.08   Mean   :-0.32   Mean   : 0.22  
+##  3rd Qu.:-0.08   3rd Qu.: 0.07   3rd Qu.:-0.14   3rd Qu.: 0.37  
+##  Max.   : 0.35   Max.   : 0.73   Max.   : 0.38   Max.   : 1.06  
+##     plate:5         plate:6         plate:7         plate:8     
+##  Min.   :-0.73   Min.   :-0.96   Min.   :-0.73   Min.   :-0.49  
+##  1st Qu.:-0.10   1st Qu.:-0.09   1st Qu.: 0.00   1st Qu.: 0.09  
+##  Median : 0.04   Median : 0.07   Median : 0.14   Median : 0.27  
+##  Mean   : 0.05   Mean   : 0.11   Mean   : 0.15   Mean   : 0.28  
+##  3rd Qu.: 0.20   3rd Qu.: 0.28   3rd Qu.: 0.29   3rd Qu.: 0.45  
+##  Max.   : 1.02   Max.   : 1.50   Max.   : 0.90   Max.   : 1.26  
+##     plate:9         plate:10        plate:11        plate:12    
+##  Min.   :-0.96   Min.   :-0.95   Min.   :-1.51   Min.   :-0.70  
+##  1st Qu.:-0.19   1st Qu.:-0.32   1st Qu.:-0.07   1st Qu.: 0.02  
+##  Median :-0.04   Median :-0.16   Median : 0.10   Median : 0.19  
+##  Mean   :-0.05   Mean   :-0.18   Mean   : 0.12   Mean   : 0.22  
+##  3rd Qu.: 0.09   3rd Qu.:-0.02   3rd Qu.: 0.30   3rd Qu.: 0.40  
+##  Max.   : 0.81   Max.   : 0.50   Max.   : 1.41   Max.   : 1.39  
+##     plate:13        plate:14        plate:15        plate:16    
+##  Min.   :-0.84   Min.   :-0.97   Min.   :-0.42   Min.   :-1.50  
+##  1st Qu.:-0.11   1st Qu.:-0.22   1st Qu.: 0.16   1st Qu.:-0.32  
+##  Median : 0.03   Median :-0.05   Median : 0.35   Median :-0.10  
+##  Mean   : 0.04   Mean   :-0.05   Mean   : 0.38   Mean   :-0.13  
+##  3rd Qu.: 0.19   3rd Qu.: 0.10   3rd Qu.: 0.56   3rd Qu.: 0.08  
+##  Max.   : 1.04   Max.   : 0.75   Max.   : 1.71   Max.   : 0.92  
+##     plate:17        plate:18        plate:19        plate:20    
+##  Min.   :-1.53   Min.   :-1.15   Min.   :-0.85   Min.   :-0.71  
+##  1st Qu.:-0.46   1st Qu.:-0.20   1st Qu.:-0.25   1st Qu.:-0.03  
+##  Median :-0.25   Median :-0.04   Median :-0.09   Median : 0.10  
+##  Mean   :-0.29   Mean   :-0.06   Mean   :-0.11   Mean   : 0.13  
+##  3rd Qu.:-0.06   3rd Qu.: 0.09   3rd Qu.: 0.05   3rd Qu.: 0.27  
+##  Max.   : 0.76   Max.   : 0.71   Max.   : 0.74   Max.   : 0.99  
+##     plate:21    
+##  Min.   :-1.43  
+##  1st Qu.:-0.24  
+##  Median :-0.06  
+##  Mean   :-0.08  
+##  3rd Qu.: 0.10  
+##  Max.   : 0.87</code></pre>
+</div>
+<div id="verifying-output" class="section level2">
+<h2><span class="header-section-number">5.4</span> Verifying output</h2>
+<p>We compare these samples to the usual posterior summaries.</p>
+<pre class="r"><code>cbind(colMeans(s.eff), res1$summary.random$plate$mean)</code></pre>
+<pre><code>##            [,1]   [,2]
+## plate:1  -0.283 -0.287
+## plate:2  -0.076 -0.080
+## plate:3  -0.317 -0.316
+## plate:4   0.218  0.217
+## plate:5   0.052  0.055
+## plate:6   0.107  0.098
+## plate:7   0.147  0.157
+## plate:8   0.284  0.284
+## plate:9  -0.055 -0.061
+## plate:10 -0.176 -0.187
+## plate:11  0.117  0.115
+## plate:12  0.223  0.206
+## plate:13  0.040  0.021
+## plate:14 -0.054 -0.059
+## plate:15  0.382  0.387
+## plate:16 -0.131 -0.126
+## plate:17 -0.287 -0.291
+## plate:18 -0.057 -0.060
+## plate:19 -0.106 -0.110
+## plate:20  0.126  0.125
+## plate:21 -0.077 -0.085</code></pre>
+</div>
+</div>
+<div id="prediction-where-we-have-data" class="section level1">
+<h1><span class="header-section-number">6</span> Prediction where we have data</h1>
+<p>We want to compute a prediction where we already have a datapoint. The goal is to predict for observation 7, which is:</p>
+<pre class="r"><code>df[7, ]</code></pre>
+<pre><code>##    y Ntrials x1 x2 plate
+## 7 53      74  0  1     7</code></pre>
+<div id="using-the-linear-predictor" class="section level2">
+<h2><span class="header-section-number">6.1</span> Using the linear predictor</h2>
+<p>The easiest approach is to use the linear predictor. Since this is the 7th row of <code>df</code>, we pick out the 7th predictor. Noe: The value of plate is <strong>not</strong> important, that is just a covariate value (which happens to be the same as the rown number). The linear predictor always start at the first element of <code>$latent</code>, so we do not need to look for it.</p>
+<pre class="r"><code>## see one example value
+samples[[1]]$latent[7, , drop=F]</code></pre>
+<pre><code>##             sample1
+## Predictor:7     1.3</code></pre>
+<pre class="r"><code>## Draw this part of every sample
+samples.pred7 = lapply(samples, function(x) x$latent[7])
+samples.pred7 = unlist(samples.pred7)</code></pre>
+<p>Plot a density of this sample. You could also do a histogram with <code>truehist</code>.</p>
+<pre class="r"><code>plot(density(samples.pred7))
+abline(v=df$y[7])</code></pre>
+<p><img src="btopic112_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+<div id="transforming-the-predictor-samples-to-data-value-samples" class="section level2">
+<h2><span class="header-section-number">6.2</span> Transforming the predictor samples to data-value samples</h2>
+<p>We now need to transform through the link function and the data sampling. We know we use the logit transform, but we can doublecheck this:</p>
+<pre class="r"><code>res1$.args$control.family$control.link$model</code></pre>
+<pre><code>## NULL</code></pre>
+<p>You can set up the logit function yourself, or use <code>inla.link.invlogit(x)</code>. We transform the samples through the link.</p>
+<pre class="r"><code>samples.link7 = inla.link.invlogit(samples.pred7)
+
+plot(density(samples.link7))
+
+## Add the naive estimate of binomial probability y/N:
+abline(v = df$y[7]/df$Ntrials[7], col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic112_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+<div id="adding-observation-likelihood-randomness" class="section level2">
+<h2><span class="header-section-number">6.3</span> Adding observation likelihood randomness</h2>
+<p>The following code is specific to discrete likelihoods, as we can compute all the densities exactly. What we do here is discrete integration, computing the probabilities exactly (on the samples that we have).</p>
+<pre class="r"><code>## What range of observations do we want to compute
+discrete.range = 0:100
+## Initialize the probabilities 
+probs = rep(0, length(discrete.range))
+
+for (i in 1:length(samples.link7)) {
+  probs = probs + dbinom(discrete.range, size=df$Ntrials[7], prob = samples.link7[i])
+}
+probs = probs / length(samples)
+names(probs) = discrete.range</code></pre>
+<p>Let us now plot the results, together with the true value.</p>
+<pre class="r"><code>plot(probs, xlim=c(37, 67))
+abline(v=df$y[7], col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic112_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+<div id="alternative-way-building-up-the-samples-model-component-by-model-component" class="section level2">
+<h2><span class="header-section-number">6.4</span> Alternative way: Building up the samples model component by model component</h2>
+<p>It is important to know how to build up the (linear) predictor sample by adding together the model components (fixed effects and random effects), as this enables you to do anything! Knowing how to do this lets us predict in unsampled locations also.</p>
+<pre class="r"><code>## Remember the covariate values
+df[7, ]</code></pre>
+<pre><code>##    y Ntrials x1 x2 plate
+## 7 53      74  0  1     7</code></pre>
+<pre class="r"><code>## Remember the formula
+res1$.args$formula</code></pre>
+<pre><code>## y ~ x1 + x2 + f(plate, model = &quot;iid&quot;, hyper = hyper1)
+## NULL</code></pre>
+<p>For sample nr 57 (as an example) we add it all up:</p>
+<pre class="r"><code>nr = 57
+s = samples[[nr]]$latent
+
+## beta1 * 0
+f.x1.0 = s[44, , drop=F] * 0
+## beta1 * 1
+f.x2.1 = s[45, , drop=F] * 1
+## f(plate = 7)
+f.plate.7 = s[28, , drop=F]
+## The intercept
+int = s[43, , drop=F]
+
+sum = drop(f.x1.0 + f.x2.1 + f.plate.7 + int)
+list(model.component.sum.7 = sum, linear.predictor.7 = samples.pred7[nr])</code></pre>
+<pre><code>## $model.component.sum.7
+## [1] 0.78
+## 
+## $linear.predictor.7
+## [1] 0.78</code></pre>
+<p>These two numbers are equal, or approximately equal, as they represent the exact same thing! To do this for all the sample numbers, create a for loop <code>for (nr in 1:length(samples))</code>.</p>
+</div>
+</div>
+<div id="predicting-for-a-different-experiment-on-an-old-plate" class="section level1">
+<h1><span class="header-section-number">7</span> Predicting for a different experiment on an old plate</h1>
+<p>Using a similar method to what we just did, we can create a new experiment, and predict it.</p>
+<pre class="r"><code>our.experiment = list(x1 = 0, x2 = 0, plate = 7)
+
+nr = 57
+s = samples[[nr]]$latent
+
+## beta1 * 0
+f.x1.0 = s[44, , drop=F] * our.experiment$x1
+## beta1 * 1
+f.x2.1 = s[45, , drop=F] * our.experiment$x2
+## f(plate = 7)
+# - the same plate as before
+f.plate.7 = s[28, , drop=F]
+## The intercept
+int = s[43, , drop=F]
+
+predictor.our.experiment = drop(f.x1.0 + f.x2.1 + f.plate.7 + int)</code></pre>
+<p>Again, to get all the samples, create a for loop. Then go through the link and the likelihood as we did in the predictor example.</p>
+</div>
+<div id="predicting-for-a-different-experiment-on-a-new-plate" class="section level1">
+<h1><span class="header-section-number">8</span> Predicting for a different experiment on a new plate</h1>
+<p>Now, we cannot use the sample from plate number 7. We want a new plate, let us call it plate number 50. Indeed, the result of our INLA model does not include a plate number 50.</p>
+<p>Even though there is no information in our data about what happens at plate number 50, there is information about what happens on plates “in general”. This information lies in the pooling parameter sigma/precision for plate. Let us find our sample for this sigma/precision.</p>
+<pre class="r"><code>## As before:
+our.experiment = list(x1 = 0, x2 = 0, plate = 50)
+nr = 57
+
+## Want a hyper-parameter
+plate.precision = samples[[nr]]$hyperpar[1]
+plate.sigma = plate.precision^-0.5
+names(plate.sigma) = &quot;sigma&quot;
+
+print(plate.sigma)</code></pre>
+<pre><code>## sigma 
+##  0.43</code></pre>
+<p>Our model for plate was a Gaussian IID effect, with standard deviation sigma. So, we can draw a sample ourselves for this new plate:</p>
+<pre class="r"><code>sample.plate50 = rnorm(1, sd=plate.sigma)</code></pre>
+<p>And then we can complete our sample number <code>nr</code>:</p>
+<pre class="r"><code>## As before
+s = samples[[nr]]$latent
+f.x1.0 = s[44, , drop=F] * our.experiment$x1
+f.x2.1 = s[45, , drop=F] * our.experiment$x2
+
+## f(plate = 50)
+f.plate.50 = sample.plate50
+## The intercept
+int = s[43, , drop=F]
+
+predictor.experiment.newplate = drop(f.x1.0 + f.x2.1 + f.plate.50 + int)</code></pre>
+<p>A for-loop is needed to produce all the samples. We also need transformation through the link and adding the likelihood.</p>
+</div>
+<div id="comments" class="section level1">
+<h1><span class="header-section-number">9</span> Comments</h1>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -10,13 +10,14 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Haakon Bakka" />
 
 
-<title>Online Course Topics for Bayesian Modeling</title>
+<title>How to make a bad mesh</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -298,52 +299,83 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Online Course Topics for Bayesian Modeling</h1>
+<h1 class="title toc-ignore">How to make a bad mesh</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic114 updated 25. May 2017</h4>
 
 </div>
 
-
-<div id="general" class="section level2">
-<h2>General</h2>
-<p>This website is for hosting material related to Bayesian modeling, GAMs, the statistical tool R-INLA, the SPDE approach, and my own research.</p>
-<p>This website is always under development.</p>
-<p>The website was recently moved from Bitbucket to Github (Dec 2019). This was mainly because Bitbucket support is ending for hg, and I like Githubs git interface.</p>
-</div>
-<div id="warning-on-r-versions" class="section level2">
-<h2>Warning on r versions</h2>
-<p>I recently updated to R 3.6, and had to change some of the scripts because of this.</p>
-</div>
-<div id="the-.r-files" class="section level2">
-<h2>The .R files</h2>
-<p>In any BTopic, go to the web-page address (e.g. command+l), replace the .html with .R, and this should give the same R file. It is a lot easier to get the code this way than to copy-paste line by line!</p>
-</div>
-<div id="what-can-you-use-this-webpage-for" class="section level2">
-<h2>What can you use this webpage for?</h2>
-<p>I get questions like: Can I use this for</p>
+<div id="TOC">
 <ul>
-<li>Teaching?</li>
-<li>Send it to others?</li>
-<li>As a basis for my own code?</li>
-<li>Include code in my presentations?</li>
+<li><a href="#about">About</a><ul>
+<li><a href="#mesh-as-a-gate">Mesh as a “gate”</a></li>
+</ul></li>
+<li><a href="#initialise-r-session">Initialise R session</a></li>
+<li><a href="#mesh1-a-mesh-without-any-outer-boundary">Mesh1: A mesh without any outer boundary</a></li>
+<li><a href="#mesh-2-a-too-small-outer-extension">Mesh 2: A too small outer extension</a></li>
+<li><a href="#mesh-3-a-fine-scale-outer-extension">Mesh 3: A fine scale outer extension</a></li>
+<li><a href="#mesh-4-put-nodes-really-close">Mesh 4: Put nodes really close</a></li>
+<li><a href="#comments">Comments</a></li>
 </ul>
-<p>The answers to all of these is “yes”. Please add an acknowledgement of this webpage when you do so.</p>
-<p>However, if you are inspired to write papers based on some of the ideas you see here, I may already be doing that. I would be happy to hear from you, and I can clarify if we are working on the same idea.</p>
 </div>
-<div id="online-offline-use-and-older-versions" class="section level2">
-<h2>Online / Offline use and older versions</h2>
-<p>The online webpage is at [<a href="https://haakonbakkagit.github.io/" class="uri">https://haakonbakkagit.github.io/</a>].</p>
-<p>To use this webpage offline, download the github repository at [<a href="https://github.com/haakonbakkagit/haakonbakkagit.github.io" class="uri">https://github.com/haakonbakkagit/haakonbakkagit.github.io</a>], open the folder and click on index.html.</p>
-<p>To find older versions of the code for any reason, use the same link and look through the history of the repo.</p>
+
+<div id="about" class="section level1">
+<h1>About</h1>
+<p>In this topic we show how to make a bad mesh. When would you like to get a bad mesh? Never! But showing what not to do is very instructive.</p>
+<div id="mesh-as-a-gate" class="section level2">
+<h2>Mesh as a “gate”</h2>
+<p>As mentioned in topic <a href="./btopic104.html">Mesh Creation including Coastlines</a>, we think of mesh as a “gate”, in the sense that you do not need to know how it is made, only how to verify that it works. This means that you can use a mesh created by another, as long as you plot it and make sure it “looks good”, and the other things mentioned in that topic.</p>
 </div>
-<div id="philosophy-of-this-website" class="section level2">
-<h2>Philosophy (of this website)</h2>
-<p>The explanations in this website are through pictures, figures and computer code.</p>
-<p>The text on the website is informal, trying to paint a picture and give the right notions, ideas and intuition. If you want rigorous mathematics, see the papers that are referenced/linked throughout the website. The goal of a paper is usually to be precise and impressive, but the goal of these pages is to make things look simple and to speak to your intuition.</p>
-<p>Why am I using html and not pdf? Because I want to use hyperlinks! I want you to be able to open new tabs, and use the “back” arrow in your browser. To open a figure in a new tab (and you can look at two figures side by side in two windows). I want to integrate other websites and content, e.g. youtube videos.</p>
 </div>
-<div id="plan" class="section level2">
-<h2>Plan</h2>
-<p>Plan for the site: Add topics as requested by you, and to fill the gaps in the topic organisation.</p>
+<div id="initialise-r-session" class="section level1">
+<h1>Initialise R session</h1>
+<p>We load any packages and set global options. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
+<pre class="r"><code>library(INLA)
+rm(list=ls())
+options(width=70, digits=2)
+set.seed(2017)</code></pre>
+</div>
+<div id="mesh1-a-mesh-without-any-outer-boundary" class="section level1">
+<h1>Mesh1: A mesh without any outer boundary</h1>
+<pre class="r"><code>loc = matrix(c(1, 0, 1, 1, 0, 1, 0,0), ncol=2, byrow = T)
+mesh1 = inla.mesh.2d(loc, max.edge = 0.2)
+plot(mesh1)</code></pre>
+<p><img src="btopic114_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>The problem with this mesh is that you may want to fit data, plot the result, or do predictions, too close to the boundary. If you only want to fit data far inside this mesh, there is nothing wrong with it.</p>
+<p>Fix: Add an outer extension, using the <code>offset</code> argument.</p>
+</div>
+<div id="mesh-2-a-too-small-outer-extension" class="section level1">
+<h1>Mesh 2: A too small outer extension</h1>
+<pre class="r"><code>loc = matrix(c(1, 0, 1, 1, 0, 1, 0,0), ncol=2, byrow = T)
+mesh2 = inla.mesh.2d(loc, max.edge = 0.2, offset = c(0, 0.05))
+plot(mesh2)</code></pre>
+<p><img src="btopic114_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>This outer extension is too small.</p>
+<p>You can see that the triangles in the outer extension is smaller than inside the main part of the mesh. When would we want a finer approximation in the mesh extension than we have in the main part of the mesh? Never.</p>
+<p>Fix: Make the offset value nr 2 larger.</p>
+</div>
+<div id="mesh-3-a-fine-scale-outer-extension" class="section level1">
+<h1>Mesh 3: A fine scale outer extension</h1>
+<pre class="r"><code>loc = matrix(c(1, 0, 1, 1, 0, 1, 0,0), ncol=2, byrow = T)
+mesh3 = inla.mesh.2d(loc, max.edge = c(0.2, 0.2), offset = c(0, 0.5))
+plot(mesh3)</code></pre>
+<p><img src="btopic114_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>This mesh is wasting so much computational effort; it is getting very precise approximations in the outer extension.</p>
+<p>Fix: The second value in <code>max.edge = c(0.2, 0.2)</code> needs to be increased, for example to <code>max.edge = c(0.2, 0.6)</code>.</p>
+<p>Improvement: INLA may require 4 times as much time and memory to fit the bad compared to the good choice.</p>
+</div>
+<div id="mesh-4-put-nodes-really-close" class="section level1">
+<h1>Mesh 4: Put nodes really close</h1>
+<pre class="r"><code>loc = matrix(c(1, 0, 1, 1, 0, 1, 0, 0, 0.5, 0.5, 0.499, 0.499, 0.3, 0.3, 0.2999, 0.2999), ncol=2, byrow = T)
+mesh4 = inla.mesh.2d(loc, max.edge = 0.2, cutoff = 1e-12)
+plot(mesh4)
+points(loc)</code></pre>
+<p><img src="btopic114_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>The mesh tries to put one node at each location in <code>loc</code>. Because some of the locations are very close, this results in a super-fine mesh where you find these points.</p>
+<p>Fix: Increase the <code>cutoff</code>, ignoring locations close to another location. E.g. set <code>cutoff = 0.002</code></p>
+</div>
+<div id="comments" class="section level1">
+<h1>Comments</h1>
 </div>
 
 
