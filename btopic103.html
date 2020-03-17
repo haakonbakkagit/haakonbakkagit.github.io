@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -376,6 +382,7 @@ div.tocify {
 </div>
 
 
+
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>In this topic we show an example of the Barrier model, with simulation, inference and plotting. The example terrain/map/study-area has a barrier going from west to east, and a gap in the middle of the barrier.</p>
@@ -460,13 +467,13 @@ poly.barrier = inla.barrier.polygon(mesh, barrier.triangles = barrier)</code></p
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
 ## intersection at or near point -2 0.58578644000000002</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
-## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
+## consider using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
 ## intersection at or near point -1 4.75</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
-## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
+## consider using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre class="r"><code># - the Barrier model&#39;s polygon
 # - in most cases this should be the same as poly.original</code></pre>
 <p>Then we define the <code>Omega</code> object which is the object that the code for the new Barrier model needs. We also define the <code>poly.barrier</code> which is the spatial polygon needed for plotting the boundaries of the barrier area.</p>
@@ -495,12 +502,10 @@ print(mesh$n)</code></pre>
 <pre><code>## [1] 2613</code></pre>
 <pre class="r"><code># - This is the appropriate length of the field variable</code></pre>
 <p>The input variable <code>field</code> must have the same length as there are mesh nodes in the mesh.</p>
-Next, we compute the Finite Element matrices needed to solve the SPDE for the non-stationary Barrier model.
-<span class="math display">\[\begin{align}
+<p>Next, we compute the Finite Element matrices needed to solve the SPDE for the non-stationary Barrier model. <span class="math display">\[\begin{align}
 u(s) - \nabla \cdot \frac{r^2}{8} \nabla u(s) &amp;=   r \sqrt{\frac{\pi}{2}} \sigma_u \mathcal{W}(s), \text{ for } s \in \Omega_n \\
 u(s) - \nabla \cdot \frac{r_b^2}{8} \nabla u(s) &amp;=   r_b \sqrt{\frac{\pi}{2}} \sigma_u \mathcal{W}(s), \text{ for } s \in \Omega_b,
-\end{align}\]</span>
-<p>To learn more about these equations, see the paper on Arxiv <span class="citation">(Bakka et al. 2016)</span>, and the appendix therein. Essentially, we are doing all the computations we can in advance, so that solving the system of equations happens quickly at each step of simulation and inference. We will not comment on the internal workings of this function now, but it will be described in detail in another topic.</p>
+\end{align}\]</span> To learn more about these equations, see the paper on Arxiv <span class="citation">(Bakka et al. 2016)</span>, and the appendix therein. Essentially, we are doing all the computations we can in advance, so that solving the system of equations happens quickly at each step of simulation and inference. We will not comment on the internal workings of this function now, but it will be described in detail in another topic.</p>
 <pre class="r"><code>barrier.model = inla.barrier.pcmatern(mesh, barrier.triangles = barrier, prior.range = c(1.44, 0.5), prior.sigma = c(0.7, 0.5), range.fraction = 0.1)
 # - Set up the inla model, including the matrices for solving the SPDE</code></pre>
 </div>
@@ -513,7 +518,7 @@ u(s) - \nabla \cdot \frac{r_b^2}{8} \nabla u(s) &amp;=   r_b \sqrt{\frac{\pi}{2}
 Q = inla.rgeneric.q(barrier.model, &quot;Q&quot;, theta = c(0, log(range)))
 # - the precision matrix for fixed ranges
 # - Q is a function of the hyperparameters theta = c( log(sigma), log(range1), log(range2),...)</code></pre>
-<p>Now, we sample a spatial field using the precision matrix <span class="math inline">\(Q\)</span>. This is done through a sparse Cholesky factorization <span class="citation">(H. Rue and Held 2005)</span>. Then we plot that field, adding the barrier area in grey on top. The value of the field on the barrier is of no interest, as there can never be observations there.</p>
+<p>Now, we sample a spatial field using the precision matrix <span class="math inline">\(Q\)</span>. This is done through a sparse Cholesky factorization <span class="citation">(Rue and Held 2005)</span>. Then we plot that field, adding the barrier area in grey on top. The value of the field on the barrier is of no interest, as there can never be observations there.</p>
 <pre class="r"><code>u = inla.qsample(n=1, Q=Q, seed = set.inla.seed)
 u = u[ ,1]
 # - access the first sample
@@ -604,10 +609,10 @@ res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
 ##    inla.stack.data(stk), &quot;, &quot; control.predictor = list(A = 
 ##    inla.stack.A(stk)), control.family = list(hyper = list(prec = 
 ##    list(prior = \&quot;pc.prec\&quot;, &quot;, &quot; fixed = FALSE, param = c(0.2, 
-##    0.5)))), control.mode = list(restart = T, &quot;, &quot; theta = c(4, -1.7, 
-##    0.25)))&quot;) 
+##    0.5)))), control.mode = list(restart = T, &quot;, &quot; theta = c(4, 
+##    -1.7, 0.25)))&quot;) 
 ## Time used:
-##     Pre = 2.25, Running = 13.9, Post = 0.311, Total = 16.5 
+##     Pre = 1.58, Running = 14.4, Post = 0.117, Total = 16.1 
 ## Fixed effects:
 ##           mean   sd 0.025quant 0.5quant 0.97quant  mode kld
 ## intercept -0.2 0.59       -1.4    -0.22      0.97 -0.23   0
@@ -617,14 +622,14 @@ res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
 ##     s SPDE2 model
 ## 
 ## Model hyperparameters:
-##                                          mean    sd 0.025quant 0.5quant
-## Precision for the Gaussian observations 26.17 2.731     21.240    26.03
-## Range for s                              3.39 0.818      2.223     3.24
-## Stdev for s                              1.38 0.280      0.965     1.33
-##                                         0.97quant  mode
-## Precision for the Gaussian observations     31.70 25.73
-## Range for s                                  5.27  2.92
-## Stdev for s                                  2.01  1.22
+##                                          mean    sd 0.025quant
+## Precision for the Gaussian observations 26.17 2.731     21.240
+## Range for s                              3.39 0.818      2.223
+## Stdev for s                              1.38 0.280      0.965
+##                                         0.5quant 0.97quant  mode
+## Precision for the Gaussian observations    26.03     31.70 25.73
+## Range for s                                 3.24      5.27  2.92
+## Stdev for s                                 1.33      2.01  1.22
 ## 
 ## Expected number of effective parameters(stdev): 209.30(11.02)
 ## Number of equivalent replicates : 2.24 
@@ -663,10 +668,10 @@ plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
 ##    inla.stack.data(stk), &quot;, &quot; control.predictor = list(A = 
 ##    inla.stack.A(stk)), control.family = list(hyper = list(prec = 
 ##    list(prior = \&quot;pc.prec\&quot;, &quot;, &quot; fixed = FALSE, param = c(0.2, 
-##    0.5)))), control.mode = list(restart = T, &quot;, &quot; theta = c(3.2, 0.4, 
-##    1.6)))&quot;) 
+##    0.5)))), control.mode = list(restart = T, &quot;, &quot; theta = c(3.2, 
+##    0.4, 1.6)))&quot;) 
 ## Time used:
-##     Pre = 1.7, Running = 21, Post = 0.288, Total = 23 
+##     Pre = 1.36, Running = 21.1, Post = 0.149, Total = 22.6 
 ## Fixed effects:
 ##            mean   sd 0.025quant 0.5quant 0.97quant  mode kld
 ## intercept -0.15 0.59       -1.3    -0.17         1 -0.19   0
@@ -676,14 +681,14 @@ plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
 ##     s RGeneric2
 ## 
 ## Model hyperparameters:
-##                                           mean    sd 0.025quant 0.5quant
-## Precision for the Gaussian observations 24.179 2.433     19.740   24.061
-## Theta1 for s                             0.204 0.190     -0.136    0.191
-## Theta2 for s                             1.331 0.222      0.933    1.315
-##                                         0.97quant   mode
-## Precision for the Gaussian observations    29.065 23.832
-## Theta1 for s                                0.588  0.145
-## Theta2 for s                                1.781  1.259
+##                                           mean    sd 0.025quant
+## Precision for the Gaussian observations 24.179 2.433     19.740
+## Theta1 for s                             0.204 0.190     -0.136
+## Theta2 for s                             1.331 0.222      0.933
+##                                         0.5quant 0.97quant   mode
+## Precision for the Gaussian observations   24.061    29.065 23.832
+## Theta1 for s                               0.191     0.588  0.145
+## Theta2 for s                               1.315     1.781  1.259
 ## 
 ## Expected number of effective parameters(stdev): 182.12(11.65)
 ## Number of equivalent replicates : 2.58 
@@ -711,11 +716,10 @@ plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
 ## Theta1 for s                                 0.59  0.14
 ## Theta2 for s                                 1.78  1.26</code></pre>
 <p>This shows the ordering of the hyper-parameters, and is how we know what index to use later in the plots.</p>
-To plot the hyper-parameters in the Barrier model, we must know the transformations.
-<span class="math display">\[\begin{align}
+<p>To plot the hyper-parameters in the Barrier model, we must know the transformations. <span class="math display">\[\begin{align}
 \sigma &amp;= e^ {\theta_1} \quad \text{is the marginal standard deviation} \\
 r &amp;= e^ {\theta_2} \quad \text{is the spatial range}
-\end{align}\]</span>
+\end{align}\]</span></p>
 <p>For the parameter <span class="math inline">\(\sigma\)</span>, the code is as follows (the dashed line is the prior, with an arbitrary scaling).</p>
 <pre class="r"><code>tmp = inla.tmarginal(function(x) exp(x), res.barrier$marginals.hyperpar[[2]]) 
 plot(tmp, type = &quot;l&quot;, xlab = &quot;sigma&quot;, ylab = &quot;Density&quot;)

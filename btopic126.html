@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -237,6 +236,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -265,6 +265,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -377,6 +383,7 @@ div.tocify {
 </div>
 
 
+
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>In this page we will illustrate what is a mesh, why we need it and how easy it is to build it using the R-<strong>INLA</strong> package. During the following overview we will also show some useful tips to plot it. We will focus only on the two dimensional case which is the most used in practice.</p>
@@ -394,20 +401,13 @@ div.tocify {
 <div id="boundary" class="section level2">
 <h2><span class="header-section-number">2.3</span> Boundary</h2>
 <p>Solutions of SPDEs on bounded domains are costructed imposing boundary conditions. In particular for 2D problems the R-<strong>INLA</strong> implementation uses Neumann boundaries. This class of conditions increase the variance near the boundaries. Then, if we are modelling a stationary field is important to extend the domain in order to make this effect neglegible. On the other hand, if there is physical boundary this effect may be desiderable.</p>
-</div>
-</div>
-<div id="mesh-construction" class="section level1">
-<h1><span class="header-section-number">3</span> Mesh construction</h1>
-<p>The basic low level function to create a mesh is <span class="math inline">\(\texttt{inla.mesh.create()}\)</span>, the most used high level functions are <span class="math inline">\(\texttt{inla.mesh.1d()}\)</span>, <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> and <span class="math inline">\(\texttt{inla.nonconvex.hull()}\)</span>. We will explain the use of the last two.</p>
-<div id="the-textttinla.mesh.2d-function" class="section level2">
-<h2><span class="header-section-number">3.1</span> The <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> function</h2>
-<p>This is the main function for the costruction of a two dimensional mesh. In order to make as clear as possible the role of the parameters we will use a simple example.<br />
+<p>#Mesh construction The basic low level function to create a mesh is <span class="math inline">\(\texttt{inla.mesh.create()}\)</span>, the most used high level functions are <span class="math inline">\(\texttt{inla.mesh.1d()}\)</span>, <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> and <span class="math inline">\(\texttt{inla.nonconvex.hull()}\)</span>. We will explain the use of the last two.</p>
+<p>##The <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> function This is the main function for the costruction of a two dimensional mesh. In order to make as clear as possible the role of the parameters we will use a simple example.<br />
 Let’s generate some locations from which generate the mesh.</p>
 <pre class="r"><code>set.seed(1)
 n = 20
 x_loc = cbind(runif(n), runif(n))</code></pre>
-<div id="nonoptional-argument" class="section level3">
-<h3><span class="header-section-number">3.1.1</span> Nonoptional argument</h3>
+<p>###Nonoptional argument</p>
 <p>The function <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> requires at least two of this three argument to run:</p>
 <ul>
 <li><p><strong>loc</strong> or <strong>loc.domain</strong>: the function requires informations about the spatial domain given by spatial points or given by the domain extent.</p></li>
@@ -418,18 +418,14 @@ x_loc = cbind(runif(n), runif(n))</code></pre>
 mesh2 = inla.mesh.2d(loc = x_loc, max.edge = c(0.1, 0.4))
 mesh3 = inla.mesh.2d(loc.domain = x_loc, max.edge = c(0.1, 0.4))</code></pre>
 <p><img src="btopic126_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-</div>
-<div id="optional-argument" class="section level3">
-<h3><span class="header-section-number">3.1.2</span> Optional argument</h3>
+<p>###Optional argument</p>
 <ul>
 <li><p><strong>offset</strong> : it specifies how much the domain will be estended in the outer and inner part. If negative it is interpreted as a factor relative to the approximate data diameter. If positive it is the extension distance on same scale unit to the coordinates provided.</p></li>
 <li><p><strong>cutoff</strong> : it specifies the minimum distance allowed between points. It means that if the distance between two points is less than the supplied value then they are replaced by a single vertex. Its very useful in case of clustered data points because it avoids building many small triangles arround clustered points.</p></li>
 <li><p><strong>min.angle</strong>: it specifies the minimum internal angle of the triangles. This could be a two-dimensional vector with the same meaning of the others. Take in mind that we would like to have a mesh with triangles as regular as possible.</p></li>
 <li><p><strong>n</strong>, <strong>interior</strong> : The argument <code>n</code> is the initial number of points on the extended boundary. The interior is a list of segments to specify <code>interior</code> constraints, each one of <em>inla.mesh.segment class</em>.</p></li>
 </ul>
-</div>
-<div id="examples" class="section level3">
-<h3><span class="header-section-number">3.1.3</span> Examples</h3>
+<p>###Examples</p>
 <p>Here there are some examples using different parameters settings. To highlight the differences between examples only the first five points are going to be used. First define the mesh using points</p>
 <pre class="r"><code>x_loc_reduce = x_loc[1:5,]
 m1 &lt;- inla.mesh.2d(x_loc_reduce, max.edge=c(0.5, 0.5))
@@ -457,15 +453,9 @@ m10 &lt;- inla.mesh.2d(, boundary, max.edge=c(.3, 0.5), n=4,
                    offset=c(.05,.3))</code></pre>
 <p><img src="btopic126_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>In the above examples the parameter <em>n</em> influences the initial number of extension points. In some situation changing it could help the convergence of the procedure. Be careful because changing <em>n</em> could result in an appropriate mesh. For example m7 doesn’t seems so good for the treated domain.</p>
-</div>
-<div id="play-by-yourself-with-shiny-apps" class="section level3">
-<h3><span class="header-section-number">3.1.4</span> Play by yourself with Shiny Apps</h3>
-<p>You can use the ShinyApp in the INLA package to play with the mesh.</p>
+<p>###Play by yourself with Shiny Apps You can use the ShinyApp in the INLA package to play with the mesh.</p>
 <pre><code>meshbuilder()</code></pre>
-</div>
-</div>
-<div id="non-convex-hull-meshes" class="section level2">
-<h2><span class="header-section-number">3.2</span> Non-convex Hull Meshes</h2>
+<p>##Non-convex Hull Meshes</p>
 <p>In the previous section we have seen how to build a convex mesh. In order to build a non-convex mesh one could still use the function <span class="math inline">\(\texttt{inla.mesh.2d()}\)</span> but a non-convex boundary has to be specified. Build a non-convex hull is very easy in R-<strong>INLA</strong> using the function <span class="math inline">\(\texttt{inla.nonconvex.hull()}\)</span>. This function take as parameters the target points and the <em>degree</em> of convexity, convavity and resolution.</p>
 <pre class="r"><code>bnd9 = inla.nonconvex.hull(x_loc, convex = 0.05)
 bnd10 = inla.nonconvex.hull(x_loc, convex = 0.09)
@@ -482,18 +472,13 @@ m10 = inla.mesh.2d(boundary = bnd10, max.edge = c(0.09, 0.4),
 m11 = inla.mesh.2d(boundary = bnd11, max.edge = c(0.09, 0.4), 
                    min.angle = 0.05)</code></pre>
 <p><img src="btopic126_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-</div>
-<div id="beyond-the-plane" class="section level2">
-<h2><span class="header-section-number">3.3</span> Beyond the plane</h2>
+<p>##Beyond the plane</p>
 <p>The meshes that we have seen untill now were defined on a plane. With the more low level function <span class="math inline">\(\texttt{inla.mesh.create()}\)</span> one could be much more sofisticated meshes. For the following example we build a globe, the parameter specify the number of sub-segment to use in the splitting of the icosahedron.</p>
 <pre class="r"><code>globe1 = inla.mesh.create(globe = 1)
 globe2 = inla.mesh.create(globe = 4)
 globe3 = inla.mesh.create(globe = 10)</code></pre>
 <p><img src="btopic126_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-</div>
-</div>
-<div id="plotting" class="section level1">
-<h1><span class="header-section-number">4</span> Plotting</h1>
+<p>#Plotting</p>
 <p>One of the most interesting tool, provided by R-<strong>INLA</strong>, for plotting spatial fields defined on a mesh is the possibility of project our data on different domain.<br />
 First of all we need a field and given a mesh is very easy to sample from it. We skip the technical details about sampling and the connection between the mesh and the field.</p>
 <pre class="r"><code>set.seed(2)
@@ -542,6 +527,7 @@ contour(proj2b$x, proj2b$y, inla.mesh.project(proj2b, field = x.glob[,1]), add =
 image(proj2a$x, proj2a$y, inla.mesh.project(proj2a, field = x.glob[,1]), main = &#39;Long-Lat projection&#39;, xlab = &#39;&#39;, ylab = &#39;&#39;)
 contour(proj2a$x, proj2a$y, inla.mesh.project(proj2a, field = x.glob[,1]), add = T)</code></pre>
 <p><img src="btopic126_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
 </div>
 
 

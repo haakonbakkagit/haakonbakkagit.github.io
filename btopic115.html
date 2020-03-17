@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -391,7 +397,7 @@ library(shiny)</code></pre>
 <p>Please be aware: The shiny app has not been checked in detail for errors.</p>
 <pre><code>## Copy the source file for the Shiny app
 dir.create(&quot;shiny/&quot;)
-download.file(url = &quot;https://haakonbakka.bitbucket.io/shiny/shiny-ar1.R&quot;, destfile = &quot;shiny/shiny-ar1.R&quot;)
+download.file(url = &quot;https://haakonbakkagit.github.io/shiny/shiny-ar1.R&quot;, destfile = &quot;shiny/shiny-ar1.R&quot;)
 </code></pre>
 <p>Run the shiny app, and select the second dataset.</p>
 <pre><code>runApp(&#39;shiny/shiny-ar1.R&#39;)</code></pre>
@@ -401,8 +407,8 @@ download.file(url = &quot;https://haakonbakka.bitbucket.io/shiny/shiny-ar1.R&quo
 <h2><span class="header-section-number">1.3</span> The data</h2>
 <pre><code>## Copy the data files
 dir.create(&quot;data&quot;)
-download.file(url = &quot;https://haakonbakka.bitbucket.io/data/harmonised-unemployment-rates-mo.csv&quot;, destfile = &quot;data/harmonised-unemployment-rates-mo.csv&quot;)
-download.file(url = &quot;https://haakonbakka.bitbucket.io/data/temperature-data&quot;, destfile = &quot;data/temperature-data&quot;)</code></pre>
+download.file(url = &quot;https://haakonbakkagit.github.io/data/harmonised-unemployment-rates-mo.csv&quot;, destfile = &quot;data/harmonised-unemployment-rates-mo.csv&quot;)
+download.file(url = &quot;https://haakonbakkagit.github.io/data/temperature-data&quot;, destfile = &quot;data/temperature-data&quot;)</code></pre>
 </div>
 </div>
 <div id="introduction-of-ar1-model" class="section level1">
@@ -435,8 +441,8 @@ download.file(url = &quot;https://haakonbakka.bitbucket.io/data/temperature-data
 <h1><span class="header-section-number">3</span> Introduction of the Data</h1>
 <p>We show two types of data in this webpage and the shiny app.</p>
 <p><strong>1. The temperature data of <em>Trondheim</em> in Norway, from October 1st, 2016 to October 30th, 2017</strong>:</p>
-<p>  We obtain the data from <a href="http://www.yr.no/place/Norway/S%C3%B8r-Tr%C3%B8ndelag/Trondheim/Trondheim/detailed_statistics.html">http://www.yr.no/place/Norway/S%C3%B8r-Tr%C3%B8ndelag/Trondheim/Trondheim/detailed_statistics.html</a>.</p>
-<p><strong>2. The standardised unemployment data for females in Norway, from Mar. 2000 to Jan. 2012</strong>:</p>
+<p>  We obtain the data from <a href="http://www.yr.no/place/Norway/S%C3%B8r-Tr%C3%B8ndelag/Trondheim/Trondheim/detailed_statistics.html" class="uri">http://www.yr.no/place/Norway/S%C3%B8r-Tr%C3%B8ndelag/Trondheim/Trondheim/detailed_statistics.html</a>.</p>
+<p><strong>2. The standardised unemployment data for females in Norway, from Mar. 2000 to Jan. 2012</strong>:</p>
 <p>  We obtain the data from <a href="https://datamarket.com/en/data/set/19rf/#!ds=19rf!prs=2:prt=8:pru=a&amp;display=line&amp;s=8i1" class="uri">https://datamarket.com/en/data/set/19rf/#!ds=19rf!prs=2:prt=8:pru=a&amp;display=line&amp;s=8i1</a> and <a href="http://data.is/1xV9PPs" class="uri">http://data.is/1xV9PPs</a>.</p>
 <p>We only use the Unemployment data here, but both datasets are found in the shiny app.</p>
 </div>
@@ -487,7 +493,7 @@ abline(h=2*(-8:9), lty=2, col=gray(.5))</code></pre>
 ## Call:
 ##    &quot;inla(formula = formula1, family = family, data = data)&quot; 
 ## Time used:
-##     Pre = 1.67, Running = 0.43, Post = 0.167, Total = 2.27 
+##     Pre = 1.36, Running = 0.364, Post = 0.0788, Total = 1.8 
 ## Fixed effects:
 ##             mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## (Intercept)  8.5 0.69        7.1      8.6       9.8  8.6   0
@@ -692,7 +698,7 @@ plot(m.theta3, type=&quot;l&quot;, xlab = &quot;intercept&quot;, ylab = &quot;Pr
 <h2><span class="header-section-number">6.7</span> References</h2>
 <ul>
 <li><p>Robert H. Shumway, and David S. Stoffer. Time Series Analysis and Its Applications. New York: Springer, 2011</p></li>
-<li><p><a href="https://haakonbakka.bitbucket.io/btopic102.html" class="uri">https://haakonbakka.bitbucket.io/btopic102.html</a></p></li>
+<li><p><a href="https://haakonbakkagit.github.io/btopic102.html" class="uri">https://haakonbakkagit.github.io/btopic102.html</a></p></li>
 <li><p>inla.doc(“ar1”), inla.doc(“pc.prec”), inla.doc(“pc.cor1”) in package INLA</p></li>
 <li><p><a href="http://www.r-inla.org/examples/tutorials/spde-tutorial" class="uri">http://www.r-inla.org/examples/tutorials/spde-tutorial</a></p></li>
 <li><p><a href="https://arxiv.org/pdf/1403.4630.pdf" class="uri">https://arxiv.org/pdf/1403.4630.pdf</a></p></li>

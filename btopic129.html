@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -237,6 +236,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -265,6 +265,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -373,9 +379,10 @@ div.tocify {
 <h1 class="title toc-ignore">Spatio-Temporal Barrier Model</h1>
 <h4 class="author">Francesco Serafini</h4>
 <h4 class="author">Runbing Zheng</h4>
-<h4 class="date">06 December, 2019</h4>
+<h4 class="date">17 March, 2020</h4>
 
 </div>
+
 
 
 <div id="about" class="section level1">
@@ -389,14 +396,14 @@ div.tocify {
 <p>In this section, we set up the study area and we build the mesh. In the next section, in which we generate data, we will explain the model more in detail.</p>
 <div id="set-up-the-study-area" class="section level2">
 <h2><span class="header-section-number">2.1</span> Set up the study area</h2>
-<p>First of all, we have to import the data and all the packages that we will need. If you need, you can download the data at <a href="https://haakonbakka.bitbucket.io/data/WebSiteData-Archipelago.RData" class="uri">https://haakonbakka.bitbucket.io/data/WebSiteData-Archipelago.RData</a>. For a description of the data see <span class="citation">Kallasvuo, Vanhatalo, and Veneranta (2016)</span> Data collection was funded by VELMU and Natural Resources Institute Finland (Luke).</p>
+<p>First of all, we have to import the data and all the packages that we will need. If you need, you can download the data at <a href="https://haakonbakkagit.github.io/data/WebSiteData-Archipelago.RData" class="uri">https://haakonbakkagit.github.io/data/WebSiteData-Archipelago.RData</a>. For a description of the data see <span class="citation">Kallasvuo, Vanhatalo, and Veneranta (2016)</span> Data collection was funded by VELMU and Natural Resources Institute Finland (Luke).</p>
 <pre class="r"><code>library(INLA)
 library(fields)
 library(rgeos)
 library(sp)
 library(colorRamps)</code></pre>
 <pre><code>dir.create(&quot;data&quot;)
-download.file(url = &quot;https://haakonbakka.bitbucket.io/data/WebSiteData-Archipelago.RData&quot;, destfile = &quot;data/WebSiteData-Archipelago.RData&quot;)</code></pre>
+download.file(url = https://haakonbakkagit.github.io/data/WebSiteData-Archipelago.RData&quot;, destfile = &quot;data/WebSiteData-Archipelago.RData&quot;)</code></pre>
 <pre class="r"><code>## Load data
 load(file = &quot;data/WebSiteData-Archipelago.RData&quot;)
 # - if you have saved the file locally
@@ -483,13 +490,13 @@ poly.barrier = inla.barrier.polygon(prmesh1, barrier.triangles)</code></pre>
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
 ## intersection at or near point 0 0</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
-## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
+## consider using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
 ## intersection at or near point -3.6000000000000001 -0.71608452</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
-## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
+## consider using set_RGEOS_CheckValidity(2L)</code></pre>
 </div>
 <div id="simulate-data" class="section level2">
 <h2><span class="header-section-number">3.2</span> Simulate Data</h2>
@@ -575,8 +582,8 @@ y &lt;- x.hat + w + rnorm(n*k, 0, sd.y)
 w &lt;- factor(w)
 #see the mean  of y which have the same value of w
 tapply(y, w, mean)</code></pre>
-<pre><code>##      -1       0       1 
-## -1.1467  0.0052  0.8020</code></pre>
+<pre><code>##    -1     0     1 
+## -1.25 -0.46  0.52</code></pre>
 <p>The last step: organize our data in a data frame. Sometimes, it may happen that we have different data locations for different times. To show that, we just drop half of the observations. The provided code still works in the case in which we have totally misaligned data points. In the below data frame, there is also an index variable representing the time at which each observation is recorded.</p>
 <pre class="r"><code>isel &lt;- sample(1:(n*k), n*k/2)
 dat &lt;- data.frame(y=as.vector(y),
@@ -612,7 +619,7 @@ u_{it} = \rho u_{i(t-1)} + \xi_{it} \\
 <li><p><span class="math inline">\(\text{Pr}(\rho &gt; 0) = 0.9\)</span></p></li>
 <li><p><span class="math inline">\(\text{Pr}(\tau^2_y &lt; 1) = 0.01\)</span></p></li>
 </ul>
-<p>You can find more details on PC priors and the main idea on <span class="citation">D. P. Simpson et al. (2014)</span> If you are interested in a detailed derivation of the PC priors for a Gaussian random field please check the work of <span class="citation">Fuglstad et al. (2017)</span></p>
+<p>You can find more details on PC priors and the main idea on <span class="citation">Simpson et al. (2014)</span> If you are interested in a detailed derivation of the PC priors for a Gaussian random field please check the work of <span class="citation">Fuglstad et al. (2017)</span></p>
 </div>
 <div id="inla" class="section level2">
 <h2><span class="header-section-number">4.2</span> INLA</h2>
@@ -658,19 +665,19 @@ res &lt;- inla(formula, data=inla.stack.data(stack),
             control.mode=list(restart=T, theta=init)) # line to add to speed up
 
 res$internal.summary.hyperpar$mode</code></pre>
-<pre><code>## [1]  4.524  0.978 -0.053  1.691</code></pre>
+<pre><code>## [1] 4.476 1.043 0.015 1.770</code></pre>
 </div>
 <div id="results" class="section level2">
 <h2><span class="header-section-number">4.3</span> Results</h2>
-<p>In this section, we take a look at the performances of our model and we show how to obtain some nice plots of the posterior distributions and the random effect. Let us start looking at the coefficient of the categorical variable <span class="math inline">\(\boldsymbol{w}\)</span>, they should reflect the values of the mean of the variable <span class="math inline">\(\boldsymbol{y}\)</span> for each category. As we can see they are pretty similar and the observed means are in <span class="math inline">\(95\)</span> confidence interval of the coefficients.</p>
+<p>In this section, we take a look at the performances of our model and we show how to obtain some nice plots of the posterior distributions and the random effect. Let us start looking at the coefficient of the categorical variable <span class="math inline">\(\boldsymbol{w}\)</span>, they should reflect the values of the mean of the variable <span class="math inline">\(\boldsymbol{y}\)</span> for each category. As we can see they are pretty similar and the observed means are in <span class="math inline">\(95%\)</span> confidence interval of the coefficients.</p>
 <pre class="r"><code>tapply(dat$y, dat$w, mean)  # Observed mean for each covariate level</code></pre>
 <pre><code>##    -1     0     1 
-## -1.23  0.17  0.79</code></pre>
+## -1.27 -0.52  0.39</code></pre>
 <pre class="r"><code>round(res$summary.fixed,4) # Coefficients of the categorical variable</code></pre>
-<pre><code>##       mean   sd 0.025quant 0.5quant 0.97quant   mode kld
-## w-1 -0.914 0.23      -1.37   -0.914     -0.48 -0.914   0
-## w0   0.075 0.23      -0.38    0.075      0.51  0.075   0
-## w1   1.081 0.23       0.63    1.081      1.51  1.081   0</code></pre>
+<pre><code>##      mean   sd 0.025quant 0.5quant 0.97quant  mode kld
+## w-1 -1.36 0.26      -1.88    -1.36     -0.87 -1.36   0
+## w0  -0.35 0.26      -0.87    -0.35      0.15 -0.35   0
+## w1   0.63 0.26       0.12     0.63      1.13  0.63   0</code></pre>
 <div id="marginal-posterior-distribution-plot" class="section level3">
 <h3><span class="header-section-number">4.3.1</span> Marginal Posterior Distribution Plot</h3>
 <p>The function <span class="math inline">\(\texttt{inla()}\)</span> gives us many objects as output, <span class="math inline">\(51\)</span> to be precise. It’s like the Supermarket of your analysis, you can find everything you need in there. Of course, we are not going to review all the elements of the list. For now, we limit ourselves to the posterior distributions of the hyper-parameters <span class="math inline">\(\rho\)</span>, <span class="math inline">\(\tau^2_y\)</span>, <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(r\)</span>. In particular, we are interested in the marginal posterior distribution for each parameter. All of them are stored in <span class="math inline">\(\texttt{res\$marginals.hyper}\)</span>. Inside it, you can find:</p>
@@ -744,7 +751,7 @@ plot(poly.barrier, add=T, col=&#39;grey&#39;, xlim = c(0,10))</code></pre>
 <h1>References</h1>
 <div id="refs" class="references">
 <div id="ref-fuglstad2017">
-<p>Fuglstad, Geir-Arne, Daniel Simpson, Finn Lindgren, and Håvard Rue. 2017. “Constructing Priors That Penalize the Complexity of Gaussian Random Fields.” <em>Journal of the American Statistical Association</em>, no. just-accepted. Taylor &amp; Francis.</p>
+<p>Fuglstad, Geir-Arne, Daniel Simpson, Finn Lindgren, and Håvard Rue. 2017. “Constructing Priors That Penalize the Complexity of Gaussian Random Fields.” <em>Journal of the American Statistical Association</em>, nos. just-accepted. Taylor &amp; Francis.</p>
 </div>
 <div id="ref-kallasvuo2016modeling">
 <p>Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016. “Modeling the Spatial Distribution of Larval Fish Abundance Provides Essential Information for Management.” <em>Canadian Journal of Fisheries and Aquatic Sciences</em>, no. ja. NRC Research Press.</p>

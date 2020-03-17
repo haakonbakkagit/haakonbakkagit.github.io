@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -470,7 +476,7 @@ formula1 = y ~ x1 + x2 + f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></p
 ##    c(&quot;inla(formula = formula1, family = family1, data = df, 
 ##    Ntrials = Ntrials, &quot;, &quot; control.family = control.family1)&quot;) 
 ## Time used:
-##     Pre = 2, Running = 0.214, Post = 0.114, Total = 2.33 
+##     Pre = 1.44, Running = 0.177, Post = 0.0735, Total = 1.69 
 ## Fixed effects:
 ##              mean   sd 0.025quant 0.5quant 0.97quant  mode kld
 ## (Intercept) -0.39 0.18      -0.73    -0.39    -0.044 -0.40   0
@@ -483,7 +489,7 @@ formula1 = y ~ x1 + x2 + f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></p
 ## 
 ## Model hyperparameters:
 ##                       mean      sd 0.025quant 0.5quant 0.97quant mode
-## Precision for plate 111.06 1231.31       2.98    10.91    225.97 6.06
+## Precision for plate 111.06 1231.28       2.98    10.91    225.97 6.06
 ## 
 ## Expected number of effective parameters(stdev): 9.91(2.94)
 ## Number of equivalent replicates : 2.12 

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -376,6 +382,7 @@ div.tocify {
 </div>
 
 
+
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>This pages discusses mesh creating near a coastline. The discussion also includes the general tips.</p>
@@ -426,34 +433,34 @@ points(df$locx, df$locy, col=&quot;blue&quot;, cex=0.5)</code></pre>
 <p><img src="btopic104_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>We look at our data.</p>
 <pre class="r"><code>summary(df)</code></pre>
-<pre><code>##     y.smelt      exposure         locx           locy         dptLUKE    
-##  Min.   : 0   Min.   :22.7   Min.   : 1.7   Min.   : 0.6   Min.   :-1.0  
-##  1st Qu.: 0   1st Qu.:22.7   1st Qu.: 6.2   1st Qu.: 4.2   1st Qu.:-0.7  
-##  Median : 0   Median :22.7   Median : 8.7   Median : 6.4   Median :-0.3  
-##  Mean   : 2   Mean   :24.6   Mean   : 9.1   Mean   : 6.3   Mean   : 0.0  
-##  3rd Qu.: 0   3rd Qu.:28.4   3rd Qu.:12.2   3rd Qu.: 8.3   3rd Qu.: 0.5  
-##  Max.   :56   Max.   :28.4   Max.   :15.8   Max.   :12.3   Max.   : 4.5  
-##    dptavg15km       dist30m        joetdsumsq     lined15km    
-##  Min.   :-1.65   Min.   :-1.33   Min.   :0.00   Min.   :-2.46  
-##  1st Qu.:-0.74   1st Qu.:-0.78   1st Qu.:0.00   1st Qu.:-0.67  
-##  Median :-0.09   Median :-0.17   Median :0.00   Median :-0.11  
-##  Mean   : 0.00   Mean   : 0.00   Mean   :0.44   Mean   : 0.00  
-##  3rd Qu.: 0.55   3rd Qu.: 0.67   3rd Qu.:1.00   3rd Qu.: 0.86  
-##  Max.   : 2.86   Max.   : 2.54   Max.   :1.00   Max.   : 2.04  
-##     swmlog10        temjul15          year         y.perch    
-##  Min.   :-2.73   Min.   :-1.14   Min.   :0.00   Min.   : 0.0  
-##  1st Qu.:-0.73   1st Qu.:-0.75   1st Qu.:0.00   1st Qu.: 0.0  
-##  Median : 0.07   Median :-0.35   Median :0.00   Median : 0.0  
-##  Mean   : 0.00   Mean   : 0.00   Mean   :0.33   Mean   : 0.5  
-##  3rd Qu.: 0.67   3rd Qu.: 0.48   3rd Qu.:1.00   3rd Qu.: 0.0  
-##  Max.   : 2.48   Max.   : 2.89   Max.   :1.00   Max.   :13.0  
-##     y.pikep   
-##  Min.   :  0  
-##  1st Qu.:  0  
-##  Median :  0  
-##  Mean   :  4  
-##  3rd Qu.:  2  
-##  Max.   :173</code></pre>
+<pre><code>##     y.smelt      exposure         locx           locy     
+##  Min.   : 0   Min.   :22.7   Min.   : 1.7   Min.   : 0.6  
+##  1st Qu.: 0   1st Qu.:22.7   1st Qu.: 6.2   1st Qu.: 4.2  
+##  Median : 0   Median :22.7   Median : 8.7   Median : 6.4  
+##  Mean   : 2   Mean   :24.6   Mean   : 9.1   Mean   : 6.3  
+##  3rd Qu.: 0   3rd Qu.:28.4   3rd Qu.:12.2   3rd Qu.: 8.3  
+##  Max.   :56   Max.   :28.4   Max.   :15.8   Max.   :12.3  
+##     dptLUKE       dptavg15km       dist30m        joetdsumsq  
+##  Min.   :-1.0   Min.   :-1.65   Min.   :-1.33   Min.   :0.00  
+##  1st Qu.:-0.7   1st Qu.:-0.74   1st Qu.:-0.78   1st Qu.:0.00  
+##  Median :-0.3   Median :-0.09   Median :-0.17   Median :0.00  
+##  Mean   : 0.0   Mean   : 0.00   Mean   : 0.00   Mean   :0.44  
+##  3rd Qu.: 0.5   3rd Qu.: 0.55   3rd Qu.: 0.67   3rd Qu.:1.00  
+##  Max.   : 4.5   Max.   : 2.86   Max.   : 2.54   Max.   :1.00  
+##    lined15km        swmlog10        temjul15          year     
+##  Min.   :-2.46   Min.   :-2.73   Min.   :-1.14   Min.   :0.00  
+##  1st Qu.:-0.67   1st Qu.:-0.73   1st Qu.:-0.75   1st Qu.:0.00  
+##  Median :-0.11   Median : 0.07   Median :-0.35   Median :0.00  
+##  Mean   : 0.00   Mean   : 0.00   Mean   : 0.00   Mean   :0.33  
+##  3rd Qu.: 0.86   3rd Qu.: 0.67   3rd Qu.: 0.48   3rd Qu.:1.00  
+##  Max.   : 2.04   Max.   : 2.48   Max.   : 2.89   Max.   :1.00  
+##     y.perch        y.pikep   
+##  Min.   : 0.0   Min.   :  0  
+##  1st Qu.: 0.0   1st Qu.:  0  
+##  Median : 0.0   Median :  0  
+##  Mean   : 0.5   Mean   :  4  
+##  3rd Qu.: 0.0   3rd Qu.:  2  
+##  Max.   :13.0   Max.   :173</code></pre>
 <p>Here, <code>y.smelt</code> is the counts of smelt larvae collected, <code>y.perch</code> is the counts of perch larvae, and <code>y.pikep</code> is the counts of pikeperch larvae. [TODO cite both papers] All the other columns are covariates.</p>
 </div>
 <div id="the-simplest-mesh" class="section level1">

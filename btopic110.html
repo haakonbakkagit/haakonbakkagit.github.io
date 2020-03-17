@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -374,6 +380,7 @@ div.tocify {
 <h4 class="date">BTopic110 updated 6. May 2017</h4>
 
 </div>
+
 
 
 <div id="about" class="section level1">
@@ -603,7 +610,7 @@ time.taken &lt;- end.time - start.time
 ##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
 ##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
 ## Time used:
-##     Pre = 2.24, Running = 1.63, Post = 0.177, Total = 4.05 
+##     Pre = 1.6, Running = 1.56, Post = 0.0911, Total = 3.25 
 ## Fixed effects:
 ##   mean  sd 0.025quant 0.5quant 0.97quant mode kld
 ## m 0.28 1.4       -2.5     0.28       2.9 0.28   0
@@ -635,7 +642,7 @@ time.taken &lt;- end.time - start.time
 ##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
 ##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
 ## Time used:
-##     Pre = 1.69, Running = 3.64, Post = 0.194, Total = 5.52 
+##     Pre = 1.22, Running = 3.64, Post = 0.0852, Total = 4.94 
 ## Fixed effects:
 ##   mean  sd 0.025quant 0.5quant 0.97quant mode kld
 ## m  3.3 2.7       -1.9      3.3       8.3  3.3   0
@@ -667,7 +674,7 @@ time.taken &lt;- end.time - start.time
 ##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
 ##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
 ## Time used:
-##     Pre = 2.29, Running = 0.949, Post = 0.13, Total = 3.37 
+##     Pre = 1.53, Running = 0.852, Post = 0.0935, Total = 2.48 
 ## Fixed effects:
 ##   mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## m  4.3 0.11        4.1      4.3       4.5  4.3   0

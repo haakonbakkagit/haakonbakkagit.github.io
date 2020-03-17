@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -238,6 +237,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -266,6 +266,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -380,6 +386,7 @@ div.tocify {
 </div>
 
 
+
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>In this page we explain how to build polygons with the <code>INLA</code> and <code>sp</code> packages. This functionality is very useful in particular when we are dealing with physical barriers, which are important in statistical models on maps (spatial statistics). On this page we show several practical examples of how to deal with polygons. After that we show how to create polygons representing a geographical area of interest, how to build a mesh on this area, and how to get some nice plot from Google Maps.</p>
@@ -388,7 +395,7 @@ div.tocify {
 <h1><span class="header-section-number">2</span> Polygons</h1>
 <div id="physical-boundaries" class="section level2">
 <h2><span class="header-section-number">2.1</span> Physical Boundaries</h2>
-<p>In many real spatial model we have to deal with areas with physical boundaries. Let us think about data coming from sensors placed in the sea recording a signal which doesn’t propagate on the earth. In this situation any island represents a physical boundary that we have to take into account when modeling. Pay attention to the boundary effect (link mesh page: <a href="https://haakonbakka.bitbucket.io/btopic126.html#21_what_is_mesh_and_why_we_need_it" class="uri">https://haakonbakka.bitbucket.io/btopic126.html#21_what_is_mesh_and_why_we_need_it</a>) On the other hand we could think of the opposite situation: We are interested in what happens on land and do not care about the sea. This is a pretty common situation in epidemiology in which we are interested in the diffusion of a certain disease where people live.</p>
+<p>In many real spatial model we have to deal with areas with physical boundaries. Let us think about data coming from sensors placed in the sea recording a signal which doesn’t propagate on the earth. In this situation any island represents a physical boundary that we have to take into account when modeling. Pay attention to the boundary effect (link mesh page: <a href="https://haakonbakkagit.github.io/btopic126.html#21_what_is_mesh_and_why_we_need_it" class="uri">https://haakonbakkagit.github.io/btopic126.html#21_what_is_mesh_and_why_we_need_it</a>) On the other hand we could think of the opposite situation: We are interested in what happens on land and do not care about the sea. This is a pretty common situation in epidemiology in which we are interested in the diffusion of a certain disease where people live.</p>
 </div>
 <div id="mesh-with-holes" class="section level2">
 <h2><span class="header-section-number">2.2</span> Mesh with holes</h2>
@@ -427,7 +434,7 @@ mesh &lt;- inla.mesh.2d(boundary=sp, max.edge=2)</code></pre>
 <div id="polygons-from-coastlines" class="section level1">
 <h1><span class="header-section-number">3</span> Polygons from coastlines</h1>
 <p>As we said before in many applications in geographical statistics it is necessary to deal with coastlines. In this section we show how to use world coastlines data in order to build a mesh in an area of interest. We consider the case where we are interested in something progating in the sea, the other case is easily deducible. If you are interested on how to <strong>build a mesh given a coastline</strong> please check this site:</p>
-<p><a href="https://haakonbakka.bitbucket.io/btopic104.html" class="uri">https://haakonbakka.bitbucket.io/btopic104.html</a></p>
+<p><a href="https://haakonbakkagit.github.io/btopic104.html" class="uri">https://haakonbakkagit.github.io/btopic104.html</a></p>
 <div id="download-coastlines-data" class="section level2">
 <h2><span class="header-section-number">3.1</span> Download Coastlines Data</h2>
 <p>First of all we need to downlad the shape file of the coastlines. The data is available on this webpage:</p>
@@ -489,7 +496,7 @@ writeOGR(shape_df, layer = &#39;shape5&#39;,&#39;temp/&#39; ,driver=&quot;ESRI S
 <p>To import the shape file we can use the same command as before. From now on, until the end of the page, you can run the code (we use ‘eval=TRUE’). [add where to download the shape file TODO: Haakon]</p>
 <pre class="r"><code>shape5 &lt;- readOGR(dsn = &quot;data/btopic127/&quot;, layer = &quot;shape5&quot;)</code></pre>
 <pre><code>## OGR data source with driver: ESRI Shapefile 
-## Source: &quot;/Users/bakkahc/Documents/GitHub/hc-private-code-and-web/web/webpage-source/data/btopic127&quot;, layer: &quot;shape5&quot;
+## Source: &quot;/Users/haakonbakka/Documents/GitHub/hc-private-code-and-web/web/webpage-source/data/btopic127&quot;, layer: &quot;shape5&quot;
 ## with 1 features
 ## It has 1 fields</code></pre>
 <p>Finally, we are ready to build our mesh with holes.</p>

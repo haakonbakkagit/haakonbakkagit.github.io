@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -498,11 +504,9 @@ plot(m.sigma, type=&quot;l&quot;, xlab = &quot;Special 2&quot;, ylab = &quot;Pro
 <p>Let us ignore the behaviour to the very left of the plots, as these are numerical artifacts, and focus on the multimodality shown. How multimodal a posterior is depends on the parametrisation. Similarly, we can always find a parametrisation where the posterior is a standard Gaussian. For the precision parametrisation, the most important information is in the decay rate for the tail of the distribution, which is not something we can easily visualise.</p>
 <p>All in all, this means that we cannot “interpret posterior plots by looking at them”, unless we are confident that the parametrisation represents the right thing. I would suggest using a parametrisation where the “model density” along the x-axis is in some sense “uniform”. This is true for the sigma parametrisation.</p>
 <p>To be on the safe side, I suggest just visualising the credible intervals, as these are “interpretable” on any (momotone) parametrisation.</p>
-</div>
-<div id="comments" class="section level1">
-<h1><span class="header-section-number">6</span> Comments</h1>
+<p>#Comments</p>
 <div id="references" class="section level2">
-<h2><span class="header-section-number">6.1</span> References</h2>
+<h2><span class="header-section-number">5.1</span> References</h2>
 </div>
 </div>
 

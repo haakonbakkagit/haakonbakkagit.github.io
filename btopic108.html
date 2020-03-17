@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -374,6 +380,7 @@ div.tocify {
 <h4 class="date">BTopic108 updated 10 Sept 2018</h4>
 
 </div>
+
 
 
 <div id="about" class="section level1">
@@ -598,7 +605,7 @@ control.family = list(hyper = list(prec = list(
 ##    control.family = control.family, control.inla = 
 ##    list(int.strategy = \&quot;eb\&quot;))&quot; ) 
 ## Time used:
-##     Pre = 2.55, Running = 4.45, Post = 0.243, Total = 7.25 
+##     Pre = 1.71, Running = 4.35, Post = 0.113, Total = 6.18 
 ## Fixed effects:
 ##       mean  sd 0.025quant 0.5quant 0.97quant mode kld
 ## Xcov1 0.21 1.8       -3.4     0.21       3.6 0.21   0

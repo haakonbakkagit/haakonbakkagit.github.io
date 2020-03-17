@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -237,6 +236,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -265,6 +265,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -378,6 +384,7 @@ div.tocify {
 </div>
 
 
+
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>In this page we show how to apply the Barrier model to a real data problem. These models arise naturally wherever physical, geographical or topological barriers have to be taken into account. Just to make some examples of barriers: land for aquatic animals (and viceversa), industrial areas for human population or cities and roads for woods and forests.<br />
@@ -477,7 +484,7 @@ library(fields)
 library(rgeos)
 library(ggplot2)</code></pre>
 <p>Let us start downloading the data:</p>
-<pre class="r"><code>load(file = &quot;https://haakonbakka.bitbucket.io/data/WebSiteData-Archipelago.RData&quot;)</code></pre>
+<pre class="r"><code>load(file = &quot;https://haakonbakkagit.github.io/data/WebSiteData-Archipelago.RData&quot;)</code></pre>
 <p>Alternatively, if you already have the data saved locally:</p>
 <pre class="r"><code>load(file = &quot;data/WebSiteData-Archipelago.RData&quot;)</code></pre>
 <p>The file contains:</p>
@@ -630,13 +637,13 @@ poly.barrier = inla.barrier.polygon(mesh, barrier.triangles)</code></pre>
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
 ## intersection at or near point 0 0</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
-## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
+## consider using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
 ## intersection at or near point -4.5999999999999996 -0.91499688999999995</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found; consider
-## using set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
+## consider using set_RGEOS_CheckValidity(2L)</code></pre>
 <p>Once that we have found the barrier triangles we can build our model very easily using R-<strong>INLA</strong>. The function is very sinilar to the one used for the stationary model, we add just an option specifying the barrier triangles. Also the priors for the hyper-parameters are the same.</p>
 <pre class="r"><code>barrier.model = inla.barrier.pcmatern(mesh, barrier.triangles = 
                                         barrier.triangles, 
@@ -676,7 +683,7 @@ M[[4]]$formula = update(M[[4]]$formula, .~. +m +
 <div id="plotting-priors" class="section level1">
 <h1><span class="header-section-number">6</span> Plotting Priors</h1>
 <p>This section is dedicated to show how to obtain some nice plots which highlight the difference between the stationary model and the Barrier model. Before anything else we define a function to find the autocorrelatiions given a precision matrix <span class="math inline">\(Q\)</span>, a location and a mesh.</p>
-<p>The following code is from <a href="https://haakonbakka.bitbucket.io/btopic105.html" class="uri">https://haakonbakka.bitbucket.io/btopic105.html</a>.</p>
+<p>The following code is from <a href="https://haakonbakkagit.github.io/btopic105.html" class="uri">https://haakonbakkagit.github.io/btopic105.html</a>.</p>
 <pre class="r"><code>local.find.correlation = function(Q, location, mesh) {
   # - vector of standard deviations
   sd = sqrt(diag(inla.qinv(Q)))

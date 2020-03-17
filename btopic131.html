@@ -9,9 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Haakon Bakka" />
 
 
-<title>This is a listing of all the topics</title>
+<title>Some of my personal ‘best practices’</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +20,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -248,6 +252,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -255,6 +322,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -298,58 +375,22 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">This is a listing of all the topics</h1>
+<h1 class="title toc-ignore">Some of my personal ‘best practices’</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic131 Placeholder</h4>
 
 </div>
 
 
-<div id="general" class="section level2">
-<h2>General</h2>
-<p>Topics include INLA, Bayesian modeling, the SPDE approach, and spatial/temporal modeling.</p>
-<p>The identifier for a topic is BTopicXYZ, where the XYZ comes in chronological order. The goal is that each webpage is product tested by more than one reviewer, it is then noted as “Finished”.</p>
-</div>
-<div id="the-topics" class="section level2">
-<h2>The topics</h2>
-<p>BTopic101: No topic.</p>
-<p>BTopic102: <a href="./btopic102.html">Seeds example</a> <span style="color:grey">Quality:Final</span></p>
-<p>BTopic103: <a href="./btopic103.html">Simulation and inference with the Barrier model</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic104: <a href="./btopic104.html">Mesh Creation including Coastlines</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic106: <a href="./btopic106.html">Using a pure-iid model for the Seeds data</a> <span style="color:grey">Quality:Draft</span></p>
-<p>BTopic107: <a href="./btopic107.html">The Barrier model applied to the Archipelago data</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic108: <a href="./btopic108.html">A first example of spatial data modeling (Calcium data)</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic109: <a href="./btopic109.html">Installation and general troubleshooting</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic110: <a href="./btopic110.html">Ramsay’s horseshoe and the Barrier model</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic112: <a href="./btopic112.html">Predictions with iid effects - overdispersed poisson example</a> <span style="color:grey">Quality:OK Webpage </span></p>
-<p>BTopic113: <a href="./btopic113.html">Multivariate predictions on held-out data - binomial example</a> <span style="color:grey">Quality:OK Webpage </span></p>
-<p>BTopic114: <a href="./btopic114.html">How to make a bad mesh</a> <span style="color:grey">Quality:OK Webpage </span></p>
-<p>BTopic115: <a href="./btopic115.html">Analysing unemployment data with the AR1 Model</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic116: <a href="./btopic116.html">Unemployment data example</a> <span style="color:grey">Quality:OK webpage </span></p>
-<p>BTopic117: <a href="./btopic117.html">Time series and nonlinear effects: Simulation-Inference</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic119: <a href="./btopic119.html">A set of exercises</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic120: <a href="./btopic120.html">Basic computations with precision matrix: AR1 example</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic121: <a href="./btopic121.html">How INLA deals with hyper-parameters: 1D Reconstruction example</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic122: <a href="./btopic122.html">A simple spatial model: Simulation-inference</a> <span style="color:grey">Quality:Ok webpage </span></p>
-<p>BTopic123: <a href="./btopic123.html">Parametrisations matter for interpretation: Seeds example</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic124: <a href="./btopic124.html">Unknown covariates are included in the Gaussian noise</a> <span style="color:grey">Quality:OK webpage </span></p>
-<p>BTopic125: <a href="./btopic125.html">What I think about overdispersed Poisson</a> <span style="color:grey">Quality:OK webpage </span></p>
-<p>BTopic127: <a href="./btopic127.html">Polygons and Coastlines</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic128: <a href="./btopic128.html">Apply Barrier Model to the Archipelago Data</a> <span style="color:grey">Quality:Draft </span> (This is an extended version of btopic107, expected to replace 107 in the near future.)</p>
-<div id="quality-levels" class="section level3">
-<h3>Quality levels</h3>
-<p>Draft: Not recommended for reading. The idea is there but the execution is poor, or not checked.</p>
-<p>OK webpage: A suitable version 1. Checked for errors.</p>
-<p>Error checked: Carefully checked for mathematical errors and spell-checked.</p>
-<p>Product tested: Tested and checked by at least one person (other than me).</p>
-<p>Final: Tested on several people, statisticians and applied practitioners. (Can still be updated with minor changes.)</p>
-</div>
-</div>
-<div id="other-pages" class="section level2">
-<h2>Other pages</h2>
-<p><a href="words.html#the-detailed-list">A list of words, as used in these topics</a></p>
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -382,6 +423,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -403,7 +409,7 @@ lines(fun, col=&quot;darkgreen&quot;)</code></pre>
 <li><p><strong>Data</strong>: Gaussian observations (iid) with precision <span class="math inline">\(\tau\)</span> <span class="math display">\[ y_{i} \mid x_{i}, \theta \;\sim\; {\mathcal N}(x_{i}, \tau^ {-1}) \]</span></p></li>
 <li><p><strong>Latent model</strong>: A random walk of second order <code>model=&quot;rw2&quot;</code></p></li>
 </ol>
-<p><span class="math display">\[\pi(\boldsymbol{x} \mid \theta) \propto \theta^{(n-2)/2}
+<p><span class="math display">\[\pi(\mathbf{x} \mid \theta) \propto \theta^{(n-2)/2}
 \exp\left(
 -\frac{\theta}{2} \sum_{i=3}^{n} (x_{i} - 2x_{i-1}+x_{i-2})^{2}
 \right)
@@ -420,12 +426,10 @@ lines(fun, col=&quot;darkgreen&quot;)</code></pre>
 </div>
 <div id="model-1-gaussian-fixed-hyper-posterior" class="section level1">
 <h1><span class="header-section-number">2</span> Model 1: Gaussian fixed-hyper posterior</h1>
-Assume first that <span class="math inline">\(\theta=1\)</span> and <span class="math inline">\(\tau=1\)</span>, fixed and known (so no hyper-priors). Then
-<span class="math display">\[\begin{align*}
+<p>Assume first that <span class="math inline">\(\theta=1\)</span> and <span class="math inline">\(\tau=1\)</span>, fixed and known (so no hyper-priors). Then <span class="math display">\[\begin{align*}
 \pi(x | y=\text{data}) &amp;\propto \pi(x , y=\text{data}) \\
 &amp;\propto \pi(y=\text{data}|x) \pi(x)
-\end{align*}\]</span>
-<p>where everything is Gaussian. To renormalise, we need to compute a determinant.</p>
+\end{align*}\]</span> where everything is Gaussian. To renormalise, we need to compute a determinant.</p>
 <p>We fit this model:</p>
 <pre class="r"><code>hyper1 = list(prec=list(initial=0, fixed=T))
 formula1 = y ~ -1 + f(idx, model=&quot;rw2&quot;, hyper=hyper1)
@@ -449,16 +453,16 @@ local.plot.result(res1)</code></pre>
 <div id="posterior-for-theta" class="section level2">
 <h2><span class="header-section-number">3.1</span> Posterior for <span class="math inline">\(\theta\)</span></h2>
 <p>Since <span class="math display">\[
-\boldsymbol{x}, \boldsymbol{y} \mid \theta \;\sim\; {\mathcal N}(\cdot,\cdot)
-\]</span> (derived using <span class="math inline">\(\pi(\boldsymbol{x}, \boldsymbol{y} \mid \theta) \propto \pi(\boldsymbol{y} \mid \boldsymbol{x}, \theta) \: \pi(\boldsymbol{x} \mid \theta)\)</span>),</p>
+\mathbf{x}, \mathbf{y} \mid \theta \;\sim\; {\mathcal N}(\cdot,\cdot)
+\]</span> (derived using <span class="math inline">\(\pi(\mathbf{x}, \mathbf{y} \mid \theta) \propto \pi(\mathbf{y} \mid \mathbf{x}, \theta) \: \pi(\mathbf{x} \mid \theta)\)</span>),</p>
 <p>we can compute (numerically) all marginals, using that</p>
-<span class="math display">\[\begin{align*}
-\pi(\theta\mid\boldsymbol{y}) &amp;= \frac{\pi(\boldsymbol{x}, \theta \mid
-\boldsymbol{y})}{\pi(\boldsymbol{x} \mid \boldsymbol{y}, \theta)}\\
+<p><span class="math display">\[\begin{align*}
+\pi(\theta\mid\mathbf{y}) &amp;= \frac{\pi(\mathbf{x}, \theta \mid
+\mathbf{y})}{\pi(\mathbf{x} \mid \mathbf{y}, \theta)}\\
 &amp;\propto \frac{%%
-\overbrace{\pi(\boldsymbol{x}, \boldsymbol{y}\mid\theta)}^{\text{Gaussian}}
-\; \pi(\theta)}{\underbrace{\pi(\boldsymbol{x} \mid \boldsymbol{y}, \theta)}_{\text{Gaussian}}}
-\end{align*}\]</span>
+\overbrace{\pi(\mathbf{x}, \mathbf{y}\mid\theta)}^{\text{Gaussian}}
+\; \pi(\theta)}{\underbrace{\pi(\mathbf{x} \mid \mathbf{y}, \theta)}_{\text{Gaussian}}}
+\end{align*}\]</span></p>
 </div>
 <div id="computational-inla-code" class="section level2">
 <h2><span class="header-section-number">3.2</span> Computational INLA code</h2>

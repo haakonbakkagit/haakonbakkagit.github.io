@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -376,6 +382,7 @@ div.tocify {
 </div>
 
 
+
 <div id="about" class="section level2">
 <h2><span class="header-section-number">0.1</span> About</h2>
 <p>Plan: Do not use this topic, ever. Reason: This adds more “stuff” than it increases our understanding! Tradeoff not worth it.</p>
@@ -387,7 +394,7 @@ div.tocify {
 <pre class="r"><code>library(INLA)
 library(mgcv)
 
-#source(&#39;https://haakonbakka.bitbucket.io/functions-barriers-dt-models-march2017.R&#39;)
+#source(&#39;https://haakonbakkagit.github.io/functions-barriers-dt-models-march2017.R&#39;)
 # - if you have an internet connection
 source(&#39;functions-barriers-dt-models-march2017.R&#39;)
 # - if you have saved the file locally
@@ -504,13 +511,13 @@ Omega.SP = dt.polygon.omega(mesh, Omega)</code></pre>
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
 ## intersection at or near point -0.90000000000000002 0</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider using
-## set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider
+## using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
 ## intersection at or near point -2.3999999999999999 -0.47688736999999998</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider using
-## set_RGEOS_CheckValidity(2L)</code></pre>
+<pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider
+## using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre class="r"><code>plot(Omega.SP[[2]], col=&quot;grey&quot;, main=&quot;The barrier region (in grey)&quot;)</code></pre>
 <p><img src="btopic111_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre class="r"><code>Q.barrier = dt.create.Q(mesh, Omega, 
@@ -618,13 +625,13 @@ time.taken &lt;- end.time - start.time
 <pre class="r"><code>summary(M[[1]]$res)</code></pre>
 <pre><code>## 
 ## Call:
-##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data = 
-##    inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
-##    inla.stack.A(stack)), control.family = list(hyper = hyper.iid), &quot;, 
-##    &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), control.mode = 
-##    list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
+##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data 
+##    = inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
+##    inla.stack.A(stack)), control.family = list(hyper = 
+##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
+##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
 ## Time used:
-##     Pre = 2.26, Running = 4.01, Post = 0.245, Total = 6.51 
+##     Pre = 1.56, Running = 4.04, Post = 0.102, Total = 5.7 
 ## Fixed effects:
 ##   mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## m 0.74 0.26       0.22     0.74       1.2 0.74   0
@@ -652,13 +659,13 @@ time.taken &lt;- end.time - start.time
 <pre class="r"><code>summary(M[[2]]$res)</code></pre>
 <pre><code>## 
 ## Call:
-##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data = 
-##    inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
-##    inla.stack.A(stack)), control.family = list(hyper = hyper.iid), &quot;, 
-##    &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), control.mode = 
-##    list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
+##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data 
+##    = inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
+##    inla.stack.A(stack)), control.family = list(hyper = 
+##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
+##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
 ## Time used:
-##     Pre = 1.71, Running = 14.1, Post = 0.265, Total = 16.1 
+##     Pre = 1.3, Running = 14.2, Post = 0.0992, Total = 15.6 
 ## Fixed effects:
 ##   mean    sd 0.025quant 0.5quant 0.97quant mode kld
 ## m 0.42 0.071       0.28     0.42      0.56 0.42   0

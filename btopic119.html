@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -433,13 +439,11 @@ cat(&quot;L = \n&quot;)</code></pre>
 </div>
 <div id="problem-a.3.-calculate-a-precision-matrix" class="section level2">
 <h2>Problem A.3. Calculate a precision matrix</h2>
-The model for <span class="math inline">\(u\)</span> is
-<span class="math display">\[\begin{align}
+<p>The model for <span class="math inline">\(u\)</span> is <span class="math display">\[\begin{align}
 u_i - u_{i-1}&amp;=  \epsilon_i  \qquad \text{for } i=2,3,4,5 \\
 u_1 - u_5 &amp;= \epsilon_1 \\
 \epsilon_i &amp;= \mathcal N(0, 3^2).
-\end{align}\]</span>
-<p>Write down the precision matrix for <span class="math inline">\(u\)</span>. This is <span class="math inline">\(Q\)</span> in <span class="math display">\[ u \sim \mathcal N(0, Q^ {-1}). \]</span></p>
+\end{align}\]</span> Write down the precision matrix for <span class="math inline">\(u\)</span>. This is <span class="math inline">\(Q\)</span> in <span class="math display">\[ u \sim \mathcal N(0, Q^ {-1}). \]</span></p>
 </div>
 </div>
 <div id="b.-problems-about-latent-gaussian-models" class="section level1">
@@ -459,20 +463,17 @@ u_1 - u_5 &amp;= \epsilon_1 \\
 <div id="problem-b.4." class="section level2">
 <h2>Problem B.4.</h2>
 <p>Explain why one of these is a valid Latent Gaussian Model (LGM) and the other is not.</p>
-<span class="math display">\[\begin{align}
+<p><span class="math display">\[\begin{align}
 \eta_i &amp;=  \beta_0 + X_{i} + U V_i \\
 \eta_i &amp;=  \beta_0 + \beta_1 X_{i} + U_i V_i
-\end{align}\]</span>
-Assume
-<span class="math display">\[\begin{align*}
+\end{align}\]</span> Assume <span class="math display">\[\begin{align*}
 y_i &amp;\sim Poiss(\lambda_i = e^ {\eta_i}) \\
 \beta_0 &amp;\sim exp(1) \\
 \beta_1 &amp;\sim exp(1) \\
 U &amp;\sim \mathcal N(0, 1) \\
 U_i &amp;\sim \mathcal N(0, 1) \quad \text{for all } i \\
 V_i &amp;\sim \mathcal N(0, 1) \quad \text{for all } i,
-\end{align*}\]</span>
-<p>and that <span class="math inline">\(X\)</span> is a known covariate.</p>
+\end{align*}\]</span> and that <span class="math inline">\(X\)</span> is a known covariate.</p>
 </div>
 </div>
 <div id="c.-conceptual-problems-about-inla-inference" class="section level1">

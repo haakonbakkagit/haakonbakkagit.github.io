@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -236,6 +235,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -264,6 +264,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -388,9 +394,9 @@ div.tocify {
 <h1><span class="header-section-number">2</span> The data</h1>
 <div id="if-you-copy-this-code-from-the-internet" class="section level2">
 <h2><span class="header-section-number">2.1</span> If you copy this code from the internet</h2>
-<p>The code on the remainder of this page assums that you have downloaded the following data file. You only need to run this once though. If you downloaded the entire “bitbucket repository” to view these pages offline you can ignore this code.</p>
+<p>The code on the remainder of this page assums that you have downloaded the following data file. You only need to run this once though. If you downloaded the entire “repository” to view these pages offline you can ignore this code.</p>
 <pre><code>dir.create(&quot;data&quot;)
-download.file(url = &quot;https://haakonbakka.bitbucket.io/data/harmonised-unemployment-rates-mo.csv&quot;, destfile = &quot;data/harmonised-unemployment-rates-mo.csv&quot;)</code></pre>
+download.file(url = &quot;https://haakonbakkagit.github.io/data/harmonised-unemployment-rates-mo.csv&quot;, destfile = &quot;data/harmonised-unemployment-rates-mo.csv&quot;)</code></pre>
 </div>
 <div id="data-summary" class="section level2">
 <h2><span class="header-section-number">2.2</span> Data summary</h2>
@@ -481,7 +487,7 @@ u_i &= \rho u_{i-1} + \epsilon_i \\
 ##    &quot;inla(formula = formula, family = \&quot;gaussian\&quot;, data = df, 
 ##    control.predictor = list(compute = TRUE))&quot; 
 ## Time used:
-##     Pre = 1.66, Running = 0.466, Post = 0.134, Total = 2.26 
+##     Pre = 1.37, Running = 0.404, Post = 0.0847, Total = 1.86 
 ## Fixed effects:
 ##             mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## (Intercept)  8.5 0.69        7.1      8.6       9.8  8.6   0
