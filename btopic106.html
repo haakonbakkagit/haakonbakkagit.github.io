@@ -72,6 +72,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
 
 
@@ -422,7 +423,7 @@ formula1 = y ~ f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
 ##    Ntrials = Ntrials, &quot;, &quot; control.compute = list(config = T), 
 ##    control.family = control.family1)&quot; ) 
 ## Time used:
-##     Pre = 1.32, Running = 0.119, Post = 0.162, Total = 1.6 
+##     Pre = 1.27, Running = 0.115, Post = 0.0829, Total = 1.47 
 ## Fixed effects:
 ##               mean   sd 0.025quant 0.5quant 0.97quant   mode kld
 ## (Intercept) -0.026 0.16      -0.35   -0.025      0.27 -0.022   0
@@ -458,13 +459,13 @@ formula1 = y ~ f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
 <pre class="r"><code>n.samples = 10000
 samples = inla.posterior.sample(n.samples, result = res1)
 (mean(samples[[1]]$latent[(1:nrow(df))][df$x1==0]) - mean(samples[[1]]$latent[(1:nrow(df))][df$x1==1]))</code></pre>
-<pre><code>## [1] 0.081</code></pre>
+<pre><code>## [1] 0.56</code></pre>
 <pre class="r"><code># - this gives the average difference between the linear predictor values for plates with the two different seed types
 samples.avg.diff = unlist(lapply(samples, FUN = function(x) mean(x$latent[(1:nrow(df))][df$x1==0]) - mean(x$latent[(1:nrow(df))][df$x1==1])))
 # - this uses the line above in lapply, to get all the samples
 summary(samples.avg.diff)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   -0.27    0.19    0.29    0.30    0.40    0.99</code></pre>
+##   -0.37    0.18    0.29    0.29    0.40    0.97</code></pre>
 <pre class="r"><code># - Note that the mean equals avg.diff</code></pre>
 <p>We plot the result to see the distribution.</p>
 <pre class="r"><code>plot(density(samples.avg.diff))</code></pre>

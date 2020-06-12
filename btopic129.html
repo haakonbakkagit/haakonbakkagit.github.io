@@ -73,6 +73,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
 
 
@@ -379,7 +380,7 @@ div.tocify {
 <h1 class="title toc-ignore">Spatio-Temporal Barrier Model</h1>
 <h4 class="author">Francesco Serafini</h4>
 <h4 class="author">Runbing Zheng</h4>
-<h4 class="date">17 March, 2020</h4>
+<h4 class="date">Updated in 2019</h4>
 
 </div>
 
@@ -582,8 +583,8 @@ y &lt;- x.hat + w + rnorm(n*k, 0, sd.y)
 w &lt;- factor(w)
 #see the mean  of y which have the same value of w
 tapply(y, w, mean)</code></pre>
-<pre><code>##    -1     0     1 
-## -1.25 -0.46  0.52</code></pre>
+<pre><code>##     -1      0      1 
+## -1.040  0.058  1.077</code></pre>
 <p>The last step: organize our data in a data frame. Sometimes, it may happen that we have different data locations for different times. To show that, we just drop half of the observations. The provided code still works in the case in which we have totally misaligned data points. In the below data frame, there is also an index variable representing the time at which each observation is recorded.</p>
 <pre class="r"><code>isel &lt;- sample(1:(n*k), n*k/2)
 dat &lt;- data.frame(y=as.vector(y),
@@ -665,19 +666,19 @@ res &lt;- inla(formula, data=inla.stack.data(stack),
             control.mode=list(restart=T, theta=init)) # line to add to speed up
 
 res$internal.summary.hyperpar$mode</code></pre>
-<pre><code>## [1] 4.476 1.043 0.015 1.770</code></pre>
+<pre><code>## [1]  4.5159  1.0090 -0.0087  1.6808</code></pre>
 </div>
 <div id="results" class="section level2">
 <h2><span class="header-section-number">4.3</span> Results</h2>
 <p>In this section, we take a look at the performances of our model and we show how to obtain some nice plots of the posterior distributions and the random effect. Let us start looking at the coefficient of the categorical variable <span class="math inline">\(\boldsymbol{w}\)</span>, they should reflect the values of the mean of the variable <span class="math inline">\(\boldsymbol{y}\)</span> for each category. As we can see they are pretty similar and the observed means are in <span class="math inline">\(95%\)</span> confidence interval of the coefficients.</p>
 <pre class="r"><code>tapply(dat$y, dat$w, mean)  # Observed mean for each covariate level</code></pre>
 <pre><code>##    -1     0     1 
-## -1.27 -0.52  0.39</code></pre>
+## -1.09  0.16  0.95</code></pre>
 <pre class="r"><code>round(res$summary.fixed,4) # Coefficients of the categorical variable</code></pre>
 <pre><code>##      mean   sd 0.025quant 0.5quant 0.97quant  mode kld
-## w-1 -1.36 0.26      -1.88    -1.36     -0.87 -1.36   0
-## w0  -0.35 0.26      -0.87    -0.35      0.15 -0.35   0
-## w1   0.63 0.26       0.12     0.63      1.13  0.63   0</code></pre>
+## w-1 -0.91 0.25      -1.40    -0.91     -0.45 -0.91   0
+## w0   0.11 0.25      -0.37     0.11      0.57  0.11   0
+## w1   1.09 0.25       0.61     1.09      1.55  1.09   0</code></pre>
 <div id="marginal-posterior-distribution-plot" class="section level3">
 <h3><span class="header-section-number">4.3.1</span> Marginal Posterior Distribution Plot</h3>
 <p>The function <span class="math inline">\(\texttt{inla()}\)</span> gives us many objects as output, <span class="math inline">\(51\)</span> to be precise. It’s like the Supermarket of your analysis, you can find everything you need in there. Of course, we are not going to review all the elements of the list. For now, we limit ourselves to the posterior distributions of the hyper-parameters <span class="math inline">\(\rho\)</span>, <span class="math inline">\(\tau^2_y\)</span>, <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(r\)</span>. In particular, we are interested in the marginal posterior distribution for each parameter. All of them are stored in <span class="math inline">\(\texttt{res\$marginals.hyper}\)</span>. Inside it, you can find:</p>

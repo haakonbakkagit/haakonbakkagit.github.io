@@ -16,10 +16,13 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -69,6 +72,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
 
 
@@ -249,6 +253,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -256,6 +323,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -305,30 +382,17 @@ $(document).ready(function () {
 
 </div>
 
-<div id="TOC">
-<ul>
-<li><a href="#about">About</a><ul>
-<li><a href="#mesh-as-a-gate">Mesh as a “gate”</a></li>
-</ul></li>
-<li><a href="#initialise-r-session">Initialise R session</a></li>
-<li><a href="#mesh1-a-mesh-without-any-outer-boundary">Mesh1: A mesh without any outer boundary</a></li>
-<li><a href="#mesh-2-a-too-small-outer-extension">Mesh 2: A too small outer extension</a></li>
-<li><a href="#mesh-3-a-fine-scale-outer-extension">Mesh 3: A fine scale outer extension</a></li>
-<li><a href="#mesh-4-put-nodes-really-close">Mesh 4: Put nodes really close</a></li>
-<li><a href="#comments">Comments</a></li>
-</ul>
-</div>
 
 <div id="about" class="section level1">
-<h1>About</h1>
+<h1><span class="header-section-number">1</span> About</h1>
 <p>In this topic we show how to make a bad mesh. When would you like to get a bad mesh? Never! But showing what not to do is very instructive.</p>
 <div id="mesh-as-a-gate" class="section level2">
-<h2>Mesh as a “gate”</h2>
+<h2><span class="header-section-number">1.1</span> Mesh as a “gate”</h2>
 <p>As mentioned in topic <a href="./btopic104.html">Mesh Creation including Coastlines</a>, we think of mesh as a “gate”, in the sense that you do not need to know how it is made, only how to verify that it works. This means that you can use a mesh created by another, as long as you plot it and make sure it “looks good”, and the other things mentioned in that topic.</p>
 </div>
 </div>
 <div id="initialise-r-session" class="section level1">
-<h1>Initialise R session</h1>
+<h1><span class="header-section-number">2</span> Initialise R session</h1>
 <p>We load any packages and set global options. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
 <pre class="r"><code>library(INLA)
 rm(list=ls())
@@ -336,7 +400,7 @@ options(width=70, digits=2)
 set.seed(2017)</code></pre>
 </div>
 <div id="mesh1-a-mesh-without-any-outer-boundary" class="section level1">
-<h1>Mesh1: A mesh without any outer boundary</h1>
+<h1><span class="header-section-number">3</span> Mesh1: A mesh without any outer boundary</h1>
 <pre class="r"><code>loc = matrix(c(1, 0, 1, 1, 0, 1, 0,0), ncol=2, byrow = T)
 mesh1 = inla.mesh.2d(loc, max.edge = 0.2)
 plot(mesh1)</code></pre>
@@ -345,7 +409,7 @@ plot(mesh1)</code></pre>
 <p>Fix: Add an outer extension, using the <code>offset</code> argument.</p>
 </div>
 <div id="mesh-2-a-too-small-outer-extension" class="section level1">
-<h1>Mesh 2: A too small outer extension</h1>
+<h1><span class="header-section-number">4</span> Mesh 2: A too small outer extension</h1>
 <pre class="r"><code>loc = matrix(c(1, 0, 1, 1, 0, 1, 0,0), ncol=2, byrow = T)
 mesh2 = inla.mesh.2d(loc, max.edge = 0.2, offset = c(0, 0.05))
 plot(mesh2)</code></pre>
@@ -355,7 +419,7 @@ plot(mesh2)</code></pre>
 <p>Fix: Make the offset value nr 2 larger.</p>
 </div>
 <div id="mesh-3-a-fine-scale-outer-extension" class="section level1">
-<h1>Mesh 3: A fine scale outer extension</h1>
+<h1><span class="header-section-number">5</span> Mesh 3: A fine scale outer extension</h1>
 <pre class="r"><code>loc = matrix(c(1, 0, 1, 1, 0, 1, 0,0), ncol=2, byrow = T)
 mesh3 = inla.mesh.2d(loc, max.edge = c(0.2, 0.2), offset = c(0, 0.5))
 plot(mesh3)</code></pre>
@@ -365,7 +429,7 @@ plot(mesh3)</code></pre>
 <p>Improvement: INLA may require 4 times as much time and memory to fit the bad compared to the good choice.</p>
 </div>
 <div id="mesh-4-put-nodes-really-close" class="section level1">
-<h1>Mesh 4: Put nodes really close</h1>
+<h1><span class="header-section-number">6</span> Mesh 4: Put nodes really close</h1>
 <pre class="r"><code>loc = matrix(c(1, 0, 1, 1, 0, 1, 0, 0, 0.5, 0.5, 0.499, 0.499, 0.3, 0.3, 0.2999, 0.2999), ncol=2, byrow = T)
 mesh4 = inla.mesh.2d(loc, max.edge = 0.2, cutoff = 1e-12)
 plot(mesh4)
@@ -375,11 +439,13 @@ points(loc)</code></pre>
 <p>Fix: Increase the <code>cutoff</code>, ignoring locations close to another location. E.g. set <code>cutoff = 0.002</code></p>
 </div>
 <div id="comments" class="section level1">
-<h1>Comments</h1>
+<h1><span class="header-section-number">7</span> Comments</h1>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -412,6 +478,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

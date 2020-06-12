@@ -12,7 +12,7 @@
 <meta name="author" content="Haakon Bakka" />
 
 
-<title>First nonsep example</title>
+<title>Comparing forecasts from separable models and non-separable diffusion models</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -72,6 +72,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
 
 
@@ -375,9 +376,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">First nonsep example</h1>
+<h1 class="title toc-ignore">Comparing forecasts from separable models and non-separable diffusion models</h1>
 <h4 class="author">Haakon Bakka</h4>
-<h4 class="date">BTopic132 Placeholder</h4>
+<h4 class="date">btopic132 updated 18 March 2020</h4>
 
 </div>
 
@@ -385,6 +386,347 @@ div.tocify {
 
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
+<p>In this example we show the difference between the forecasts from 2 space-time models, one separable model, and one non-separable diffusion-based model.</p>
+<p>This is supplementary material to the paper <em>The diffusion-based extension of the Matérn field to space-time</em> by Bakka et. al. <a href="https://arxiv.org/abs/2006.04917" class="uri">https://arxiv.org/abs/2006.04917</a> Here we see a comparison of the two first of the three main examples in that paper.</p>
+<div id="setup" class="section level2">
+<h2><span class="header-section-number">1.1</span> Setup</h2>
+<p>First, you need to download the functions we will use to your current working directory <code>getwd()</code>.</p>
+<pre><code>download.file(&quot;https://raw.githubusercontent.com/haakonbakkagit/haakonbakkagit.github.io/master/functions-rgeneric-121-march2020.R&quot;, destfile=&quot;functions-rgeneric-121-march2020.R&quot;)</code></pre>
+<pre class="r"><code>library(INLA)
+library(fields)
+library(viridisLite)
+library(gtools)
+## Load functions
+source(&quot;functions-rgeneric-121-march2020.R&quot;)
+## Seed
+set.seed(20200119)</code></pre>
+</div>
+<div id="input" class="section level2">
+<h2><span class="header-section-number">1.2</span> Input</h2>
+<p>These are the variables you may want to change and explore.</p>
+<pre class="r"><code>## Range in time
+## For nonseparable 
+## (we use a factor of 1.8 modification when comparing to separable, see paper)
+range.t = 3.5
+
+## Range in space
+range.s = 5
+
+## Max edge in spatial mesh
+## Small numbers makes algorithm very slow
+## Should be less than 1/4 of range.s, preferably much smaller
+## ex: 1.5, 1, 0.7, 0.5
+max.e = 1
+
+## Number of timepoints used
+## Must be 2 or greater
+t.max = 5</code></pre>
+</div>
+</div>
+<div id="create-spatial-and-temporal-meshes" class="section level1">
+<h1><span class="header-section-number">2</span> Create spatial and temporal meshes</h1>
+<p>We create the 1 dimensional temporal mesh, as a completely regular mesh.</p>
+<pre class="r"><code>mesh.t = inla.mesh.1d(1:t.max)</code></pre>
+<p>We create a simple 2 dimensional spatial mesh.</p>
+<pre class="r"><code>fake.locations = matrix(c(0,0,10,10, 0, 10, 10, 0), nrow = 4, byrow = T)
+mesh.s = inla.mesh.2d(loc = fake.locations, max.edge=max.e*c(1, 2))</code></pre>
+<pre class="r"><code>plot(mesh.s)</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="standard-inla-separable-model" class="section level1">
+<h1><span class="header-section-number">3</span> Standard INLA separable model</h1>
+<p>Here we run the standard separable (group) model that can be found in many INLA applications. See the SPDE book for details. <a href="https://becarioprecario.bitbucket.io/spde-gitbook/" class="uri">https://becarioprecario.bitbucket.io/spde-gitbook/</a></p>
+<div id="temporal-part" class="section level2">
+<h2><span class="header-section-number">3.1</span> Temporal part</h2>
+<p>First we use a hidden function to extract the Q matrix used by the AR1 model, to investigate it. This part is only to showcase exatcly what the AR1 model is.</p>
+<pre class="r"><code>## Approx rho for decay in 6 time points
+approx.rho = 0.13^(1/6)
+theta2 = logit(approx.rho)
+N = t.max 
+Q = INLA:::inla.extract.Q(&#39;i&#39;, formula = y ~ f(i, model=&#39;ar1&#39;, hyper = list(prec=list(initial=0, fixed=T), theta2=list(initial=theta2, fixed=T))), data = data.frame(y=1:N, i=1:N))
+Q</code></pre>
+<pre><code>## 5 x 5 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                   
+## [1,]  1.22 -0.51  .     .     .   
+## [2,] -0.51  1.43 -0.51  .     .   
+## [3,]  .    -0.51  1.43 -0.51  .   
+## [4,]  .     .    -0.51  1.43 -0.51
+## [5,]  .     .     .    -0.51  1.22</code></pre>
+<pre class="r"><code>solve(Q)</code></pre>
+<pre><code>## 5 x 5 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                  
+## [1,] 1.000 0.422 0.18 0.075 0.032
+## [2,] 0.422 1.000 0.42 0.178 0.075
+## [3,] 0.178 0.422 1.00 0.422 0.178
+## [4,] 0.075 0.178 0.42 1.000 0.422
+## [5,] 0.032 0.075 0.18 0.422 1.000</code></pre>
+</div>
+<div id="spatial-part" class="section level2">
+<h2><span class="header-section-number">3.2</span> Spatial part</h2>
+<p>We set up the standard spatial model.</p>
+<pre class="r"><code>mco.space = inla.spde2.pcmatern(mesh = mesh.s, prior.range = c(5, .5), prior.sigma = c(1, .5))</code></pre>
+<p>We extract the preciison matrix of the spatial model, using our chosen spatial range.</p>
+<pre class="r"><code>Qsep.s = inla.spde2.precision(spde = mco.space, theta = log(c(range.s,1)))</code></pre>
+</div>
+</div>
+<div id="simulate-for-t1" class="section level1">
+<h1><span class="header-section-number">4</span> Simulate for t=1</h1>
+<p>We simulate a dataset for <span class="math inline">\(t=1\)</span>. We will only observe data at <span class="math inline">\(t=1\)</span>, and no data at <span class="math inline">\(t&gt;1\)</span>.</p>
+<pre class="r"><code>## Gaussian noise
+sig.eps = 0.01
+## Seed used in C code
+inla.seed = sample(1E12, 1)
+## Sample with INLA
+u.sim = inla.qsample(n=1, Qsep.s, seed = inla.seed, num.threads=1)[, 1]
+u.sim = u.sim - mean(u.sim)
+sim.noise = rnorm(length(u.sim), 0, 1) * sig.eps
+## st is spacetime index
+df1 = data.frame(y=u.sim+sim.noise,
+                u.sim = u.sim, sim.noise=sim.noise,
+                year=1)
+summary(df1)</code></pre>
+<pre><code>##        y            u.sim        sim.noise           year  
+##  Min.   :-3.4   Min.   :-3.4   Min.   :-0.027   Min.   :1  
+##  1st Qu.:-0.8   1st Qu.:-0.8   1st Qu.:-0.006   1st Qu.:1  
+##  Median :-0.2   Median :-0.2   Median : 0.001   Median :1  
+##  Mean   : 0.0   Mean   : 0.0   Mean   : 0.000   Mean   :1  
+##  3rd Qu.: 0.6   3rd Qu.: 0.7   3rd Qu.: 0.007   3rd Qu.:1  
+##  Max.   : 5.5   Max.   : 5.5   Max.   : 0.042   Max.   :1</code></pre>
+<p>The easiest way to get predictions for <span class="math inline">\(t&gt;1\)</span> is to add fake data locations, with no observation (coded as <code>NA</code>).</p>
+<pre class="r"><code>## df2: Augment df1 with the needed prediction locations
+temp.na = rep(NA, (t.max-1)*mesh.s$n)
+df2 = data.frame(y=c(df1$y, temp.na), 
+                 locx = rep(mesh.s$loc[, 1], t.max),
+                 locy = rep(mesh.s$loc[, 2], t.max),
+                 year = rep(1:t.max, each=mesh.s$n)
+)
+
+## Our final dataframe
+summary(df2)</code></pre>
+<pre><code>##        y             locx           locy           year  
+##  Min.   :-3     Min.   :-3.0   Min.   :-3.0   Min.   :1  
+##  1st Qu.:-1     1st Qu.: 1.7   1st Qu.: 1.6   1st Qu.:2  
+##  Median : 0     Median : 5.0   Median : 5.0   Median :3  
+##  Mean   : 0     Mean   : 5.0   Mean   : 5.0   Mean   :3  
+##  3rd Qu.: 1     3rd Qu.: 8.4   3rd Qu.: 8.3   3rd Qu.:4  
+##  Max.   : 6     Max.   :13.0   Max.   :13.0   Max.   :5  
+##  NA&#39;s   :1736</code></pre>
+</div>
+<div id="nonseparable-model-rgeneric-object" class="section level1">
+<h1><span class="header-section-number">5</span> Nonseparable model: rgeneric object</h1>
+<p>In January 2020, the nonseparable model is coded in the rgeneric interface of INLA. This will make it slower than if it was implemented in C.</p>
+<pre class="r"><code>## Rgeneric object containing needed variables
+## Mesh in space and time
+## Lambdas for exponential prior on ransformed hyper-param (1/rt, 1/rs and sig)
+rgen.obj = list(mesh.space = mesh.s,
+                mesh.time = mesh.t,
+                lambdas = c(1,1,1))
+
+## Nonsep model definition
+nm = mesh.s$n*mesh.t$n
+
+## The non-separable random effect / random field
+## We use the function loaded in the beginning of the document
+mco.nonsep = inla.rgeneric.define(
+  model=stmodel121.interpret, debug=FALSE, n=nm, obj=rgen.obj)</code></pre>
+</div>
+<div id="function-for-plotting" class="section level1">
+<h1><span class="header-section-number">6</span> Function for plotting</h1>
+<p>A generic function for plotting spatial fields in this example.</p>
+<pre class="r"><code>local.plot.field = function(field, mesh=mesh.s, 
+                            timepoint=1, xlim, ylim, ...){
+  ## Here: mesh is spatial mesh only
+  # Possible error when using a wrong spatial mesh
+  stopifnot((length(field) %% mesh$n) ==0 )
+  
+  field = field[1:mesh$n + (timepoint-1)*mesh$n]
+  # - only use the relevant part of the incoming vector
+  
+  # Choose plotting region to be the same as the study area polygon
+  if (missing(xlim)) xlim = c(0, 10)
+  if (missing(ylim)) ylim = c(0, 10)
+  
+  # Project the mesh onto a 300x300 grid
+  proj = inla.mesh.projector(mesh, xlim = xlim, 
+                             ylim = ylim, dims=c(300, 300))
+  
+  # Do the projection 
+  field.proj = inla.mesh.project(proj, field)
+  
+  # Plot it
+  image.plot(list(x = proj$x, y=proj$y, z = field.proj), col = plasma(64),
+             xlim = xlim, ylim = ylim, ...)  
+}</code></pre>
+<div id="plot-simulation" class="section level2">
+<h2><span class="header-section-number">6.1</span> Plot simulation</h2>
+<p>We plot the simulated true field. The observations are this truth added some measurement noise.</p>
+<pre class="r"><code>local.plot.field(field = df1$u.sim, mesh = mesh.s)</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+</div>
+<div id="model-setup" class="section level1">
+<h1><span class="header-section-number">7</span> Model setup</h1>
+<p>We define an empty list to conatin our prior models.</p>
+<pre class="r"><code>M = list()
+for (i in 1:2) M[[i]] = list()</code></pre>
+<div id="stack-setup" class="section level2">
+<h2><span class="header-section-number">7.1</span> Stack setup</h2>
+<p>We set up the stack as in the SPDE book <a href="https://becarioprecario.bitbucket.io/spde-gitbook/" class="uri">https://becarioprecario.bitbucket.io/spde-gitbook/</a>.</p>
+<pre class="r"><code>iset = inla.spde.make.index(&#39;i&#39;, n.spde = mesh.s$n, n.group = t.max)
+A = inla.spde.make.A(mesh = mesh.s, loc = cbind(df2$locx, df2$locy), group = df2$year) 
+sum(A-Diagonal(nrow(A)))</code></pre>
+<pre><code>## [1] -3.6e-14</code></pre>
+<p>Note that this A matrix is a diagonal matrix, since we have observations only on the nodes of the mesh. In this case the stack is not really needed, but we include it anyway to make the code generalise more easily (to your needs).</p>
+<pre class="r"><code>stack = list()
+stack[[1]] = inla.stack(
+  data = list(y = df2$y), 
+  A = list(A, 1), 
+  effects = list(iset, m = rep(1, nrow(df2))),
+  tag = &#39;stdata&#39;) </code></pre>
+<pre class="r"><code>## Special: Since the index is very structured we can use the same A matrix here
+## We know that iset is in the right order 
+## (year 1 then year 2 etc, with the whole spatial mesh each time)
+i.nonsep = 1:nm
+
+stack[[2]] = inla.stack(
+  data = list(y = df2$y), 
+  A = list(A, 1), 
+  effects = list(i.nonsep=i.nonsep, m = rep(1, nrow(df2))),
+  tag = &#39;stdata&#39;) </code></pre>
+</div>
+<div id="separable-model" class="section level2">
+<h2><span class="header-section-number">7.2</span> Separable model</h2>
+<p>Next we create the kronecker product (group) model. We cannot infer the temporal dependency, since we only have data for <span class="math inline">\(t=1\)</span>, so we have to fix this parameter.</p>
+<pre class="r"><code>## We want to fix the autocorrelation in time
+## The theta2 as defined before is the INLA internal parametrisation of rho
+hyper.ar1.rho = list(rho = list(initial=theta2, fixed=TRUE))
+form.sep = y ~ -1 + m + f(i, model = mco.space, group = i.group, 
+                     control.group = list(model=&quot;ar1&quot;, hyper = hyper.ar1.rho))
+M[[1]]$formula = form.sep</code></pre>
+</div>
+<div id="nonseparable-model" class="section level2">
+<h2><span class="header-section-number">7.3</span> Nonseparable model</h2>
+<p>We redefined the nonseparable model. Here we add the <code>fixed.theta</code> argument.</p>
+<pre class="r"><code>## We need to fix the temporal range in the non-separable model
+rgen.obj2 = rgen.obj
+rgen.obj2$fixed.theta = c(log(range.t), NA, NA)
+mco.nonsep.fix = inla.rgeneric.define(model=stmodel121.interpret, debug=FALSE, n=nm, obj=rgen.obj2)
+
+form.nonsep = y ~ -1 + m + f(i.nonsep, model=mco.nonsep.fix, n=nm)
+M[[2]]$formula = form.nonsep</code></pre>
+</div>
+<div id="check-that-formulas-are-correct" class="section level2">
+<h2><span class="header-section-number">7.4</span> Check that formulas are correct</h2>
+<pre class="r"><code>print(M)</code></pre>
+<pre><code>## [[1]]
+## [[1]]$formula
+## y ~ -1 + m + f(i, model = mco.space, group = i.group, control.group = list(model = &quot;ar1&quot;, 
+##     hyper = hyper.ar1.rho))
+## 
+## 
+## [[2]]
+## [[2]]$formula
+## y ~ -1 + m + f(i.nonsep, model = mco.nonsep.fix, n = nm)</code></pre>
+</div>
+</div>
+<div id="inference" class="section level1">
+<h1><span class="header-section-number">8</span> Inference</h1>
+<p>Setup some initial values (use NULL if you do not know them).</p>
+<pre class="r"><code>## WARNING: Set these variables to NULL if you change the model in any way!
+M[[1]]$init = c(1.775 , 0.153)
+M[[2]]$init = c(1.11 , -0.056)
+
+fits = list()</code></pre>
+<p>Run the INLA algorithm. This is the time consuming part of this script. Here, we fix the Gaussian nugget effect to be of the correct size, to save time and to get a more accurate comparison.</p>
+<pre class="r"><code>for (i in 1:length(M)){
+  print(paste(&quot;Running:  &quot;, i))
+  stk = stack[[i]]
+  fits[[i]] = inla(M[[i]]$formula,
+                   family=&quot;gaussian&quot;,
+                   control.family = list(hyper = list(prec = list(
+                     initial = log(sig.eps)*-2, fixed=T)
+                   )),
+                   data=inla.stack.data(stk),
+                   control.predictor=list(A=inla.stack.A(stk), compute=T),
+                   verbose=F,
+                   num.threads = 3,
+                   control.inla = list(int.strategy = &quot;eb&quot;),
+                   control.mode = list(restart=T, theta=M[[i]]$init),
+                   control.compute = list(dic=TRUE, cpo=TRUE, waic=T, 
+                           mlik=T, return.marginals=F, config=T, 
+                           openmp.strategy=&quot;default&quot;, smtp=&quot;taucs&quot;)
+)
+    print(round(fits[[i]]$cpu.used[4],2))
+}</code></pre>
+<pre><code>## [1] &quot;Running:   1&quot;
+## Total 
+##     7 
+## [1] &quot;Running:   2&quot;
+## Total 
+##    71</code></pre>
+<pre class="r"><code>## Check what we can set the initial values to
+for (i in 1:length(M)){
+    print(paste(round(fits[[i]]$internal.summary.hyperpar$mean, 3), collapse = &quot; , &quot;))
+}</code></pre>
+<pre><code>## [1] &quot;1.776 , 0.154&quot;
+## [1] &quot;1.109 , -0.056&quot;</code></pre>
+<pre class="r"><code>## Comparison
+fits[[1]]$summary.hyperpar[ ,c(4,3,5)]</code></pre>
+<pre><code>##             0.5quant 0.025quant 0.97quant
+## Range for i      5.8       4.54       8.0
+## Stdev for i      1.2       0.92       1.5</code></pre>
+<pre class="r"><code>## This only works in this specific case, when we fixed the first hyper-parameter
+data.frame(var=c(&quot;Range&quot;, &quot;Stdev&quot;), exp(fits[[2]]$summary.hyperpar[c(1,2), c(4,3,5)]))</code></pre>
+<pre><code>##                       var X0.5quant X0.025quant X0.97quant
+## Theta1 for i.nonsep Range      3.03        2.77        3.3
+## Theta2 for i.nonsep Stdev      0.94        0.83        1.1</code></pre>
+</div>
+<div id="plot-results" class="section level1">
+<h1><span class="header-section-number">9</span> Plot results</h1>
+<p>We extract the predictions that we want to plot. This</p>
+<pre class="r"><code>pred.sep = fits[[1]]$summary.random$i$mean + fits[[1]]$summary.fixed$mean[1]
+pred.nonsep = fits[[2]]$summary.random$i$mean + fits[[2]]$summary.fixed$mean[1]</code></pre>
+<div id="year-1" class="section level2">
+<h2><span class="header-section-number">9.1</span> Year 1</h2>
+<p>We set up some clever variables to improve visualisation across years. We define <code>zlim</code> to see the plots on the same scale. However, forecasts will regress to the mean as you go into the future, approximately by <code>approx.rho</code>. Since the mean is close to zero, we can use the factor <code>approx.rho</code> to discount the <code>zlim</code> every year. In the end we plot with different <code>zlim</code> every year, but the same <code>zlim</code> within each year.</p>
+<pre class="r"><code>## zlim for plots
+local.zlim = c(-2, 3)
+## Yearly reduction in zlim
+zlim.disc = approx.rho # discount factor</code></pre>
+<p>Predictions from separable model at year 1.</p>
+<pre class="r"><code>local.plot.field(pred.sep, timepoint = 1, zlim=local.zlim)</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p>Predictions from nonseparable model at year 1.</p>
+<pre class="r"><code>local.plot.field(pred.nonsep, timepoint = 1, zlim=local.zlim)</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p>The difference between the two predictions (or estimates) are very small. This is because we fitted a very informative spatial dataset at year 1.</p>
+<pre class="r"><code>## Difference between predictions.
+local.plot.field(pred.nonsep-pred.sep, timepoint = 1, zlim=c(-1,1))</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+</div>
+<div id="year-2" class="section level2">
+<h2><span class="header-section-number">9.2</span> Year 2</h2>
+<p>For year 2 we already see a large difference between the two models. This is large because the correlation between years is so small. With <code>range.t</code> set to 3.5, every year, there is a large change from the year before. If we set a longer temporal range, we observe less difference between the models at the 1 year forecast.</p>
+<pre class="r"><code>local.plot.field(pred.sep, timepoint = 2, zlim=local.zlim*zlim.disc)</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<pre class="r"><code>local.plot.field(pred.nonsep, timepoint = 2, zlim=local.zlim*zlim.disc)</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<pre class="r"><code>local.plot.field(pred.nonsep-pred.sep, timepoint = 2, zlim=c(-1,1))</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+</div>
+<div id="year-5" class="section level2">
+<h2><span class="header-section-number">9.3</span> Year 5</h2>
+<p>You can plot any of the years; we plotted year 1 and 2, and now we show year 5. Year 5 illustrates how, into the far future, both the models have regressed so close to the mean that the pointwise difference is small.</p>
+<pre class="r"><code>if(t.max&gt;=5) local.plot.field(pred.sep, timepoint = 5, zlim=local.zlim*zlim.disc^5)</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<pre class="r"><code>if(t.max&gt;=5) local.plot.field(pred.nonsep, timepoint = 5, zlim=local.zlim*zlim.disc^5)</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<pre class="r"><code>if(t.max&gt;=5) local.plot.field(pred.nonsep-pred.sep, timepoint = 5, zlim=c(-1,1))</code></pre>
+<p><img src="btopic132_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+</div>
+</div>
+<div id="end" class="section level1">
+<h1><span class="header-section-number">10</span> END</h1>
 </div>
 
 

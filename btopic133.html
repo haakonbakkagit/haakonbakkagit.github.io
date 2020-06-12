@@ -12,7 +12,7 @@
 <meta name="author" content="Haakon Bakka" />
 
 
-<title>Second nonsep eaxmple placeholder</title>
+<title>Non-separable space-time modelling of temperature data in Europe</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -72,6 +72,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
 
 
@@ -375,16 +376,529 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Second nonsep eaxmple placeholder</h1>
+<h1 class="title toc-ignore">Non-separable space-time modelling of temperature data in Europe</h1>
 <h4 class="author">Haakon Bakka</h4>
-<h4 class="date">BTopic133 Placeholder</h4>
+<h4 class="date">btopic 133 updated 18 March 2020</h4>
 
 </div>
 
 
-
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
+<p>This is supplementary material to the paper <em>The diffusion-based extension of the Matérn field to space-time</em> by Bakka et. al. <a href="https://arxiv.org/abs/2006.04917" class="uri">https://arxiv.org/abs/2006.04917</a></p>
+<p>Here we see a comparison of the two first of the three main models in that paper, comparing the usual separable model to our corresponding non-separable model.</p>
+<p>Note that, as usual, this example is created to run quickly. For a space-time model to run fast we had to take many shortcuts. This code example is therefore not a good analysis of the data, but it shows the main steps in an analysis.</p>
+<div id="setup" class="section level2">
+<h2><span class="header-section-number">1.1</span> Setup</h2>
+<p>First, you need to download the functions we will use to your current working directory <code>getwd()</code>.</p>
+<pre><code>download.file(&quot;https://raw.githubusercontent.com/haakonbakkagit/haakonbakkagit.github.io/master/functions-rgeneric-121-march2020.R&quot;, destfile=&quot;functions-rgeneric-121-march2020.R&quot;)</code></pre>
+<p>Then we need to download the data. This code will create a folder on your computer, under your current working directory.</p>
+<pre><code>dir.create(&quot;data/btopic133/&quot;, recursive = T, showWarnings = F)
+download.file(&quot;https://raw.githubusercontent.com/haakonbakkagit/haakonbakkagit.github.io/master/data/btopic133/tmed-eur.Rdata&quot;, destfile=&quot;data/btopic133/tmed-eur.Rdata.R&quot;)</code></pre>
+<pre class="r"><code>library(INLA)
+library(fields)
+library(viridisLite)
+library(gtools)
+library(mapdata)
+## Load functions
+source(&quot;functions-rgeneric-121-march2020.R&quot;)</code></pre>
+</div>
+<div id="input" class="section level2">
+<h2><span class="header-section-number">1.2</span> Input</h2>
+<pre class="r"><code>## Number of time points used
+## Subsets the data
+t.max = 4
+## Max edge in spatial mesh
+## Small number makes algorithm very slow
+## ex: 2, 1.5
+max.e = 2</code></pre>
+</div>
+<div id="keeping-track-of-objects" class="section level2">
+<h2><span class="header-section-number">1.3</span> Keeping track of objects</h2>
+<p>We define empty lists to keep track of the models we will run.</p>
+<pre class="r"><code>## Prior model information
+M = list()
+for (i in 1:3) M[[i]] = list()
+## Posteriors
+fits = list()
+## stacks (see later)
+stack = list()</code></pre>
+</div>
+</div>
+<div id="data-on-weekly-median-temperatures" class="section level1">
+<h1><span class="header-section-number">2</span> Data on weekly median temperatures</h1>
+<div id="load-data" class="section level2">
+<h2><span class="header-section-number">2.1</span> Load data</h2>
+<p>This dataset was extracted and aggregated from the GCHND Data. See the DOI <a href="doi:10.1175/JTECH-D-11-00103.1" class="uri">doi:10.1175/JTECH-D-11-00103.1</a>. The data here is a very small subset, please see the full data for any real applications.</p>
+<pre class="r"><code>load(&quot;data/btopic133/tmed-eur.Rdata&quot;)</code></pre>
+<p>The data structure:</p>
+<pre class="r"><code>str(df.eur)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    14563 obs. of  6 variables:
+##  $ station  : Factor w/ 13513 levels &quot;AE000041196&quot;,..: 8 11 11 11 15 15 17 17 18 20 ...
+##  $ week     : num  11 8 12 11 8 11 11 8 11 8 ...
+##  $ tmed     : num  15 10.2 10.6 14.7 9.6 ...
+##  $ latitude : num  36.7 36.7 36.7 36.7 36.8 ...
+##  $ longitude: num  3.25 4.05 4.05 4.05 5.87 ...
+##  $ altitude : num  24 222 222 222 11 11 7 7 4.9 6.1 ...</code></pre>
+<p>We will explain the variables after they have been renamed.</p>
+</div>
+<div id="rename-data" class="section level2">
+<h2><span class="header-section-number">2.2</span> Rename data</h2>
+<p>I rename the variables to my usual standard, to make it simpler for us to reuse code.</p>
+<pre class="r"><code>df1 = data.frame(locx = df.eur$longitude, locy = df.eur$latitude, 
+                 time = df.eur$week, y = df.eur$tmed)</code></pre>
+<p>The data are measured over 20 weeks, and at longitude and latitude. The response is median daily-mean temperature over the week.</p>
+</div>
+<div id="plot-observation-locations" class="section level2">
+<h2><span class="header-section-number">2.3</span> Plot observation locations</h2>
+<pre class="r"><code>plot(df1$locx, df1$locy, col=&quot;blue&quot;,
+     xlab=&quot;longitude&quot;, ylab=&quot;latitude&quot;, main=&quot;Observation locations&quot;)
+map(&quot;worldHires&quot;, add=TRUE, col = grey(.5))</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Here, we have a huge issue! Longitude and latitude are not appropriate coordinates for spatial modelling. Since this is just a code example, we will ignore this problem. But please note that any proper application should use a coordinate system (e.g. UTM) where the distances are the same on the <code>locx</code>-axis and the <code>locy</code>-axis.</p>
+</div>
+<div id="histogram-of-response" class="section level2">
+<h2><span class="header-section-number">2.4</span> Histogram of response</h2>
+<pre class="r"><code>hist(df1$y, breaks=100)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>This shows that the response has a few possible outliers, but no major issues.</p>
+</div>
+<div id="altitude-covariate" class="section level2">
+<h2><span class="header-section-number">2.5</span> Altitude covariate</h2>
+<p>We transform the altitude covariate to avoid heavy skewness (look at a histogram of the altitude). Then we group it into 200 distinct value groups (similar to rounding numbers to integers), which is needed for easy use of random effects in INLA.</p>
+<pre class="r"><code>## Transform with our chosen function
+alt = log(df.eur$altitude+10)
+## We group this into classes
+alt = inla.group(alt, n=200)
+## We add this to the dataframe
+## We note that it has been transformed in some way by writing .t
+df1$altitude.t = alt</code></pre>
+<pre class="r"><code>hist(df1$altitude.t, breaks=100)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>This historam looks good for a covariate. The chosen transformation is a bit arbitrary in this case, but we do not believe temperature would be linearly affected by altitude.</p>
+</div>
+<div id="select-a-subset" class="section level2">
+<h2><span class="header-section-number">2.6</span> Select a subset</h2>
+<p>Next, select part of the dataframe, to speed up computations.</p>
+<pre class="r"><code>if (T) { 
+  stopifnot(t.max &lt;= 20)
+  df2 = df1[df1$time &lt;= t.max, ]
+} else {
+  ## Alternative: use every 3rd week and recode time variable
+  ## This results in weaker time dependency
+  stopifnot(t.max &lt; 7)
+  df2 = df1[df1$time %in% ((1:t.max)*3), ]
+  df2$time = df2$time/3
+}
+
+summary(df2)</code></pre>
+<pre><code>##       locx           locy         time           y        
+##  Min.   :-8.9   Min.   :36   Min.   :1.0   Min.   :-18.0  
+##  1st Qu.: 6.5   1st Qu.:46   1st Qu.:2.0   1st Qu.: -0.8  
+##  Median : 9.5   Median :50   Median :3.0   Median :  1.4  
+##  Mean   : 8.6   Mean   :49   Mean   :2.5   Mean   :  1.9  
+##  3rd Qu.:12.3   3rd Qu.:52   3rd Qu.:3.0   3rd Qu.:  4.1  
+##  Max.   :23.0   Max.   :56   Max.   :4.0   Max.   : 14.8  
+##    altitude.t 
+##  Min.   :1.8  
+##  1st Qu.:4.0  
+##  Median :5.3  
+##  Mean   :5.0  
+##  3rd Qu.:6.1  
+##  Max.   :8.2</code></pre>
+</div>
+</div>
+<div id="data-exploration" class="section level1">
+<h1><span class="header-section-number">3</span> Data exploration</h1>
+<p>We plot how the response changes in time.</p>
+<pre class="r"><code>plot(df2$time, df2$y)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>We run raw estimates of the means over each timepoint.</p>
+<pre class="r"><code>for (i in 1:t.max) {
+  df.temp = df2[df2$t == i, ]
+  print(mean(df.temp$y))
+}</code></pre>
+<pre><code>## [1] 2.7
+## [1] 3
+## [1] 1.2
+## [1] 0.49</code></pre>
+<p>We plot how the response changes in (transformed) altitude.</p>
+<pre class="r"><code>plot(df2$altitude.t, df2$y)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<div id="plot-data-in-space" class="section level2">
+<h2><span class="header-section-number">3.1</span> Plot data in space</h2>
+<p>We visualise some slices of the data.</p>
+<pre class="r"><code>for (i in 1:3) {
+  df.temp = df2[df2$time == i, ]
+  quilt.plot(x = df.temp$locx, y = df.temp$locy, z = df.temp$y,
+             nx = 40, ny = 40, col = plasma(101),
+             main = paste(&quot;Plot data in year&quot;, i), zlim=range(df2$y))
+  
+}</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-15-1.png" width="672" /><img src="btopic133_files/figure-html/unnamed-chunk-15-2.png" width="672" /><img src="btopic133_files/figure-html/unnamed-chunk-15-3.png" width="672" /></p>
+<p>The data clearly change in time. The spatial structure, however, is quite flat, with a low range and “few effective replicates”. This will lead to problems in estimating the spatial range.</p>
+</div>
+<div id="plot-in-latitude" class="section level2">
+<h2><span class="header-section-number">3.2</span> Plot in latitude</h2>
+<p>We know the earth has a very strong latitude effect, where it gets colder to the North.</p>
+<pre class="r"><code>plot(df2$locy, df2$y)
+abline(lm(df2$y ~ df2$locy), col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+</div>
+<div id="simple-model" class="section level1">
+<h1><span class="header-section-number">4</span> Simple model</h1>
+<p>Define some variables to be used throughout, as hyper-prior specifications.</p>
+<pre class="r"><code>hyper.iid.fix = list(prec = list(initial = -2*log(0.1), fixed=T))
+hyper2 = list(prec = list(prior=&quot;pc.prec&quot;, param=c(0.5,0.5)))
+hyper.ar1.rho = list(rho = list(prior = &quot;pc.cor1&quot;, param=c(0.95,0.5)))</code></pre>
+<p>We set up a model with no spatial or spatio-temporal random effect, only using one-dimensional random effects.</p>
+<pre class="r"><code>## Formula
+form.lmm = y ~  locy + f(time, model = &quot;iid&quot;, hyper = hyper2) + f(altitude.t, model = &quot;rw1&quot;, hyper = hyper.iid.fix, scale.model = T)
+
+## Fit model
+fits[[1]] = inla(form.lmm,
+                 family=&quot;gaussian&quot;,
+                 data=df2,
+                 num.threads = 3,
+                 control.predictor = list(compute=T),
+                 control.inla = list(int.strategy = &quot;eb&quot;))</code></pre>
+<pre class="r"><code>summary(fits[[1]])</code></pre>
+<pre><code>## 
+## Call:
+##    c(&quot;inla(formula = form.lmm, family = \&quot;gaussian\&quot;, data = df2, 
+##    control.predictor = list(compute = T), &quot;, &quot; control.inla = 
+##    list(int.strategy = \&quot;eb\&quot;), num.threads = 3)&quot; ) 
+## Time used:
+##     Pre = 1.4, Running = 1.52, Post = 0.176, Total = 3.09 
+## Fixed effects:
+##              mean    sd 0.025quant 0.5quant 0.97quant  mode kld
+## (Intercept) 23.48 0.756      22.00    23.48     24.91 23.48   0
+## locy        -0.44 0.011      -0.47    -0.44     -0.42 -0.44   0
+## 
+## Random effects:
+##   Name     Model
+##     time IID model
+##    altitude.t RW1 model
+## 
+## Model hyperparameters:
+##                                          mean    sd 0.025quant
+## Precision for the Gaussian observations 0.148 0.004      0.140
+## Precision for time                      0.872 0.604      0.172
+##                                         0.5quant 0.97quant  mode
+## Precision for the Gaussian observations    0.148     0.156 0.148
+## Precision for time                         0.728     2.325 0.454
+## 
+## Expected number of effective parameters(stdev): 6.91(0.00)
+## Number of equivalent replicates : 458.19 
+## 
+## Marginal log-Likelihood:  -8182.31 
+## Posterior marginals for the linear predictor and
+##  the fitted values are computed</code></pre>
+<pre class="r"><code>resid = df2$y - fits[[1]]$summary.linear.predictor$mean
+hist(resid, breaks = 200)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>These residuals have some outliers at low temperatures. But since there are so few, and they are not too far out, we will proceed without any adjustments.</p>
+<div id="plot-residuals-in-space" class="section level2">
+<h2><span class="header-section-number">4.1</span> Plot residuals in space</h2>
+<p>We plot the resiudlas in space to check if there is a residual spatio-temporal structure, and there is.</p>
+<pre class="r"><code>for (i in 1:3) {
+  df.temp = df2[df2$t == i, ]
+  resid.temp = resid[df2$t == i]
+  quilt.plot(x = df.temp$locx, y = df.temp$locy, z = resid.temp, 
+             nx = 40, ny = 40, col = plasma(101),
+             main = paste(&quot;Residuals year&quot;, i), zlim = range(resid))
+  
+}</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-21-1.png" width="672" /><img src="btopic133_files/figure-html/unnamed-chunk-21-2.png" width="672" /><img src="btopic133_files/figure-html/unnamed-chunk-21-3.png" width="672" /></p>
+</div>
+</div>
+<div id="create-spatial-and-temporal-meshes" class="section level1">
+<h1><span class="header-section-number">5</span> Create spatial and temporal meshes</h1>
+<p>The temporal mesh is just a uniform grid of values.</p>
+<pre class="r"><code>mesh.t = inla.mesh.1d(1:t.max)</code></pre>
+<p>We set up the spatial mesh with no additional explanations. See tutorials on spatial models for details on spatial meshes.</p>
+<pre class="r"><code>mesh.s = inla.mesh.2d(loc = cbind(df2$locx, df2$locy), 
+                      max.edge=max.e*c(1, 2),
+                      cutoff=max.e/5)</code></pre>
+<pre class="r"><code>plot(mesh.s)
+axis(1)
+axis(2)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p>The total dimension of the space-time model component is:</p>
+<pre class="r"><code>mesh.s$n*mesh.t$n</code></pre>
+<pre><code>## [1] 3592</code></pre>
+</div>
+<div id="separable-space-time-model-component" class="section level1">
+<h1><span class="header-section-number">6</span> Separable space-time model component</h1>
+<p>This is the standard model to use in INLA for space-time random effects.</p>
+<div id="spatial-part-of-the-separable-model" class="section level2">
+<h2><span class="header-section-number">6.1</span> Spatial part of the separable model</h2>
+<p>This model component can be grouped with time to produce a spatio-temporal model component. It can also be used by itself to create a purely spatial component.</p>
+<pre class="r"><code>## Model component in space
+mco.space = inla.spde2.pcmatern(mesh = mesh.s, 
+                                prior.range = c(100, .5), prior.sigma = c(1, .5))</code></pre>
+</div>
+<div id="stack-for-the-separable-model" class="section level2">
+<h2><span class="header-section-number">6.2</span> Stack for the separable model</h2>
+<p>For a simple spatial component we use the following A matrix.</p>
+<pre class="r"><code>A.s1 = inla.spde.make.A(mesh = mesh.s, loc = cbind(df2$locx, df2$locy))</code></pre>
+<p>For the separable space-time component we use this A matrix.</p>
+<pre class="r"><code>iset = inla.spde.make.index(&#39;i&#39;, n.spde = mesh.s$n, n.group = t.max)
+A.st = inla.spde.make.A(mesh = mesh.s, loc = cbind(df2$locx, df2$locy), group = df2$time) </code></pre>
+<pre class="r"><code>stack[[2]] = inla.stack(
+  data = list(y = df2$y), 
+  effects = list(iset, m = rep(1, nrow(df2)), 
+                 time = df2$time, altitude.t = df2$altitude.t,
+                 s = 1:mesh.s$n),
+  A = list(A.st, 1, 1, 1, A.s1), 
+  tag = &#39;stdata&#39;) </code></pre>
+</div>
+<div id="separable-model-formula" class="section level2">
+<h2><span class="header-section-number">6.3</span> Separable model formula</h2>
+<p>We create a short description of the model number 2:</p>
+<pre class="r"><code>M[[2]]$shortname = &quot;Separable&quot;</code></pre>
+<p>We set up the formula and the model components therein.</p>
+<pre class="r"><code>## The separable model
+hyper22 = list(prec = list(initial = -2*log(5), fixed=T))
+
+## The formula
+## It is possible to add a spatial random effect (uncomment f(s))
+form.sep = y ~ -1 + m  + f(i, model = mco.space, group = i.group, 
+                     control.group = list(model=&quot;ar1&quot;, hyper = hyper.ar1.rho)) + f(time, model = &quot;iid&quot;, hyper=hyper22) + f(altitude.t, model = &quot;rw1&quot;, hyper=hyper.iid.fix, scale.model = T) #+ f(s, model=mco.space)
+
+M[[2]]$formula = form.sep</code></pre>
+</div>
+</div>
+<div id="nonseparable-space-time-model-component" class="section level1">
+<h1><span class="header-section-number">7</span> Nonseparable space-time model component</h1>
+<div id="nonseparable-model-rgeneric-object" class="section level2">
+<h2><span class="header-section-number">7.1</span> Nonseparable model: rgeneric object</h2>
+<pre class="r"><code>## Rgeneric object containing needed variables
+## Mesh in space and time
+## Lambdas for exponential prior on transformed hyper-param (1/rt, 1/rs and sig)
+rgen.obj = list(mesh.space = mesh.s,
+                mesh.time = mesh.t,
+                lambdas = c(1,1,5))
+
+## Nonsep model definition
+nm = mesh.s$n*mesh.t$n
+
+## The non-separable random effect / random field
+mco.nonsep = inla.rgeneric.define(
+  model = stmodel121.interpret, debug = FALSE, n = nm, obj = rgen.obj)</code></pre>
+</div>
+<div id="stack-for-the-nonseparable-model" class="section level2">
+<h2><span class="header-section-number">7.2</span> Stack for the nonseparable model</h2>
+<pre class="r"><code>## Special: Since the index is very structured we can do this
+## We know that iset is in the right order 
+## (year 1 then year 2 etc, with the whole spatial mesh each time)
+i.nonsep = 1:(mesh.s$n * mesh.t$n)
+
+stack[[3]] = inla.stack(
+  data = list(y = df2$y), 
+  effects = list(i.nonsep = i.nonsep, m = rep(1, nrow(df2)), 
+                 time = df2$time, altitude.t = df2$altitude.t,
+                 s = 1:mesh.s$n),
+  A = list(A.st, 1, 1, 1, A.s1), 
+  tag = &#39;stdata&#39;) </code></pre>
+</div>
+<div id="nonseparable-model-formula" class="section level2">
+<h2><span class="header-section-number">7.3</span> Nonseparable model formula</h2>
+<p>We create a short description of the model number 2:</p>
+<pre class="r"><code>M[[2]]$shortname = &quot;Non-separable&quot;</code></pre>
+<p>We set up the formula and the model components therein.</p>
+<pre class="r"><code>mco.nonsep.fix = inla.rgeneric.define(model = stmodel121.interpret, 
+                                      debug = FALSE, n = nm, obj = rgen.obj)
+
+## The formula
+## It is possible to add a spatial random effect (uncomment the f(s))
+form.nonsep = y ~ -1 + m + f(i.nonsep, model = mco.nonsep.fix, n = nm)   + f(time, model = &quot;iid&quot;, hyper = hyper22) + f(altitude.t, model = &quot;rw1&quot;, hyper = hyper.iid.fix, scale.model = T) #+ f(s, model=mco.space)
+
+M[[3]]$formula = form.nonsep</code></pre>
+</div>
+</div>
+<div id="compute-inference-with-inla" class="section level1">
+<h1><span class="header-section-number">8</span> Compute inference with INLA</h1>
+<p>Setup some initial values (use NULL if you do not know them).</p>
+<pre class="r"><code>M[[2]]$init = c(0.404 , 2.207 , 1.813 , 3.804)
+M[[3]]$init = c(0.435 , 8.012 , 2.944 , 2.553)</code></pre>
+<div id="time-consuming-inla-run" class="section level2">
+<h2><span class="header-section-number">8.1</span> Time-consuming INLA run</h2>
+<pre class="r"><code>## Fit model 2 and 3
+for (i in 2:3){
+  print(paste(&quot;Running:  &quot;, i))
+  stk = stack[[i]]
+  fits[[i]] = inla(M[[i]]$formula,
+                   family=&quot;gaussian&quot;,
+                   data=inla.stack.data(stk),
+                   control.predictor=list(A=inla.stack.A(stk), compute=T),
+                   #verbose=T,
+                   num.threads = 3,
+                   control.inla = list(int.strategy = &quot;eb&quot;),
+                   control.mode = list(restart=T, theta=M[[i]]$init),
+                   control.compute = list(dic=TRUE, cpo=TRUE, waic=T, 
+                           mlik=T, return.marginals=F, config=T, 
+                           openmp.strategy=&quot;default&quot;, smtp=&quot;taucs&quot;)
+)
+}</code></pre>
+<pre><code>## [1] &quot;Running:   2&quot;
+## [1] &quot;Running:   3&quot;</code></pre>
+<p>Check how much time the algorithms take to run.</p>
+<pre class="r"><code>for (i in 1:length(M)){
+    print(round(fits[[i]]$cpu.used[4],2))
+}</code></pre>
+<pre><code>## Total 
+##   3.1 
+## Total 
+##    25 
+## Total 
+##   290</code></pre>
+<p>The nonseparable is slower than the separable model, because the nonseparable model is coded in R, while the separable is coded in C.</p>
+<p>We compute good initial values as follows.</p>
+<pre class="r"><code>for (i in 1:length(M)){
+    print(paste(round(fits[[i]]$internal.summary.hyperpar$mean, 3), collapse = &quot; , &quot;))
+}</code></pre>
+<pre><code>## [1] &quot;-1.908 , -0.353&quot;
+## [1] &quot;0.318 , 2.024 , 1.746 , 3.711&quot;
+## [1] &quot;0.325 , 6.999 , 2.452 , 2.16&quot;</code></pre>
+</div>
+<div id="quick-summaries" class="section level2">
+<h2><span class="header-section-number">8.2</span> Quick summaries</h2>
+<pre class="r"><code>## Comparison of the Precision for Gaussian observations
+fits[[2]]$summary.hyperpar</code></pre>
+<pre><code>##                                         mean     sd 0.025quant
+## Precision for the Gaussian observations 1.38 0.0500       1.28
+## Range for i                             7.60 0.7027       6.32
+## Stdev for i                             5.76 0.5140       4.81
+## GroupRho for i                          0.95 0.0068       0.94
+##                                         0.5quant 0.97quant mode
+## Precision for the Gaussian observations     1.37      1.47 1.37
+## Range for i                                 7.57      9.01 7.50
+## Stdev for i                                 5.73      6.79 5.69
+## GroupRho for i                              0.95      0.96 0.95</code></pre>
+<pre class="r"><code>fits[[3]]$summary.hyperpar</code></pre>
+<pre><code>##                                         mean    sd 0.025quant
+## Precision for the Gaussian observations  1.4 0.052        1.3
+## Theta1 for i.nonsep                      7.0 0.252        6.5
+## Theta2 for i.nonsep                      2.5 0.102        2.3
+## Theta3 for i.nonsep                      2.2 0.099        2.0
+##                                         0.5quant 0.97quant mode
+## Precision for the Gaussian observations      1.4       1.5  1.4
+## Theta1 for i.nonsep                          7.0       7.5  7.0
+## Theta2 for i.nonsep                          2.5       2.6  2.4
+## Theta3 for i.nonsep                          2.2       2.3  2.2</code></pre>
+<pre class="r"><code>## To compare the 3 other hyper-parameters, we need to transform the
+## hyperparameters of the non-separable model as follows
+data.frame(var=c(&quot;Range.s&quot;, &quot;Stdev&quot;, &quot;Range.t&quot;), exp(fits[[3]]$summary.hyperpar[c(3,4,2), c(4,3,5)]))</code></pre>
+<pre><code>##                         var X0.5quant X0.025quant X0.97quant
+## Theta2 for i.nonsep Range.s      11.6         9.5         14
+## Theta3 for i.nonsep   Stdev       8.7         7.2         10
+## Theta1 for i.nonsep Range.t    1091.9       674.7       1775</code></pre>
+<p>The two Gaussian precisions are very similar, showing that the residuals are similar. The range in space is estimated in a similar way between the two models. The <span class="math inline">\(\sigma\)</span> (<code>Stdev</code>) also gets similar estimates between the two models. The <code>Group.rho</code> however, is hard to compare to <code>Range.t</code>, as they are two different ways of thinking about correlation strength in time. In addition, because the time series in this example is very short, they are both poorly identified. The only conclusion we can draw is that there is a very very strong time dependency (in the space-time random effect).</p>
+<p>We could have summarised the two models as follows.</p>
+<pre class="r"><code>#summary(fits[[2]])
+#summary(fits[[3]])</code></pre>
+</div>
+</div>
+<div id="plot-results" class="section level1">
+<h1><span class="header-section-number">9</span> Plot results</h1>
+<p>First we plot the two one-dimensional random effect, <code>f(time)</code>and <code>f(altitude)</code>.</p>
+<pre class="r"><code>plot(df2$time, df2$y)
+points(fits[[2]]$summary.random$time$mean, col=&quot;blue&quot;, pch=19, cex=2)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+<pre class="r"><code>plot(fits[[2]]$summary.random$altitude$mean)</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<p>For completeness, we add how to compare the fit and the data.</p>
+<pre class="r"><code>## Compare fitted values and observations.
+# plot(fits[[2]]$summary.linear.predictor$mean[1:nrow(df2)], df2$y)</code></pre>
+</div>
+<div id="spatial-plots" class="section level1">
+<h1><span class="header-section-number">10</span> Spatial plots</h1>
+<p>Extract the space-time variables. We add on the intercept for easier comparison.</p>
+<pre class="r"><code>rf.st.sep = fits[[2]]$summary.random$i$mean + fits[[2]]$summary.fixed$mean[1]
+rf.st.nonsep = fits[[3]]$summary.random$i$mean + fits[[3]]$summary.fixed$mean[1]</code></pre>
+<div id="function-for-plotting-in-space" class="section level2">
+<h2><span class="header-section-number">10.1</span> Function for plotting in space</h2>
+<p>We create a local plotting function, designed for this script.</p>
+<pre class="r"><code>## Define default plotting window
+local.xlim = range(df2$locx)
+local.ylim = range(df2$locy)
+
+local.plot.field = function(field, mesh=mesh.s, 
+                            timepoint=1, xlim, ylim, ...){
+  ## Here: mesh is spatial mesh only
+  # Possible error when using a wrong spatial mesh
+  stopifnot((length(field) %% mesh$n) == 0 )
+  
+  field = field[1:mesh$n + (timepoint-1)*mesh$n]
+  # - only use the relevant part of the incoming vector
+  
+  # Choose plotting region to be the same as the study area polygon
+  if (missing(xlim)) xlim = local.xlim
+  if (missing(ylim)) ylim = local.ylim
+  
+  # Project the mesh onto a 300x300 grid
+  proj = inla.mesh.projector(mesh, xlim = xlim, 
+                             ylim = ylim, dims=c(300, 300))
+  
+  # Do the projection 
+  field.proj = inla.mesh.project(proj, field)
+  
+  # Plot it
+  image.plot(list(x = proj$x, y=proj$y, z = field.proj), col = plasma(64),
+             xlim = xlim, ylim = ylim, ...)  
+}</code></pre>
+<p>If you uncomment the purely spatial random effect, the following two chunks will run. In the default scrip, these do nothing.</p>
+<pre class="r"><code>if(!is.null(fits[[2]]$summary.random$s)) {
+  local.plot.field(fits[[2]]$summary.random$s$mean)
+}</code></pre>
+<pre class="r"><code>if(!is.null(fits[[3]]$summary.random$s)) {
+  local.plot.field(fits[[3]]$summary.random$s$mean)
+}</code></pre>
+</div>
+<div id="year-3" class="section level2">
+<h2><span class="header-section-number">10.2</span> Year 3</h2>
+<p>We compare the separable and nonseparable model. Here, we will only show the contribution from the spatio-temporal model component. Another interesting comparison would be to compare the linear predictor or the fitted values between the models (but we have not included this, as it is a bit less interesting than comparing the random effects).</p>
+<pre class="r"><code>## Change this to any year
+time.k = 3</code></pre>
+<p>Plot the separable model results.</p>
+<pre class="r"><code>local.plot.field(rf.st.sep, timepoint = time.k, 
+                 main = paste(&quot;Separable model at time =&quot;, i))
+points(df2$locx, df2$locy, col=adjustcolor(&quot;black&quot;, alpha.f = 0.01))
+map(&quot;worldHires&quot;, add=TRUE, col = grey(.5))</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
+<p>Plot the non-separable model.</p>
+<pre class="r"><code>local.plot.field(rf.st.nonsep, timepoint = time.k, 
+                 main = paste(&quot;Nonsep model at time =&quot;, time.k))
+points(df2$locx, df2$locy, col=adjustcolor(&quot;black&quot;, alpha.f = 0.01))
+map(&quot;worldHires&quot;, add=TRUE, col = grey(.5))</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<p>Plot the pointwise difference. The difference is not massive, due to the large number of observations, but neither is it small.</p>
+<pre class="r"><code>local.plot.field(rf.st.nonsep-rf.st.sep, timepoint = time.k)
+points(df2$locx, df2$locy, col=adjustcolor(&quot;black&quot;, alpha.f = 0.01))
+map(&quot;worldHires&quot;, add=TRUE, col = grey(.5))</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+</div>
+<div id="temporal-change-in-the-nonseparable-model" class="section level2">
+<h2><span class="header-section-number">10.3</span> Temporal change in the nonseparable model</h2>
+<p>We now investigate how the nonseparable random effect changes in time. The change is substantial even though the temporal correlation is very high.</p>
+<pre class="r"><code>zlim.temp = range(rf.st.nonsep) #c(-9, 16)
+for (i in 1:3) {
+  local.plot.field(rf.st.nonsep, timepoint = i, zlim=zlim.temp,
+                   main=paste(&quot;Nonsep model at time =&quot;, i))
+  map(&quot;worldHires&quot;, add=TRUE, col = grey(.5))
+}</code></pre>
+<p><img src="btopic133_files/figure-html/unnamed-chunk-53-1.png" width="672" /><img src="btopic133_files/figure-html/unnamed-chunk-53-2.png" width="672" /><img src="btopic133_files/figure-html/unnamed-chunk-53-3.png" width="672" /></p>
+</div>
+<div id="general-note-on-the-plots" class="section level2">
+<h2><span class="header-section-number">10.4</span> General note on the plots</h2>
+<p>All the spatial plots look a bit strange and irregular. This is because the spatial mesh does not have a high enough resolution. To get better plots, increse <code>max.e</code>, but be prepared that the code example takes quite some time to run.</p>
+</div>
+</div>
+<div id="end" class="section level1">
+<h1><span class="header-section-number">11</span> End</h1>
+<p>Thank you for reading.</p>
 </div>
 
 

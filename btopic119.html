@@ -72,6 +72,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
 
 
@@ -383,17 +384,17 @@ div.tocify {
 
 
 <div id="about" class="section level1">
-<h1>About</h1>
+<h1><span class="header-section-number">1</span> About</h1>
 <p>This topic is not a regular topic. This page contains a set of exercises used as homework in INLA courses. When giving homework, refer to this page and the problem numbers. The solutions to these homeworks are not given out.</p>
 <div id="packages" class="section level2">
-<h2>Packages</h2>
+<h2><span class="header-section-number">1.1</span> Packages</h2>
 <pre class="r"><code>library(INLA)</code></pre>
 </div>
 </div>
 <div id="a.-problems-about-precision-matrices" class="section level1">
-<h1>A. Problems about precision matrices</h1>
+<h1><span class="header-section-number">2</span> A. Problems about precision matrices</h1>
 <div id="problem-a.1.-draw-gmrf-graph" class="section level2">
-<h2>Problem A.1. Draw GMRF graph</h2>
+<h2><span class="header-section-number">2.1</span> Problem A.1. Draw GMRF graph</h2>
 <p>Draw the graph for the GMRF represented by the percision matrix <span class="math inline">\(Q\)</span>.</p>
 <pre class="r"><code>Q = matrix(c(1, 0, 1, 2, 0, 4, 0, 0, 1, 0, 3, 1, 2, 0, 1, 0), nrow=4, byrow=T)
 cat(&quot;Q = \n&quot;)</code></pre>
@@ -406,7 +407,7 @@ cat(&quot;Q = \n&quot;)</code></pre>
 ## [4,]    2    0    1    0</code></pre>
 </div>
 <div id="problem-a.2.-sample-from-precision-matrix" class="section level2">
-<h2>Problem A.2. Sample from precision matrix</h2>
+<h2><span class="header-section-number">2.2</span> Problem A.2. Sample from precision matrix</h2>
 <p>The precision matrix <span class="math inline">\(Q\)</span>:</p>
 <pre class="r"><code>Q = matrix(c(1, 0, 1, 2, 0, 4, 0, 0, 1, 0, 3, 1, 2, 0, 1, 7), nrow=4, byrow=T)
 cat(&quot;Q = \n&quot;)</code></pre>
@@ -438,7 +439,7 @@ cat(&quot;L = \n&quot;)</code></pre>
 <p>Compare the estimated covariance of your samples to the inverse of <span class="math inline">\(Q\)</span>.</p>
 </div>
 <div id="problem-a.3.-calculate-a-precision-matrix" class="section level2">
-<h2>Problem A.3. Calculate a precision matrix</h2>
+<h2><span class="header-section-number">2.3</span> Problem A.3. Calculate a precision matrix</h2>
 <p>The model for <span class="math inline">\(u\)</span> is <span class="math display">\[\begin{align}
 u_i - u_{i-1}&amp;=  \epsilon_i  \qquad \text{for } i=2,3,4,5 \\
 u_1 - u_5 &amp;= \epsilon_1 \\
@@ -447,21 +448,21 @@ u_1 - u_5 &amp;= \epsilon_1 \\
 </div>
 </div>
 <div id="b.-problems-about-latent-gaussian-models" class="section level1">
-<h1>B. Problems about Latent Gaussian Models</h1>
+<h1><span class="header-section-number">3</span> B. Problems about Latent Gaussian Models</h1>
 <div id="problem-b.1." class="section level2">
-<h2>Problem B.1.</h2>
+<h2><span class="header-section-number">3.1</span> Problem B.1.</h2>
 <p>Describe with a paragraph the first level of the 3-level hierarchy. I.e. the observation level, with the (observation) likelihood and the link function.</p>
 </div>
 <div id="problem-b.2." class="section level2">
-<h2>Problem B.2.</h2>
+<h2><span class="header-section-number">3.2</span> Problem B.2.</h2>
 <p>Describe with a paragraph the second level of the 3-level hierarchy. A.k.a. the latent variable, the linear predictor.</p>
 </div>
 <div id="problem-b.3." class="section level2">
-<h2>Problem B.3.</h2>
+<h2><span class="header-section-number">3.3</span> Problem B.3.</h2>
 <p>Describe with a paragraph the third level of the 3-level hierarchy. I.e. the hyper-parameters.</p>
 </div>
 <div id="problem-b.4." class="section level2">
-<h2>Problem B.4.</h2>
+<h2><span class="header-section-number">3.4</span> Problem B.4.</h2>
 <p>Explain why one of these is a valid Latent Gaussian Model (LGM) and the other is not.</p>
 <p><span class="math display">\[\begin{align}
 \eta_i &amp;=  \beta_0 + X_{i} + U V_i \\
@@ -477,26 +478,26 @@ V_i &amp;\sim \mathcal N(0, 1) \quad \text{for all } i,
 </div>
 </div>
 <div id="c.-conceptual-problems-about-inla-inference" class="section level1">
-<h1>C. Conceptual problems about INLA inference</h1>
+<h1><span class="header-section-number">4</span> C. Conceptual problems about INLA inference</h1>
 <div id="problem-c.1." class="section level2">
-<h2>Problem C.1.</h2>
+<h2><span class="header-section-number">4.1</span> Problem C.1.</h2>
 <p>Explain in a paragraph the difference between burn-in in an MCMC chain and how INLA searches for the posterior mode.</p>
 </div>
 <div id="problem-c.2." class="section level2">
-<h2>Problem C.2.</h2>
+<h2><span class="header-section-number">4.2</span> Problem C.2.</h2>
 <p>After we know the posterior mode in the hyper-parameter-space, what is the difference in how MCMC explores the posterior and how INLA explores the posterior?</p>
 </div>
 <div id="problem-c.3." class="section level2">
-<h2>Problem C.3.</h2>
+<h2><span class="header-section-number">4.3</span> Problem C.3.</h2>
 <p>A modeller wants to use the Gaussian likelihood with the following latent model <span class="math display">\[\eta_i = ~ \beta_0 + X\beta + v_i \]</span> with an iid model on <span class="math inline">\(v_i\)</span>, and uses</p>
 <pre class="r"><code>formula = y~ X + f(index, model=&quot;iid&quot;)</code></pre>
 <p>He complains that INLA is having trouble. What would you tell him?</p>
 </div>
 </div>
 <div id="d.-practical-problems-not-in-space" class="section level1">
-<h1>D. Practical problems (not in space)</h1>
+<h1><span class="header-section-number">5</span> D. Practical problems (not in space)</h1>
 <div id="problem-d.1." class="section level2">
-<h2>Problem D.1.</h2>
+<h2><span class="header-section-number">5.1</span> Problem D.1.</h2>
 <p>Use</p>
 <pre class="r"><code>data(Tokyo)
 summary(Tokyo)</code></pre>
@@ -510,19 +511,19 @@ summary(Tokyo)</code></pre>
 <p>and fit a time series over <code>time</code> with a binomial likelihood, where the number of trials is <code>Tokyo$n</code>. Improve this model by making the random effect cyclic. Try two different link functions (logit and probit) and compare the two linear predcitors and the two fitted values</p>
 </div>
 <div id="problem-d.2." class="section level2">
-<h2>Problem D.2.</h2>
+<h2><span class="header-section-number">5.2</span> Problem D.2.</h2>
 <p>Create a simulation-inference to understand the estimation in the previous problem. Do you think it is better to have several observations at each time point, or a larger <code>n</code> (and probably larger <code>y</code> values)?</p>
 <p>Optional: Give a clear mathematical argument for your intuition.</p>
 </div>
 </div>
 <div id="e.-practical-problems-in-space" class="section level1">
-<h1>E. Practical problems in space</h1>
+<h1><span class="header-section-number">6</span> E. Practical problems in space</h1>
 <div id="problem-e.1." class="section level2">
-<h2>Problem E.1.</h2>
+<h2><span class="header-section-number">6.1</span> Problem E.1.</h2>
 <p>Read and run the code in <a href="./btopic108.html">A first example of spatial data modeling (Calcium data)</a>. Change the two prior medians <code>prior.median...</code> and see what happens to the result.</p>
 </div>
 <div id="problem-e.2." class="section level2">
-<h2>Problem E.2.</h2>
+<h2><span class="header-section-number">6.2</span> Problem E.2.</h2>
 <p>Read and run the code in <a href="./btopic108.html">A first example of spatial data modeling (Calcium data)</a>. Change the mesh, plot the mesh <code>plot(mesh)</code>, and see if the change impacts the results.</p>
 </div>
 </div>

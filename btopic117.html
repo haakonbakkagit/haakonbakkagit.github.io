@@ -16,10 +16,13 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -69,6 +72,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
 
 
@@ -249,6 +253,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -256,6 +323,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -305,34 +382,13 @@ $(document).ready(function () {
 
 </div>
 
-<div id="TOC">
-<ul>
-<li><a href="#about">About</a><ul>
-<li><a href="#packages">Packages</a></li>
-</ul></li>
-<li><a href="#simulation">Simulation</a><ul>
-<li><a href="#motivation">Motivation</a></li>
-<li><a href="#input-parameters">Input parameters</a></li>
-<li><a href="#simulation-code">Simulation code</a></li>
-</ul></li>
-<li><a href="#data">Data</a></li>
-<li><a href="#model">Model</a></li>
-<li><a href="#result">Result</a></li>
-<li><a href="#estimation-of-the-hyper-parameters">Estimation of the hyper-parameters</a><ul>
-<li><a href="#sigma_epsilon"><span class="math inline">\(\sigma_\epsilon\)</span></a></li>
-<li><a href="#sigma_epsilon-1"><span class="math inline">\(\sigma_\epsilon\)</span></a></li>
-<li><a href="#rho"><span class="math inline">\(\rho\)</span></a></li>
-<li><a href="#the-seasonal-effect">The seasonal effect</a></li>
-</ul></li>
-</ul>
-</div>
 
 <div id="about" class="section level1">
-<h1>About</h1>
+<h1><span class="header-section-number">1</span> About</h1>
 <p>This is the Simulation-Inference counterpart to the <a href="./btopic116.html">Unemployment data example</a>.</p>
 <p>In this example we study when a complex model is identifiable, and how fast INLA will run.</p>
 <div id="packages" class="section level2">
-<h2>Packages</h2>
+<h2><span class="header-section-number">1.1</span> Packages</h2>
 <pre class="r"><code>library(INLA)
 inla.setOption(&quot;num.threads&quot;, 1)
 # - to only run 1 processor thread (no paralellisation)
@@ -340,15 +396,15 @@ set.seed(2017)</code></pre>
 </div>
 </div>
 <div id="simulation" class="section level1">
-<h1>Simulation</h1>
+<h1><span class="header-section-number">2</span> Simulation</h1>
 <div id="motivation" class="section level2">
-<h2>Motivation</h2>
+<h2><span class="header-section-number">2.1</span> Motivation</h2>
 <p>We have a long time series, for example temperature or unemployment. This time series contain no linear trends, as those would go to <span class="math inline">\(\pm \infty\)</span>.</p>
 <p>We assume there is one seasonal effect, repeating every 12 months.</p>
 <p>We assume there is one other covariate with a nonlinear effect.</p>
 </div>
 <div id="input-parameters" class="section level2">
-<h2>Input parameters</h2>
+<h2><span class="header-section-number">2.2</span> Input parameters</h2>
 <p>We want to change these to try different things.</p>
 <pre class="r"><code>N = 3600
 # - the number of observations
@@ -363,7 +419,7 @@ sig.seasonal = 2
 # - the size of the seasonal effect</code></pre>
 </div>
 <div id="simulation-code" class="section level2">
-<h2>Simulation code</h2>
+<h2><span class="header-section-number">2.3</span> Simulation code</h2>
 <pre class="r"><code>u = arima.sim(list(order = c(1,0,0), ar = rho), n = N,sd=1)
 # - this sd is not the marginal standard deviation
 u = u/sd(u)*sig.u
@@ -376,13 +432,13 @@ seas = drop(scale(seas))*sig.seasonal</code></pre>
 </div>
 </div>
 <div id="data" class="section level1">
-<h1>Data</h1>
+<h1><span class="header-section-number">3</span> Data</h1>
 <pre class="r"><code>df = data.frame(y = y, t = 1:N, year = rep(1:12, N/12))</code></pre>
 <pre class="r"><code>plot(df$t, df$y, main=&quot;Data&quot;, col=&quot;blue&quot;)</code></pre>
 <p><img src="btopic117_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
 <div id="model" class="section level1">
-<h1>Model</h1>
+<h1><span class="header-section-number">4</span> Model</h1>
 <pre class="r"><code>hyper.ar1 = list(theta1 = list(prior=&quot;pc.prec&quot;, param=c(0.1, 0.5)),
                  theta2 = list(prior=&quot;pc.cor1&quot;, param=c(0.9, 0.5)))
 hyper.rw2 = list(theta1 = list(prior=&quot;pc.prec&quot;, param=c(0.1, 0.5)))
@@ -394,7 +450,7 @@ res &lt;- inla(formula=formula, data=df, family=&quot;gaussian&quot;,
              control.family = list(hyper = hyper.family))</code></pre>
 </div>
 <div id="result" class="section level1">
-<h1>Result</h1>
+<h1><span class="header-section-number">5</span> Result</h1>
 <pre class="r"><code>summary(res)</code></pre>
 <pre><code>## 
 ## Call:
@@ -402,7 +458,7 @@ res &lt;- inla(formula=formula, data=df, family=&quot;gaussian&quot;,
 ##    control.predictor = list(compute = TRUE), &quot;, &quot; control.family 
 ##    = list(hyper = hyper.family))&quot;) 
 ## Time used:
-##     Pre = 1.68, Running = 14.6, Post = 0.266, Total = 16.5 
+##     Pre = 1.64, Running = 14.2, Post = 0.281, Total = 16.1 
 ## Fixed effects:
 ##               mean   sd 0.025quant 0.5quant 0.97quant   mode kld
 ## (Intercept) -0.046 0.07      -0.18   -0.046     0.086 -0.046   0
@@ -434,11 +490,11 @@ res &lt;- inla(formula=formula, data=df, family=&quot;gaussian&quot;,
 <p><img src="btopic117_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 <div id="estimation-of-the-hyper-parameters" class="section level1">
-<h1>Estimation of the hyper-parameters</h1>
+<h1><span class="header-section-number">6</span> Estimation of the hyper-parameters</h1>
 <p>Here we plot prior, posterior and truth!</p>
 <p>Figuring out how to plot these is not trivial, and will take some time. However, it is not a good topic to talk about in detail during a course.</p>
 <div id="sigma_epsilon" class="section level2">
-<h2><span class="math inline">\(\sigma_\epsilon\)</span></h2>
+<h2><span class="header-section-number">6.1</span> <span class="math inline">\(\sigma_\epsilon\)</span></h2>
 <pre class="r"><code>marginal = res$internal.marginals.hyperpar$`Log precision for the Gaussian observations`
 transform = function(x) exp(-0.5*x)
 sig.eps.posterior = inla.tmarginal(transform, marginal)
@@ -454,7 +510,7 @@ abline(v=sig.epsilon, col=&quot;blue&quot;)</code></pre>
 <p>The blue vertical line is the true value, the dashed line is the prior, and the full line is the posterior.</p>
 </div>
 <div id="sigma_epsilon-1" class="section level2">
-<h2><span class="math inline">\(\sigma_\epsilon\)</span></h2>
+<h2><span class="header-section-number">6.2</span> <span class="math inline">\(\sigma_\epsilon\)</span></h2>
 <pre class="r"><code>marginal = res$internal.marginals.hyperpar$`Log precision for t`
 transform = function(x) exp(-0.5*x)
 sig.posterior = inla.tmarginal(transform, marginal)
@@ -470,7 +526,7 @@ abline(v=sig.u, col=&quot;blue&quot;)</code></pre>
 <p>The blue vertical line is the true value, the dashed line is the prior, and the full line is the posterior.</p>
 </div>
 <div id="rho" class="section level2">
-<h2><span class="math inline">\(\rho\)</span></h2>
+<h2><span class="header-section-number">6.3</span> <span class="math inline">\(\rho\)</span></h2>
 <p>Here we can use the standard output marginal in INLA.</p>
 <pre class="r"><code>marginal = res$marginals.hyperpar$`Rho for t`
 
@@ -486,7 +542,7 @@ abline(v=rho, col=&quot;blue&quot;)</code></pre>
 <p>The blue vertical line is the true value, the dashed line is the prior, and the full line is the posterior.</p>
 </div>
 <div id="the-seasonal-effect" class="section level2">
-<h2>The seasonal effect</h2>
+<h2><span class="header-section-number">6.4</span> The seasonal effect</h2>
 <pre class="r"><code>plot(res$summary.random$year$mean)
 points(seas, col=&quot;blue&quot;)</code></pre>
 <p><img src="btopic117_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
@@ -495,6 +551,8 @@ points(seas, col=&quot;blue&quot;)</code></pre>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -527,6 +585,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

@@ -72,6 +72,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
 
 
@@ -385,6 +386,49 @@ div.tocify {
 
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
+<p>In this topic I plan to collect some of my (best?) practices. Learning these cost time, in the form of inefficient working hours when coding. This is sort of a note-to-self.</p>
+</div>
+<div id="readme-files-and-similar" class="section level1">
+<h1><span class="header-section-number">2</span> Readme files and similar</h1>
+<p>Organising files on the coputer and on servers can be hard. To help this, most folders should contain a file called README.txt where the contents of the folder is described. Additional detail in the README could be where figures are from, what their licenses are, links to sources, and related folders, etc.</p>
+<p>In addition, some folders should have a file called Make or something similar, where we find code or a description of how to run the code / compile the documents in the folder.</p>
+</div>
+<div id="clean-and-half-clean-scripts" class="section level1">
+<h1><span class="header-section-number">3</span> Clean and half-clean scripts</h1>
+<p>Delete all variables in the beginning of your script, with <code>rm(list=ls())</code>. This is controversial.</p>
+<p>When you end your work for the day (or more regularly): Restart R and run your scripts. This will NOT work if your Rstudio is loading the last used workspace, make sure nothing is saved on exit and nothing is loaded on start.</p>
+<p>Additionally, if you are tempted to create startup scripts for R, e.g. for loading packages you use a lot. Please do not: Your code cannot be run by anyone else!</p>
+<p>Be liberal with save.image. But be careful with loading variables.</p>
+</div>
+<div id="working-folder" class="section level1">
+<h1><span class="header-section-number">4</span> Working folder</h1>
+<p>Have a specified folder (directory) for the data (and/or other input). Run the current script with working directory where the script is located. Have a specified folder for output. People may want to redirect it.</p>
+<p>The following is my recommended code for how to set these folders. Note that each person who runs the code have different folder locations:</p>
+<pre class="r"><code>## Chunk not ran
+## Example is real, but folder names were changed
+if (Sys.info()[&quot;user&quot;]==&quot;haakon&quot;) {
+  folder.data = &quot;BarnacleDamage/&quot;
+  folder.out = &quot;../../../Barnacle/out-10-09/&quot;
+} else if (Sys.info()[&quot;user&quot;]==&quot;tmjo&quot;) {
+  folder.data = &quot;C:/Users/tmjo/Desktop/Haakon&quot;
+  folder.out = &quot;C:/Users/tmjo/Desktop/Haakon&quot;
+} else {
+  stop(&quot;Add your folders as above:&quot;)
+}
+dir.create(folder.out)</code></pre>
+<p>If you want to write a file, or load something:</p>
+<pre class="r"><code>## Chunk not ran
+## Loading data
+filename = &quot;data1&quot;
+load(paste0(folder.data, filename))
+## Writing a file
+filename = &quot;figt1&quot;
+png(file=paste0(folder.out, filename))
+# ...</code></pre>
+</div>
+<div id="asking-questions" class="section level1">
+<h1><span class="header-section-number">5</span> Asking questions</h1>
+<p>Asking for help with code: Make the question as precise as you can (better chance of helpful answer). Attach a minimal reproducible example, and comment it clearly, in r-markdown.</p>
 </div>
 
 
