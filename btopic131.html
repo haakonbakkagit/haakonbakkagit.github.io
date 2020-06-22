@@ -12,7 +12,7 @@
 <meta name="author" content="Haakon Bakka" />
 
 
-<title>Some of my personal ‘best practices’</title>
+<title>Some of my ‘good practices’ and solutions to code-issues</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -376,9 +376,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Some of my personal ‘best practices’</h1>
+<h1 class="title toc-ignore">Some of my ‘good practices’ and solutions to code-issues</h1>
 <h4 class="author">Haakon Bakka</h4>
-<h4 class="date">BTopic131 Placeholder</h4>
+<h4 class="date">BTopic131 updated 22. June 2020</h4>
 
 </div>
 
@@ -386,23 +386,23 @@ div.tocify {
 
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>In this topic I plan to collect some of my (best?) practices. Learning these cost time, in the form of inefficient working hours when coding. This is sort of a note-to-self.</p>
+<p>In this topic I plan to collect some of my (good?) practices. Learning these cost time, in the form of inefficient working hours when coding.</p>
 </div>
 <div id="readme-files-and-similar" class="section level1">
 <h1><span class="header-section-number">2</span> Readme files and similar</h1>
-<p>Organising files on the coputer and on servers can be hard. To help this, most folders should contain a file called README.txt where the contents of the folder is described. Additional detail in the README could be where figures are from, what their licenses are, links to sources, and related folders, etc.</p>
+<p>Organising files on the coputer and on servers can be hard. To help this, most folders should contain a file called README.txt where the contents of the folder is described. Additional detail in the README could be: Where figures are from, what their licenses are, links to sources, and related folders, etc.</p>
 <p>In addition, some folders should have a file called Make or something similar, where we find code or a description of how to run the code / compile the documents in the folder.</p>
 </div>
 <div id="clean-and-half-clean-scripts" class="section level1">
 <h1><span class="header-section-number">3</span> Clean and half-clean scripts</h1>
 <p>Delete all variables in the beginning of your script, with <code>rm(list=ls())</code>. This is controversial.</p>
-<p>When you end your work for the day (or more regularly): Restart R and run your scripts. This will NOT work if your Rstudio is loading the last used workspace, make sure nothing is saved on exit and nothing is loaded on start.</p>
+<p>When you end your work for the day (or more regularly): Restart R and run your scripts. This check will NOT help if your Rstudio is loading the last used workspace: Make sure nothing is saved on exit and nothing is loaded on start of RStudio.</p>
 <p>Additionally, if you are tempted to create startup scripts for R, e.g. for loading packages you use a lot. Please do not: Your code cannot be run by anyone else!</p>
-<p>Be liberal with save.image. But be careful with loading variables.</p>
+<p>Be liberal with <code>save</code> and <code>save.image</code>. But be careful with loading variables.</p>
 </div>
 <div id="working-folder" class="section level1">
 <h1><span class="header-section-number">4</span> Working folder</h1>
-<p>Have a specified folder (directory) for the data (and/or other input). Run the current script with working directory where the script is located. Have a specified folder for output. People may want to redirect it.</p>
+<p>Run the current script with working directory where the script is located. Have a (different) specified folder (directory) for the data (and/or other input). Have a (different) specified folder for output. People may want to redirect the data and output folders.</p>
 <p>The following is my recommended code for how to set these folders. Note that each person who runs the code have different folder locations:</p>
 <pre class="r"><code>## Chunk not ran
 ## Example is real, but folder names were changed
@@ -413,11 +413,11 @@ if (Sys.info()[&quot;user&quot;]==&quot;haakon&quot;) {
   folder.data = &quot;C:/Users/tmjo/Desktop/Haakon&quot;
   folder.out = &quot;C:/Users/tmjo/Desktop/Haakon&quot;
 } else {
-  stop(&quot;Add your folders as above:&quot;)
+  stop(&quot;Add your folders as above.&quot;)
 }
-dir.create(folder.out)</code></pre>
-<p>If you want to write a file, or load something:</p>
-<pre class="r"><code>## Chunk not ran
+dir.create(folder.out, recursive = T, showWarnings = F)</code></pre>
+<p>With these folders defined: If you want to write a file, or load something, never change working directory, but run something like…</p>
+<pre class="r"><code>## Chunk not run
 ## Loading data
 filename = &quot;data1&quot;
 load(paste0(folder.data, filename))
@@ -426,9 +426,59 @@ filename = &quot;figt1&quot;
 png(file=paste0(folder.out, filename))
 # ...</code></pre>
 </div>
+<div id="variable-names" class="section level1">
+<h1><span class="header-section-number">5</span> Variable names</h1>
+<div id="first-time-explanation" class="section level2">
+<h2><span class="header-section-number">5.1</span> First time explanation</h2>
+<p>When a variable is defined for the first time, write a short explanation of the name</p>
+<pre class="r"><code>## Velocity of the ship
+v.ship = 10</code></pre>
+</div>
+<div id="replace-ijk" class="section level2">
+<h2><span class="header-section-number">5.2</span> Replace i,j,k</h2>
+<p>In math, we like <span class="math inline">\(i,j,k\)</span> for indices, in coding, we should only use <code>i</code>, but follow it with an explanation. Try it and see how much more self-explanatory your code becomes.</p>
+<pre class="r"><code>n.row = 14
+n.column = 19
+for (i.row in 1:n.row) {
+  for (i.column in 1:n.column) {
+    ## code...
+  }
+}</code></pre>
+</div>
+<div id="no-general-short-names" class="section level2">
+<h2><span class="header-section-number">5.3</span> No general short names</h2>
+<p>Which of <code>df</code>, <code>dat</code>, <code>DT</code>, is the best name for a dataframe? None of them. Because of R’s interesting autocomplete feature, and in general (for all coding languages), because of search-and-replace, no variable name should be a subset of another.</p>
+<pre class="r"><code>## Chunk not run
+## Not:
+df
+df.scaled
+df2
+df2.scaled
+
+## Yes
+df1.raw
+df1.scaled
+df2.raw
+df2.scaled</code></pre>
+</div>
+</div>
+<div id="linear-covariates-more-than-2" class="section level1">
+<h1><span class="header-section-number">6</span> Linear covariates (more than 2)</h1>
+<p>If there are many covariates, we often write</p>
+<pre class="r"><code>y ~ elevation + aspect + dryness + vegetation + class + slope + ...</code></pre>
+<pre><code>## y ~ elevation + aspect + dryness + vegetation + class + slope + 
+##     ...</code></pre>
+<p>and have these as columns in a dataframe.</p>
+<p>In general, it is good to define.</p>
+<pre class="r"><code>## Chunk not run
+covar1.names = c(&quot;elevation&quot;, &quot;aspect&quot;, &quot;dryness&quot;, &quot;vegetation&quot;, &quot;class&quot;, &quot;slope&quot;)
+Xcov1 = as.matrix(df1[, c(&quot;covar1.names&quot;)])
+y ~ Xcov1</code></pre>
+<p>This is to ensure that we study the same linear covariates as those we include in the model, and that our many different formulas use the same covariates when they are meant to.</p>
+</div>
 <div id="asking-questions" class="section level1">
-<h1><span class="header-section-number">5</span> Asking questions</h1>
-<p>Asking for help with code: Make the question as precise as you can (better chance of helpful answer). Attach a minimal reproducible example, and comment it clearly, in r-markdown.</p>
+<h1><span class="header-section-number">7</span> Asking questions</h1>
+<p>Asking for help with code: Make the question as precise as you can (better chance of helpful answer). Attach a minimal reproducible example, and comment it clearly, in r-markdown. Use simulated data, if possible.</p>
 </div>
 
 
