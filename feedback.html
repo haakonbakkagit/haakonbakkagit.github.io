@@ -12,7 +12,7 @@
 <meta name="author" content="Haakon Bakka" />
 
 
-<title>Feedback and changes</title>
+<title>Feedback</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,6 +23,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -300,9 +311,9 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Feedback and changes</h1>
+<h1 class="title toc-ignore">Feedback</h1>
 <h4 class="author">Haakon Bakka</h4>
-<h4 class="date">Updated 06 December 2019</h4>
+<h4 class="date">Updated 13 March 2021</h4>
 
 </div>
 
@@ -310,11 +321,7 @@ $(document).ready(function () {
 <div id="feedback" class="section level1">
 <h1>Feedback</h1>
 <p>I welcome you to submit feedback, compliments, complaints, errors, etc. Both specific and general feedback is welcome. Please email me at bakka [at] r-inla.org.</p>
-</div>
-<div id="changelog" class="section level1">
-<h1>Changelog</h1>
-<p>May 2020: Major overhaul ongoing. Improved readability, content changes, and additions.</p>
-<p>December 2019: Moved from bitbucket to github</p>
+<p>Most times when I update the webpage it is because someone just told me that it is useful to them, and that inspired me to work on it.</p>
 </div>
 
 
@@ -326,7 +333,7 @@ $(document).ready(function () {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

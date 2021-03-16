@@ -1,8 +1,8 @@
-## ----setup, include=FALSE-------------------------------------------
+## ----setup, include=FALSE--------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ---- message = F, warning=FALSE------------------------------------
+## ---- message = F, warning=FALSE-------------------------------
 library(INLA)
 library(fields)
 library(rgeos)
@@ -10,7 +10,7 @@ library(sp)
 library(colorRamps)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 ## Load data
 load(file = "data/WebSiteData-Archipelago.RData")
 # - if you have saved the file locally
@@ -22,7 +22,7 @@ load(file = "data/WebSiteData-Archipelago.RData")
 str(poly.water, 1)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 # Find the boundaries of the reduced study area
 xmax = poly.water@bbox[1,2]
 xmin = xmax/2
@@ -43,7 +43,7 @@ poly.water = shape2
 plot(poly.water, main = 'Reduced study area')
 
 
-## ---- fig.width=8, fig.height=8-------------------------------------
+## ---- fig.width=8, fig.height=8--------------------------------
 set.seed(2018)
 set.inla.seed = 2018
 
@@ -62,7 +62,7 @@ title(main = "Triangulation of the study area")
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 # Total number of triangles 
 tl = length(prmesh1$graph$tv[,1])
 # Index vector of all triangles
@@ -89,12 +89,12 @@ barrier.triangles = setdiff(all.triangles, not.barrier)
 poly.barrier = inla.barrier.polygon(prmesh1, barrier.triangles)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 loc.data <- spsample(poly.water, n = 1000, type = "random")
 coords <- loc.data@coords
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 k <- 4 
 range <- sqrt(8)
 sigma <- 1
@@ -106,7 +106,7 @@ theta <- c(log(range),log(sigma))
 simulation.mesh <- prmesh1
 
 
-## ---- warning=FALSE-------------------------------------------------
+## ---- warning=FALSE--------------------------------------------
 # Create spde to simulate
 # Ignore range and sigma priors, the function doesn't work without, you can put
 # there everything
@@ -122,7 +122,7 @@ simulation.Q <- inla.rgeneric.q(simulation.spde, "Q", theta=theta)
 simulation.A <- inla.mesh.project(mesh=simulation.mesh, loc=coords)$A
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 # simulate 4 independent samples
 x <- inla.qsample(k, simulation.Q, seed=0, constr=simulation.spde$f$extraconstr)
 
@@ -152,7 +152,7 @@ for (j in 1:k){
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 set.seed(2)
 
 n <- nrow(coords)
@@ -172,7 +172,7 @@ tapply(y, w, mean)
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 isel <- sample(1:(n*k), n*k/2)
 dat <- data.frame(y=as.vector(y),
                   w=w,
@@ -182,7 +182,7 @@ dat <- data.frame(y=as.vector(y),
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 spde <- inla.barrier.pcmatern(mesh=prmesh1,
                               barrier.triangles = barrier.triangles,
                               prior.range=c(0.5, 0.01), #P(range < 0.5) = 0.01
@@ -197,7 +197,7 @@ iset <- inla.spde.make.index('spatio.temp', n.spde = prmesh1$n, n.group = k)
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 # Create projection matrix (it includes also the time!)
 A <- inla.spde.make.A(mesh=prmesh1, 
                       loc=cbind(dat$xcoo, dat$ycoo),
@@ -211,12 +211,12 @@ stack <- inla.stack(tag = 'stdata',
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 formula <- y ~ 0 + w +f(spatio.temp, model=spde, group=spatio.temp.group,
                         control.group=list(model='ar1', hyper=rho.prior))
 
 
-## ---- warning=F, message=FALSE--------------------------------------
+## ---- warning=F, message=FALSE---------------------------------
 init = c(4.689,  0.977, -0.007,  1.714)
 res <- inla(formula, data=inla.stack.data(stack),
             control.predictor=list(compute=TRUE, A=inla.stack.A(stack)), 
@@ -229,16 +229,16 @@ res <- inla(formula, data=inla.stack.data(stack),
 res$internal.summary.hyperpar$mode
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 tapply(dat$y, dat$w, mean)  # Observed mean for each covariate level
 round(res$summary.fixed,4) # Coefficients of the categorical variable
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 names(res$marginals.hyper)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 par(mfrow=c(2,2), mar=c(3,3,1,0.1), mgp=2:0)
 plot(res$marginals.hyper[[1]], type='l', 
      xlab=names(res$marginals.hyper)[1], ylab='Density',xlim=c(0,200))
@@ -252,11 +252,11 @@ for (j in 2:4) {
 }
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 names(res$summary.random$spatio.temp)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 projgrid <- inla.mesh.projector(prmesh1, 
                                 xlim=range(coords[,1]),
                                 ylim=range(coords[,2]), 
@@ -280,7 +280,7 @@ for (i in 1:k){
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 par(mfrow=c(1,2), mar=c(1,1,1,1))
 
 # plot true one

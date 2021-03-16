@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -385,7 +396,7 @@ div.tocify {
 
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>This is the first example I used in my INLA course in Rome December 2017. A more involved example is found in <a href="./btopic115.html">BTopic115</a>.</p>
+<p>This topic is no longer maintained, please see <a href="./btopic115.html">BTopic115</a> instead!</p>
 <div id="packages" class="section level2">
 <h2><span class="header-section-number">1.1</span> Packages</h2>
 <pre class="r"><code>library(INLA)</code></pre>
@@ -402,29 +413,28 @@ download.file(url = &quot;https://haakonbakkagit.github.io/data/harmonised-unemp
 <div id="data-summary" class="section level2">
 <h2><span class="header-section-number">2.2</span> Data summary</h2>
 <pre class="r"><code>temp = read.csv(&quot;data/harmonised-unemployment-rates-mo.csv&quot;)
-n = nrow(temp)
-data = data.frame(y = temp[,2], t=1:n)
-dates &lt;- temp[,1]
+n = nrow(temp)-1
+data = data.frame(y = temp[1:n,2], t=1:n)
+dates &lt;- temp[1:n,1]
 
 df = data.frame(data, dates)
 
 summary(df)</code></pre>
-<pre><code>##        y              t           dates    
-##  Min.   : 4.4   Min.   :  1   2000-03:  1  
-##  1st Qu.: 7.2   1st Qu.: 37   2000-04:  1  
-##  Median : 8.8   Median : 72   2000-05:  1  
-##  Mean   : 8.7   Mean   : 72   2000-06:  1  
-##  3rd Qu.:10.2   3rd Qu.:108   2000-07:  1  
-##  Max.   :13.1   Max.   :144   2000-08:  1  
-##  NA&#39;s   :1                    (Other):138</code></pre>
+<pre><code>##        y              t          dates          
+##  Min.   : 4.4   Min.   :  1   Length:143        
+##  1st Qu.: 7.2   1st Qu.: 36   Class :character  
+##  Median : 8.8   Median : 72   Mode  :character  
+##  Mean   : 8.7   Mean   : 72                     
+##  3rd Qu.:10.2   3rd Qu.:108                     
+##  Max.   :13.1   Max.   :143</code></pre>
 <p>The <code>y</code> column is the standardised unemployment data for females in Norway. The <code>dates</code> are the months at which <code>y</code> was recorded. The <code>t</code> is equivalent to <code>dates</code> but easier to use in modeling.</p>
 <p>We obtained the data from <a href="https://datamarket.com/en/data/set/19rf/#!ds=19rf!prs=2:prt=8:pru=a&amp;display=line&amp;s=8i1">this page</a> (alternatively <a href="http://data.is/1xV9PPs">here</a>).</p>
 </div>
 <div id="data-plot" class="section level2">
 <h2><span class="header-section-number">2.3</span> Data plot</h2>
-<pre class="r"><code>plot(df$dates, df$y, lwd=2, col=&quot;blue&quot;, xlab=&#39;Month&#39;, ylab=&#39;Percentage&#39;,
+<pre class="r"><code>plot(df$t, df$y, lwd=2, col=&quot;black&quot;, xlab=&#39;Month&#39;, ylab=&#39;Percentage&#39;,
      main = &quot;Unemployment Norwegian Females (standardised)&quot;)
-lines(dates,data$y)
+lines(df$t,data$y)
 abline(h=2*(-8:9), lty=2, col=gray(.5))</code></pre>
 <p><img src="btopic116_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
@@ -488,7 +498,7 @@ u_i &= \rho u_{i-1} + \epsilon_i \\
 ##    &quot;inla(formula = formula, family = \&quot;gaussian\&quot;, data = df, 
 ##    control.predictor = list(compute = TRUE))&quot; 
 ## Time used:
-##     Pre = 1.38, Running = 0.406, Post = 0.0861, Total = 1.87 
+##     Pre = 3.24, Running = 0.376, Post = 0.176, Total = 3.79 
 ## Fixed effects:
 ##             mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## (Intercept)  8.5 0.69        7.1      8.6       9.8  8.6   0
@@ -499,18 +509,18 @@ u_i &= \rho u_{i-1} + \epsilon_i \\
 ## 
 ## Model hyperparameters:
 ##                                             mean       sd 0.025quant
-## Precision for the Gaussian observations 1.86e+04 1.84e+04   1267.822
+## Precision for the Gaussian observations 1.88e+04 1.84e+04   1265.349
 ## Precision for t                         2.62e-01 8.20e-02      0.123
 ## Rho for t                               8.93e-01 3.40e-02      0.822
 ##                                         0.5quant 0.97quant     mode
-## Precision for the Gaussian observations 1.32e+04  6.38e+04 3466.879
-## Precision for t                         2.57e-01  4.31e-01    0.243
-## Rho for t                               8.95e-01  9.49e-01    0.900
+## Precision for the Gaussian observations 1.34e+04  6.42e+04 3461.364
+## Precision for t                         2.56e-01  4.32e-01    0.242
+## Rho for t                               8.95e-01  9.49e-01    0.901
 ## 
-## Expected number of effective parameters(stdev): 142.96(0.05)
+## Expected number of effective parameters(stdev): 142.97(0.05)
 ## Number of equivalent replicates : 1.00 
 ## 
-## Marginal log-Likelihood:  -199.90 
+## Marginal log-Likelihood:  -199.92 
 ## Posterior marginals for the linear predictor and
 ##  the fitted values are computed</code></pre>
 <ol style="list-style-type: decimal">
@@ -523,30 +533,30 @@ u_i &= \rho u_{i-1} + \epsilon_i \\
 <div id="other-essential-results" class="section level2">
 <h2><span class="header-section-number">4.4</span> Other essential results</h2>
 <pre class="r"><code>str(res$summary.random$t)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    144 obs. of  8 variables:
+<pre><code>## &#39;data.frame&#39;:    143 obs. of  8 variables:
 ##  $ ID        : num  1 2 3 4 5 6 7 8 9 10 ...
-##  $ mean      : num  0.551 0.251 1.35 1.551 1.751 ...
-##  $ sd        : num  0.689 0.689 0.689 0.689 0.689 ...
-##  $ 0.025quant: num  -0.79058 -1.09037 0.00933 0.20945 0.40959 ...
+##  $ mean      : num  0.551 0.251 1.351 1.551 1.751 ...
+##  $ sd        : num  0.69 0.69 0.69 0.69 0.69 ...
+##  $ 0.025quant: num  -0.79294 -1.09273 0.00697 0.20709 0.40723 ...
 ##  $ 0.5quant  : num  0.534 0.234 1.334 1.534 1.734 ...
 ##  $ 0.97quant : num  1.92 1.62 2.72 2.92 3.12 ...
-##  $ mode      : num  0.513 0.213 1.313 1.513 1.713 ...
-##  $ kld       : num  7.03e-10 7.03e-10 7.03e-10 7.03e-10 7.03e-10 ...</code></pre>
+##  $ mode      : num  0.513 0.214 1.313 1.513 1.713 ...
+##  $ kld       : num  6.82e-10 6.82e-10 6.82e-10 6.82e-10 6.82e-10 ...</code></pre>
 <pre class="r"><code>str(res$marginals.fixed)</code></pre>
 <pre><code>## List of 1
-##  $ (Intercept): num [1:75, 1:2] 1.66 2.59 3.04 3.21 3.9 ...
+##  $ (Intercept): num [1:75, 1:2] 1.65 2.59 3.03 3.21 3.9 ...
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2
 ##   .. ..$ : NULL
 ##   .. ..$ : chr [1:2] &quot;x&quot; &quot;y&quot;</code></pre>
 <pre class="r"><code>str(res$marginals.hyperpar, 1)</code></pre>
 <pre><code>## List of 3
-##  $ Precision for the Gaussian observations: num [1:75, 1:2] 0.913 6.736 18.638 33.515 49.72 ...
+##  $ Precision for the Gaussian observations: num [1:75, 1:2] 1.03 7.46 18.34 33.11 53.99 ...
 ##   ..- attr(*, &quot;hyperid&quot;)= chr &quot;65001|INLA.Data1&quot;
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2
-##  $ Precision for t                        : num [1:75, 1:2] 0.0114 0.0218 0.0332 0.0397 0.0415 ...
+##  $ Precision for t                        : num [1:75, 1:2] 0.0116 0.0219 0.0335 0.04 0.0417 ...
 ##   ..- attr(*, &quot;hyperid&quot;)= chr &quot;14001|t&quot;
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2
-##  $ Rho for t                              : num [1:75, 1:2] -0.3201 0.0122 0.3418 0.4839 0.6044 ...
+##  $ Rho for t                              : num [1:75, 1:2] -0.3101 0.0214 0.3483 0.4889 0.6079 ...
 ##   ..- attr(*, &quot;hyperid&quot;)= chr &quot;14002|t&quot;
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2</code></pre>
 </div>
@@ -598,7 +608,7 @@ lines(res2$summary.fitted.values$`0.97`,col=&quot;grey&quot;)</code></pre>
 <p>Is it problematic that we can produce whatever results we want? Yes, this is a problematic feature of the dataset. If we fit a different model, RW1 or a simple seasonal model, or if we just use default priors, we are no longer able to get any result we want. But the issue is still there, we would just loose our ability to understand it.</p>
 <div id="can-we-fix-this-by-model-comparison" class="section level3">
 <h3><span class="header-section-number">6.1.1</span> Can we fix this by model comparison?</h3>
-<p>Not really. Doing model comparison over fixed values of e.g. <span class="math inline">\(\sigma_\epsilon\)</span> will give us an estimate, yes. But that estimate will be very sensitive to the choice of model comparison criterion!</p>
+<p>Not really. Doing model comparison over fixed values of e.g. <span class="math inline">\(\sigma_\epsilon\)</span> will give us an estimate, yes. But that estimate will be very sensitive to the choice of model comparison criterion!</p>
 </div>
 </div>
 </div>
@@ -614,7 +624,7 @@ lines(res2$summary.fitted.values$`0.97`,col=&quot;grey&quot;)</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -653,7 +663,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

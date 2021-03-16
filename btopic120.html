@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -435,7 +446,7 @@ print(Q)</code></pre>
 ## [10,]  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00 -0.95  1.90</code></pre>
 <div id="an-important-detail-we-will-skip" class="section level2">
 <h2><span class="header-section-number">2.1</span> An important detail we will skip</h2>
-<p>A confusing part of the AR1 model is that we must define the first value to have the correct distribution to make the process stationary, see <code>inla.doc(&quot;ar1&quot;)</code> for details. We fix this now:</p>
+<p>A confusing part of the AR1 model is that we must define the first value to have the correct distribution to make the process stationary, see <code>inla.doc("ar1")</code> for details. We fix this now:</p>
 <pre class="r"><code>Q[1,1] = 1
 Q[N,N] = 1</code></pre>
 </div>
@@ -564,7 +575,7 @@ plot(u.sample, type=&quot;l&quot;)</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -603,7 +614,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

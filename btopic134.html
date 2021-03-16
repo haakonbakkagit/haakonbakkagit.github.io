@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>Ridge regression in INLA</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Ridge regression in INLA</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic 134 updated 16 March 2021</h4>
+
+</div>
+
+
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>This topic shows how I do a first pass at modelling data with many covariates and/or factors. We use strong shrinkage penalties, also known as ridge regression. For factors we use iid effects, to deal with factor levels with few observations, and when there are many different factor levels.</p>
+<p>We simulate synthetic data instead of using real data.</p>
+<div id="pre-selection" class="section level2">
+<h2><span class="header-section-number">1.1</span> Pre-selection</h2>
+<p>We can do a pre-selection first, especially if there are many (say <span class="math inline">\(&gt;100\)</span>) covariates. There are many different approaches to pre-selection. I will not show any of these methods in this topic, but I mention them here.</p>
+<ul>
+<li>Univariate: we plot and fit every covariate against the response, one at a time, and we have some kind of criteria for what to include or exclude.</li>
+<li>Correlation: Remove some variables that have a correlation near 1 with other variables</li>
+<li>Random forest: Fit a boosting/RF model and pick the most important ones</li>
+<li>Variance: Select variables with a large variance (only reasonable in some applications)</li>
+<li>Other approaches</li>
+<li>Combination: Use a combination of these</li>
+</ul>
+<p>In the pre-selection, we have to be careful that we do not delete</p>
+<ul>
+<li>Covariates that have a significant non-linear effect, but no significant linear one</li>
+<li>Covariates that say nothing by themselves, but are important together with other covariates</li>
+</ul>
+</div>
+<div id="covariate-transformations" class="section level2">
+<h2><span class="header-section-number">1.2</span> Covariate transformations</h2>
+<p>Another point I mention for completeness is that covariates should often be transformed, especially when using linear models (as in this topic). It is often good to try several transformations. The main transformations I use</p>
+<ul>
+<li>Logarithmic: <span class="math inline">\(\log(x)\)</span>, <span class="math inline">\(\log(x+1)\)</span>, <span class="math inline">\(\log(x+min(x)+1)\)</span></li>
+<li>Exponents: <span class="math inline">\(x^2\)</span>, <span class="math inline">\(x^3\)</span></li>
+<li>Empirical quantile transform: Results in “equidistant behaviour”. Example code below.</li>
+</ul>
+<pre class="r"><code>## Empirical quantile transform
+x = c(0:10, 20:21, 100:105, 1000)
+qtx = ecdf(x)
+## The transformed variable:
+qtx(x)</code></pre>
+<pre><code>##  [1] 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65
+## [14] 0.70 0.75 0.80 0.85 0.90 0.95 1.00</code></pre>
+</div>
+<div id="packages" class="section level2">
+<h2><span class="header-section-number">1.3</span> Packages</h2>
+<pre class="r"><code>library(INLA)
+inla.setOption(&quot;num.threads&quot;, 1)
+set.seed(2021)</code></pre>
+</div>
+</div>
+<div id="simulation" class="section level1">
+<h1><span class="header-section-number">2</span> Simulation</h1>
+<div id="motivation" class="section level2">
+<h2><span class="header-section-number">2.1</span> Motivation</h2>
+<p>We have many covariates and many observations, many of the covariates have no effect, or a neglible effect. Many of the covariates are correlated. This is supposed to give a good example of typical difficult real data case.</p>
+</div>
+<div id="input-parameters" class="section level2">
+<h2><span class="header-section-number">2.2</span> Input parameters</h2>
+<p>You can change these to try different things.</p>
+<pre class="r"><code>## Number of observations
+n.obs = 5E3
+## The Gaussian noise
+sig.epsilon = 1.00
+## Covariates
+n.cov.important = 7
+n.cov.noeffect = 20
+## Fraction of new variable that is taken from some previous variable
+## 0 gives uncorrelated, infinity gives perfectly correlated
+corr.fraction = 0.7
+## How many factors
+## Please do not change this number (that requires further code changes)
+n.factors = 6
+## How many factor levels, at most
+n.fact.levels = 7
+## Typical effect size of important factor level
+effect.size.fact = 2.10</code></pre>
+</div>
+<div id="simulating-continuous-covariates" class="section level2">
+<h2><span class="header-section-number">2.3</span> Simulating continuous covariates</h2>
+<p>We simulate covariates from a normal distribution. Often the distribution is not so nice at all! But, worst case, we can do an empirical quantile transform and have nice marginals behaviour.</p>
+<pre class="r"><code>## Matrix of covariates 
+## Build this column by column
+X = cbind(rnorm(n.obs))
+## What previous variable are you correlated with?
+corr.with = rep(NA, n.cov.important)
+for (i in 2:(n.cov.important+n.cov.noeffect)) {
+  ## Choose a previous covariate to be correlated with
+  corr.with[i] = sample(1:(i-1), 1)
+  ## Create a new covariate
+  new = (corr.fraction*X[, corr.with[i]] + rnorm(n.obs))/corr.fraction
+  ## Add a column to the matrix of covariates
+  X = cbind(X, new)
+}
+colnames(X) = paste0(&quot;x&quot;, 1:ncol(X))</code></pre>
+<p>A brief look at the variables and correlations:</p>
+<pre class="r"><code>summary(X[, 1:5])</code></pre>
+<pre><code>##        x1             x2             x3             x4      
+##  Min.   :-3.9   Min.   :-6.4   Min.   :-5.7   Min.   :-7.7  
+##  1st Qu.:-0.7   1st Qu.:-1.2   1st Qu.:-1.1   1st Qu.:-1.5  
+##  Median : 0.0   Median : 0.0   Median : 0.0   Median : 0.0  
+##  Mean   : 0.0   Mean   : 0.0   Mean   : 0.0   Mean   : 0.0  
+##  3rd Qu.: 0.7   3rd Qu.: 1.2   3rd Qu.: 1.2   3rd Qu.: 1.5  
+##  Max.   : 3.7   Max.   : 6.5   Max.   : 6.5   Max.   : 8.1  
+##        x5      
+##  Min.   :-7.9  
+##  1st Qu.:-1.2  
+##  Median : 0.0  
+##  Mean   : 0.0  
+##  3rd Qu.: 1.2  
+##  Max.   : 6.1</code></pre>
+<pre class="r"><code>cor(X[, 1:5])</code></pre>
+<pre><code>##      x1   x2   x3   x4   x5
+## x1 1.00 0.58 0.59 0.45 0.58
+## x2 0.58 1.00 0.33 0.78 0.35
+## x3 0.59 0.33 1.00 0.25 0.34
+## x4 0.45 0.78 0.25 1.00 0.27
+## x5 0.58 0.35 0.34 0.27 1.00</code></pre>
+</div>
+<div id="simulating-factors" class="section level2">
+<h2><span class="header-section-number">2.4</span> Simulating factors</h2>
+<p>Simulating factors is slightly harder, since each has several factor levels, and each factor level can have a different effect (on the linear predictor / response).</p>
+<pre class="r"><code>## Simulate a factor with n.fact.levels factor levels
+new = sample(1:n.fact.levels, size=n.obs, replace = T)
+## The factor (as strings)
+new = paste0(&quot;F&quot;, 1, &quot;level&quot;, new)
+## Create the first column of the matrix of factors
+FF = cbind(new)
+## The effect of the factor
+FFeff = cbind(rep(0, n.obs))
+## Each factor has an effect level and an effect size
+## Effect level gives which of the factor levels has a nonzero effect
+effect.level = rep(NA, n.factors)
+## Effect size gives how large the effect for the nonzero factor is
+## The first factor has an effect of 0
+effect.size = rep(NA, n.factors)
+for (i in 2:(n.factors)) {
+  ## Choose how many factor levels for this factor
+  tmp.levels = sample(2:n.fact.levels, 1)
+  ## Create a new factor
+  new = sample(1:tmp.levels, size=n.obs, replace = T)
+  ## Create its effect
+  effect.level[i] = sample(1:tmp.levels, 1)
+  effect.size[i] = rnorm(1)*effect.size.fact
+  new.effect = (new==effect.level[i])*effect.size[i]
+  ## Create the column for the new factor and add it to the matrix
+  new = paste0(&quot;F&quot;, i, &quot;level&quot;, new)
+  FF = cbind(FF, new)
+  ## Add the new effect column to the matrix
+  FFeff = cbind(FFeff, new.effect)
+}
+colnames(FF) = paste0(&quot;fa&quot;, 1:ncol(FF))
+colnames(FFeff) = paste0(&quot;fa&quot;, 1:ncol(FF), &quot;eff&quot;)</code></pre>
+<p>Check that the factors look ok:</p>
+<pre class="r"><code>FF[1:8, 2:6]</code></pre>
+<pre><code>##      fa2        fa3        fa4        fa5        fa6       
+## [1,] &quot;F2level2&quot; &quot;F3level7&quot; &quot;F4level4&quot; &quot;F5level4&quot; &quot;F6level4&quot;
+## [2,] &quot;F2level1&quot; &quot;F3level4&quot; &quot;F4level4&quot; &quot;F5level6&quot; &quot;F6level4&quot;
+## [3,] &quot;F2level2&quot; &quot;F3level2&quot; &quot;F4level5&quot; &quot;F5level7&quot; &quot;F6level2&quot;
+## [4,] &quot;F2level2&quot; &quot;F3level5&quot; &quot;F4level5&quot; &quot;F5level7&quot; &quot;F6level3&quot;
+## [5,] &quot;F2level2&quot; &quot;F3level5&quot; &quot;F4level2&quot; &quot;F5level1&quot; &quot;F6level2&quot;
+## [6,] &quot;F2level2&quot; &quot;F3level3&quot; &quot;F4level5&quot; &quot;F5level3&quot; &quot;F6level2&quot;
+## [7,] &quot;F2level1&quot; &quot;F3level2&quot; &quot;F4level5&quot; &quot;F5level1&quot; &quot;F6level4&quot;
+## [8,] &quot;F2level1&quot; &quot;F3level2&quot; &quot;F4level1&quot; &quot;F5level2&quot; &quot;F6level2&quot;</code></pre>
+<pre class="r"><code>FFeff[1:8, 2:6]</code></pre>
+<pre><code>##      fa2eff fa3eff fa4eff fa5eff fa6eff
+## [1,]    2.3    0.0  -0.25    0.0   0.00
+## [2,]    0.0    3.1  -0.25    0.0   0.00
+## [3,]    2.3    0.0   0.00    0.0   0.00
+## [4,]    2.3    0.0   0.00    0.0  -0.46
+## [5,]    2.3    0.0   0.00    0.0   0.00
+## [6,]    2.3    0.0   0.00    1.5   0.00
+## [7,]    0.0    0.0   0.00    0.0   0.00
+## [8,]    0.0    0.0   0.00    0.0   0.00</code></pre>
+</div>
+<div id="simulating-response" class="section level2">
+<h2><span class="header-section-number">2.5</span> Simulating response</h2>
+<p>First we simulate the beta coefficients</p>
+<pre class="r"><code>## 2 alternatives, no effect at all or negligble effect
+betas = c(abs(rnorm(n.cov.important))+0.5, rnorm(n.cov.noeffect)*0.000) * 0.1
+# betas = c(abs(rnorm(n.cov.important))+0.5, rnorm(n.cov.noeffect)*0.001) * 0.1</code></pre>
+<pre class="r"><code>gaussian.error = rnorm(n.obs, 0, sd=sig.epsilon)</code></pre>
+<pre class="r"><code>## Compute the response from the simulated values
+eta1 = X %*% betas
+eta2 = rowSums(FFeff)
+y = eta1 + eta2 + gaussian.error</code></pre>
+<p>Compare the variances of the different components. If the error variance is high, compared to the eta varainces, we have little information, and vice versa.</p>
+<pre class="r"><code>sd(eta1)</code></pre>
+<pre><code>## [1] 1.4</code></pre>
+<pre class="r"><code>sd(eta2)</code></pre>
+<pre><code>## [1] 1.7</code></pre>
+<pre class="r"><code>sd(gaussian.error)</code></pre>
+<pre><code>## [1] 0.98</code></pre>
+</div>
+</div>
+<div id="fit-inla-models-with-continuous-covariates" class="section level1">
+<h1><span class="header-section-number">3</span> Fit INLA models with continuous covariates</h1>
+<div id="linear-regression" class="section level2">
+<h2><span class="header-section-number">3.1</span> Linear regression</h2>
+<p>The following formula and inla call makes it very easy to program models with many covariates. More commonly, people put in all the covariate names in the formula, but that is inconvenient and prone to making mistakes.</p>
+<pre class="r"><code>form1 = y ~ 1 + X
+fit1 = inla(form1, family=&quot;gaussian&quot;, data = list(y=y, X=X))</code></pre>
+<pre class="r"><code>## Look at the first 10 fixed effects
+fit1$summary.fixed[1:8, 1:2]</code></pre>
+<pre><code>##              mean    sd
+## (Intercept) 1.635 0.028
+## x1          0.132 0.051
+## x2          0.095 0.052
+## x3          0.084 0.034
+## x4          0.115 0.028
+## x5          0.275 0.034
+## x6          0.261 0.027
+## x7          0.064 0.028</code></pre>
+<pre class="r"><code>## How far is the estimate from the truth?
+betas - fit1$summary.fixed$mean[-1]</code></pre>
+<pre><code>##  [1]  0.00066 -0.03476 -0.02260  0.04595 -0.02337 -0.01539  0.00934
+##  [8] -0.00746 -0.05116 -0.02132  0.01839  0.02465 -0.03092  0.01414
+## [15]  0.00974  0.01200  0.00262  0.01497 -0.00138  0.01461 -0.01416
+## [22]  0.03253 -0.00291 -0.00549  0.01519 -0.01298  0.01940</code></pre>
+<pre class="r"><code>## Total RMSE
+sqrt(sum((betas - fit1$summary.fixed$mean[-1])^2))</code></pre>
+<pre><code>## [1] 0.11</code></pre>
+<pre class="r"><code>## Is the estimate within two std errors?
+table((abs(betas - fit1$summary.fixed$mean[-1]))&lt;fit1$summary.fixed$sd[-1]*2)</code></pre>
+<pre><code>## 
+## TRUE 
+##   27</code></pre>
+<pre class="r"><code>## Quantiled model sd
+quantile(fit1$summary.fixed$sd[-1])</code></pre>
+<pre><code>##    0%   25%   50%   75%  100% 
+## 0.019 0.020 0.027 0.028 0.052</code></pre>
+</div>
+<div id="vague-ridge-regression" class="section level2">
+<h2><span class="header-section-number">3.2</span> Vague ridge regression</h2>
+<p>We fit the same model as before, but we put a vague <span class="math inline">\(\mathcal N(0, 1)\)</span> prior on all the betas.</p>
+<pre class="r"><code>fit2 = inla(form1, family=&quot;gaussian&quot;, data = list(y=y, X=X),
+            control.fixed = list(prec=1))</code></pre>
+<pre class="r"><code>## Total RMSE
+sqrt(sum((betas - fit2$summary.fixed$mean[-1])^2))</code></pre>
+<pre><code>## [1] 0.11</code></pre>
+<pre class="r"><code>## Is the estimate within two std errors?
+table((abs(betas - fit2$summary.fixed$mean[-1]))&lt;fit2$summary.fixed$sd[-1]*2)</code></pre>
+<pre><code>## 
+## TRUE 
+##   27</code></pre>
+<pre class="r"><code>## Quantiled model sd
+quantile(fit2$summary.fixed$sd[-1])</code></pre>
+<pre><code>##    0%   25%   50%   75%  100% 
+## 0.019 0.020 0.027 0.028 0.051</code></pre>
+</div>
+<div id="strict-ridge-regression" class="section level2">
+<h2><span class="header-section-number">3.3</span> Strict ridge regression</h2>
+<p>We fit the same model as before, but we put a strong <span class="math inline">\(\mathcal N(0, 0.1^2)\)</span> prior on all the betas.</p>
+<pre class="r"><code>fit3 = inla(form1, family=&quot;gaussian&quot;, data = list(y=y, X=X),
+            control.fixed = list(prec=100))</code></pre>
+<pre class="r"><code>## Total RMSE
+sqrt(sum((betas - fit3$summary.fixed$mean[-1])^2))</code></pre>
+<pre><code>## [1] 0.1</code></pre>
+<pre class="r"><code>## Is the estimate within two std errors?
+table((abs(betas - fit3$summary.fixed$mean[-1]))&lt;fit3$summary.fixed$sd[-1]*2)</code></pre>
+<pre><code>## 
+## TRUE 
+##   27</code></pre>
+<pre class="r"><code>## Quantiled model sd
+quantile(fit3$summary.fixed$sd[-1])</code></pre>
+<pre><code>##    0%   25%   50%   75%  100% 
+## 0.019 0.019 0.026 0.026 0.045</code></pre>
+</div>
+</div>
+<div id="fit-inla-models-with-factor-variables" class="section level1">
+<h1><span class="header-section-number">4</span> Fit INLA models with Factor variables</h1>
+<p>We now proceed to using the factors instead of the covariates. We will add back the covariates at the end.</p>
+<div id="no-hyperparameters" class="section level2">
+<h2><span class="header-section-number">4.1</span> No hyperparameters</h2>
+<pre class="r"><code>## Fixed hyperparameter in the iid effect is the same as putting
+## control.fixed = list(prec=&quot;what you fix it to&quot;)
+## The theta1 is the log precision
+hyper.fix = list(theta1 = list(initial=log(1), fixed=T))
+## Dynamic hyperparameter, with a prior for log precision that has median 0.1
+hyper.iid = list(theta1 = list(prior=&quot;pc.prec&quot;, param=c(0.1, 0.5)))</code></pre>
+<p>For these formulas, we access the factors directly, so we need to have them in the data directly.</p>
+<pre class="r"><code>data1 = as.list(as.data.frame(FF))
+data1$y = drop(y)
+str(data1)</code></pre>
+<pre><code>## List of 7
+##  $ fa1: chr [1:5000] &quot;F1level1&quot; &quot;F1level1&quot; &quot;F1level4&quot; &quot;F1level1&quot; ...
+##  $ fa2: chr [1:5000] &quot;F2level2&quot; &quot;F2level1&quot; &quot;F2level2&quot; &quot;F2level2&quot; ...
+##  $ fa3: chr [1:5000] &quot;F3level7&quot; &quot;F3level4&quot; &quot;F3level2&quot; &quot;F3level5&quot; ...
+##  $ fa4: chr [1:5000] &quot;F4level4&quot; &quot;F4level4&quot; &quot;F4level5&quot; &quot;F4level5&quot; ...
+##  $ fa5: chr [1:5000] &quot;F5level4&quot; &quot;F5level6&quot; &quot;F5level7&quot; &quot;F5level7&quot; ...
+##  $ fa6: chr [1:5000] &quot;F6level4&quot; &quot;F6level4&quot; &quot;F6level2&quot; &quot;F6level3&quot; ...
+##  $ y  : num [1:5000] 2.614 1.819 1.887 2.611 0.632 ...</code></pre>
+<p>For the factors, we write out all the names explicitly in the code. If you change the number of factors under “Input”, you also have to change the folowing formulas.</p>
+<pre class="r"><code>form2 = y ~ 1 + f(fa1, model=&quot;iid&quot;, hyper=hyper.fix) + f(fa2, model=&quot;iid&quot;, hyper=hyper.fix) + f(fa3, model=&quot;iid&quot;, hyper=hyper.fix) + f(fa4, model=&quot;iid&quot;, hyper=hyper.fix) + f(fa5, model=&quot;iid&quot;, hyper=hyper.fix) + f(fa6, model=&quot;iid&quot;, hyper=hyper.fix)
+fit4 = inla(form2, family=&quot;gaussian&quot;, data = data1)</code></pre>
+<p>We look at the different factor levels.</p>
+<pre class="r"><code>fit4$summary.random$fa1[, 1:3]</code></pre>
+<pre><code>##         ID   mean   sd
+## 1 F1level1 -0.112 0.38
+## 2 F1level2  0.042 0.38
+## 3 F1level3  0.035 0.38
+## 4 F1level4 -0.046 0.38
+## 5 F1level5  0.065 0.38
+## 6 F1level6 -0.052 0.38
+## 7 F1level7  0.070 0.38</code></pre>
+<pre class="r"><code>print(paste(&quot;Effect on level&quot;, effect.level[2], &quot;is&quot;, effect.size[2], 
+            &quot;compared to baseline 0&quot;))</code></pre>
+<pre><code>## [1] &quot;Effect on level 2 is 2.32970852456796 compared to baseline 0&quot;</code></pre>
+<pre class="r"><code>fit4$summary.random$fa2[, 1:3]</code></pre>
+<pre><code>##         ID mean   sd
+## 1 F2level1 -1.2 0.71
+## 2 F2level2  1.2 0.71</code></pre>
+</div>
+<div id="allow-hyperparameters" class="section level2">
+<h2><span class="header-section-number">4.2</span> Allow hyperparameters</h2>
+<p>This will run slower than the previous, since it optimises hyperparameters. Inference with a factor that does nothing (fa1) often gives some numerical problems. So, if we get some warnings, it is expected / should still be ok. For real data, you might remove factors, that have no effect, like this fa1, and then you should no longer get warnings.</p>
+<pre class="r"><code>form3 = y ~ 1 + f(fa1, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa2, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa3, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa4, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa5, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa6, model=&quot;iid&quot;, hyper=hyper.iid)
+fit5 = inla(form3, family=&quot;gaussian&quot;, data = data1,
+            control.inla = list(int.strategy=&quot;eb&quot;))</code></pre>
+<pre class="r"><code>## We see that the precision for fa1 is very big, so there is little effect of fa1
+fit5$summary.hyperpar[, 1:2]</code></pre>
+<pre><code>##                                            mean      sd
+## Precision for the Gaussian observations    0.34 6.8e-03
+## Precision for fa1                       2504.83 1.0e+04
+## Precision for fa2                          1.89 1.3e+00
+## Precision for fa3                          1.37 5.1e-01
+## Precision for fa4                        403.38 6.8e+02
+## Precision for fa5                          4.38 2.0e+00
+## Precision for fa6                         26.14 2.3e+01</code></pre>
+<pre class="r"><code>## The following uncertainties are much better than in model 4
+fit5$summary.random$fa1[, 1:3]</code></pre>
+<pre><code>##         ID   mean   sd
+## 1 F1level1 -0.040 0.04
+## 2 F1level2  0.014 0.04
+## 3 F1level3  0.013 0.04
+## 4 F1level4 -0.017 0.04
+## 5 F1level5  0.023 0.04
+## 6 F1level6 -0.019 0.04
+## 7 F1level7  0.025 0.04</code></pre>
+<pre class="r"><code>## The following uncertainties are better than in model 4
+fit5$summary.random$fa2[, 1:3]</code></pre>
+<pre><code>##         ID mean   sd
+## 1 F2level1 -1.2 0.61
+## 2 F2level2  1.2 0.61</code></pre>
+</div>
+</div>
+<div id="fit-inla-with-everything" class="section level1">
+<h1><span class="header-section-number">5</span> Fit INLA with everything</h1>
+<p>We fit all the covariates and factors at the same type, with dynamical priors for the factors. The comments about numerical problems and warnings from the last section apply here too.</p>
+<pre class="r"><code>form4 = y ~ 1 + X + f(fa1, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa2, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa3, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa4, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa5, model=&quot;iid&quot;, hyper=hyper.iid) + f(fa6, model=&quot;iid&quot;, hyper=hyper.iid)
+fit6 = inla(form4, family=&quot;gaussian&quot;, data = c(data1, list(X=X)),
+            control.inla = list(int.strategy=&quot;eb&quot;),
+            control.fixed = list(prec=100))</code></pre>
+<p>Continuous covariates:</p>
+<pre class="r"><code>## Total RMSE
+sqrt(sum((betas - fit6$summary.fixed$mean[-1])^2))</code></pre>
+<pre><code>## [1] 0.046</code></pre>
+<pre class="r"><code>## Is the estimate within two std errors?
+table((abs(betas - fit6$summary.fixed$mean[-1]))&lt;fit6$summary.fixed$sd[-1]*2)</code></pre>
+<pre><code>## 
+## FALSE  TRUE 
+##     1    26</code></pre>
+<pre class="r"><code>## Quantiled model sd
+quantile(fit6$summary.fixed$sd[-1])</code></pre>
+<pre><code>##     0%    25%    50%    75%   100% 
+## 0.0094 0.0095 0.0131 0.0134 0.0244</code></pre>
+<p>Factors:</p>
+<pre class="r"><code>print(paste(&quot;Effect on level&quot;, effect.level[2], &quot;is&quot;, effect.size[2], 
+            &quot;compared to baseline 0&quot;))</code></pre>
+<pre><code>## [1] &quot;Effect on level 2 is 2.32970852456796 compared to baseline 0&quot;</code></pre>
+<pre class="r"><code>fit6$summary.random$fa2[, 1:3]</code></pre>
+<pre><code>##         ID mean   sd
+## 1 F2level1 -1.2 0.75
+## 2 F2level2  1.2 0.75</code></pre>
+<div id="next-steps" class="section level2">
+<h2><span class="header-section-number">5.1</span> Next steps</h2>
+<p>This was the first round of modelling. We can look at the results and find ways to proceed.</p>
+<ul>
+<li>Can any of the factors be removed, or any of the levels merged?</li>
+<li>Can any of the covariates be removed or transofmred</li>
+<li>Do we need nonlinear effects of some of the covariates?</li>
+<li>Do we need any interaction effects?</li>
+</ul>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

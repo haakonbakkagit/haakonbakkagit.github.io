@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -597,9 +608,9 @@ time.taken &lt;- end.time - start.time
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
 }</code></pre>
-<pre><code>## [1] &quot;4.713,0.927,0.833&quot;
-## [1] &quot;4.727,0.493,2.399&quot;
-## [1] &quot;4.4,2.362,-0.203&quot;</code></pre>
+<pre><code>## [1] &quot;4.877,0.9,0.814&quot;
+## [1] &quot;4.727,0.48,2.388&quot;
+## [1] &quot;4.397,2.354,-0.21&quot;</code></pre>
 <div id="summaries" class="section level2">
 <h2><span class="header-section-number">8.1</span> Summaries</h2>
 <pre class="r"><code>summary(M[[1]]$res)</code></pre>
@@ -611,10 +622,10 @@ time.taken &lt;- end.time - start.time
 ##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
 ##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
 ## Time used:
-##     Pre = 1.56, Running = 1.57, Post = 0.0872, Total = 3.22 
+##     Pre = 3.23, Running = 0.972, Post = 0.195, Total = 4.39 
 ## Fixed effects:
 ##   mean  sd 0.025quant 0.5quant 0.97quant mode kld
-## m 0.28 1.4       -2.5     0.28       2.9 0.28   0
+## m 0.28 1.4       -2.4     0.28       2.8 0.28   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -622,18 +633,18 @@ time.taken &lt;- end.time - start.time
 ## 
 ## Model hyperparameters:
 ##                                           mean     sd 0.025quant
-## Precision for the Gaussian observations 131.40 82.081      36.09
-## Range for s                               2.75  0.634       1.79
-## Stdev for s                               2.47  0.507       1.69
+## Precision for the Gaussian observations 141.08 74.635      44.11
+## Range for s                               2.58  0.585       1.66
+## Stdev for s                               2.34  0.457       1.59
 ##                                         0.5quant 0.97quant  mode
-## Precision for the Gaussian observations   111.44    329.38 80.27
-## Range for s                                 2.64      4.17  2.44
-## Stdev for s                                 2.40      3.60  2.24
+## Precision for the Gaussian observations   125.67    317.12 97.69
+## Range for s                                 2.51      3.86  2.36
+## Stdev for s                                 2.29      3.33  2.18
 ## 
-## Expected number of effective parameters(stdev): 89.95(0.00)
-## Number of equivalent replicates : 1.11 
+## Expected number of effective parameters(stdev): 90.87(0.00)
+## Number of equivalent replicates : 1.10 
 ## 
-## Marginal log-Likelihood:  -101.16</code></pre>
+## Marginal log-Likelihood:  -101.41</code></pre>
 <pre class="r"><code>summary(M[[2]]$res)</code></pre>
 <pre><code>## 
 ## Call:
@@ -643,10 +654,10 @@ time.taken &lt;- end.time - start.time
 ##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
 ##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
 ## Time used:
-##     Pre = 1.2, Running = 3.65, Post = 0.0859, Total = 4.94 
+##     Pre = 3.01, Running = 4.71, Post = 0.187, Total = 7.9 
 ## Fixed effects:
 ##   mean  sd 0.025quant 0.5quant 0.97quant mode kld
-## m  3.3 2.7       -1.9      3.3       8.3  3.3   0
+## m  3.3 2.6       -1.8      3.3       8.2  3.3   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -654,18 +665,18 @@ time.taken &lt;- end.time - start.time
 ## 
 ## Model hyperparameters:
 ##                                            mean     sd 0.025quant
-## Precision for the Gaussian observations 118.081 30.710      69.81
-## Theta1 for s                              0.543  0.326      -0.07
-## Theta2 for s                              2.454  0.355       1.78
-##                                         0.5quant 0.97quant    mode
-## Precision for the Gaussian observations  113.996    185.81 106.253
-## Theta1 for s                               0.532      1.18   0.493
-## Theta2 for s                               2.442      3.15   2.399
+## Precision for the Gaussian observations 118.351 30.743     70.112
+## Theta1 for s                              0.539  0.327     -0.071
+## Theta2 for s                              2.451  0.354      1.790
+##                                         0.5quant 0.97quant   mode
+## Precision for the Gaussian observations  114.214    186.19 106.37
+## Theta1 for s                               0.526      1.18   0.48
+## Theta2 for s                               2.437      3.15   2.39
 ## 
-## Expected number of effective parameters(stdev): 49.43(0.00)
-## Number of equivalent replicates : 2.02 
+## Expected number of effective parameters(stdev): 49.37(0.00)
+## Number of equivalent replicates : 2.03 
 ## 
-## Marginal log-Likelihood:  15.28</code></pre>
+## Marginal log-Likelihood:  15.26</code></pre>
 <pre class="r"><code>summary(M[[3]]$res)</code></pre>
 <pre><code>## 
 ## Call:
@@ -675,7 +686,7 @@ time.taken &lt;- end.time - start.time
 ##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
 ##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
 ## Time used:
-##     Pre = 1.55, Running = 0.825, Post = 0.0962, Total = 2.47 
+##     Pre = 3.29, Running = 0.526, Post = 0.18, Total = 3.99 
 ## Fixed effects:
 ##   mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## m  4.3 0.11        4.1      4.3       4.5  4.3   0
@@ -685,19 +696,19 @@ time.taken &lt;- end.time - start.time
 ##     s SPDE2 model
 ## 
 ## Model hyperparameters:
-##                                           mean     sd 0.025quant
-## Precision for the Gaussian observations 83.272 16.259     56.063
-## Range for s                             12.718  4.299      7.095
-## Stdev for s                              0.946  0.278      0.567
+##                                           mean    sd 0.025quant
+## Precision for the Gaussian observations 83.208 16.27     56.110
+## Range for s                             12.712  4.32      7.123
+## Stdev for s                              0.947  0.28      0.568
 ##                                         0.5quant 0.97quant   mode
-## Precision for the Gaussian observations    81.66    117.92 78.520
-## Range for s                                11.77     22.91 10.066
-## Stdev for s                                 0.89      1.59  0.782
+## Precision for the Gaussian observations   81.560    117.94 78.321
+## Range for s                               11.744     22.97 10.002
+## Stdev for s                                0.889      1.60  0.777
 ## 
 ## Expected number of effective parameters(stdev): 26.86(0.00)
 ## Number of equivalent replicates : 3.72 
 ## 
-## Marginal log-Likelihood:  26.59</code></pre>
+## Marginal log-Likelihood:  26.60</code></pre>
 </div>
 <div id="logfiles" class="section level2">
 <h2><span class="header-section-number">8.2</span> Logfiles</h2>
@@ -771,7 +782,7 @@ data.frame(name=unlist(lapply(M, function(x) c(x$shortname))),
            mae=unlist(lapply(M, function(x) c(x$mae))),
            mae.sd=unlist(lapply(M, function(x) c(x$mae.sd))))</code></pre>
 <pre><code>##               name  rmse   mae  mae.sd
-## 1 stationary-model 0.346 0.190 0.00169
+## 1 stationary-model 0.346 0.191 0.00168
 ## 2    barrier-model 0.075 0.057 0.00028
 ## 3    neumann-model 0.152 0.056 0.00082</code></pre>
 </div>
@@ -797,7 +808,7 @@ data.frame(name=unlist(lapply(M, function(x) c(x$shortname))),
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -836,7 +847,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

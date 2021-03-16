@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -386,6 +397,7 @@ div.tocify {
 
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
+<p>Warning: This topic is no longer maintained, please see <a href="./btopic128.html">Barrier Model applied to the Archipelago Data</a> instead.</p>
 <p>This topic covers how to visualize spatial models near a coast. The method for visualizing spatial models can be used for other models. The knowledge we gain on the spatial models we are looking at is useful when using these models.</p>
 <div id="initialisation-and-dependency" class="section level2">
 <h2><span class="header-section-number">1.1</span> Initialisation and dependency</h2>
@@ -592,10 +604,10 @@ M[[4]]$init = c(0.044,1.274,-0.596)</code></pre>
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
 }</code></pre>
-<pre><code>## [1] &quot;2.509,1.199,-0.574&quot;
-## [1] &quot;1.144,0.314,-0.62&quot;
-## [1] &quot;0.787,2.339,-0.471&quot;
-## [1] &quot;-0.002,1.29,-0.581&quot;</code></pre>
+<pre><code>## [1] &quot;2.509,1.199,-0.575&quot;
+## [1] &quot;1.154,0.311,-0.627&quot;
+## [1] &quot;0.793,2.349,-0.47&quot;
+## [1] &quot;-0.004,1.325,-0.584&quot;</code></pre>
 <div id="summaries" class="section level2">
 <h2><span class="header-section-number">5.1</span> Summaries</h2>
 <p>You can run these to see the model output.</p>
@@ -690,7 +702,7 @@ if(require(ggplot2)) {
 <p>Bakka, H., J. Vanhatalo, J. Illian, D. Simpson, and H. Rue. 2016. “Accounting for Physical Barriers in Species Distribution Modeling with Non-Stationary Spatial Random Effects.” ArXiv preprint arXiv:1608.03787. Norwegian University of Science; Technology, Trondheim, Norway.</p>
 </div>
 <div id="ref-kallasvuo2016modeling">
-<p>Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016. “Modeling the Spatial Distribution of Larval Fish Abundance Provides Essential Information for Management.” <em>Canadian Journal of Fisheries and Aquatic Sciences</em>, no. ja. NRC Research Press.</p>
+<p>Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016. “Modeling the Spatial Distribution of Larval Fish Abundance Provides Essential Information for Management.” <em>Canadian Journal of Fisheries and Aquatic Sciences</em>, no. ja.</p>
 </div>
 </div>
 </div>
@@ -707,7 +719,7 @@ if(require(ggplot2)) {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -746,7 +758,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

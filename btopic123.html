@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -427,7 +438,7 @@ control.family1 = list(control.link=list(model=&quot;logit&quot;))
 <h2><span class="header-section-number">3.3</span> Formula</h2>
 <pre class="r"><code>hyper1 = list(theta = list(prior=&quot;pc.prec&quot;, param=c(1,0.01)))
 formula1 = y ~ x1 + x2 + f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
-<p>This specifies the formula, and the priors for any hyper-parameters in the random effects. See <code>inla.doc(&quot;pc.prec&quot;)</code> for the description of this prior (exponential distribution on <span class="math inline">\(\sigma\)</span> with <span class="math inline">\(\lambda = \frac{\log(0.01)}{1}\)</span>).</p>
+<p>This specifies the formula, and the priors for any hyper-parameters in the random effects. See <code>inla.doc("pc.prec")</code> for the description of this prior (exponential distribution on <span class="math inline">\(\sigma\)</span> with <span class="math inline">\(\lambda = \frac{\log(0.01)}{1}\)</span>).</p>
 </div>
 <div id="call-inla" class="section level2">
 <h2><span class="header-section-number">3.4</span> Call INLA</h2>
@@ -504,8 +515,7 @@ plot(m.sigma, type=&quot;l&quot;, xlab = &quot;Special 2&quot;, ylab = &quot;Pro
 <h1><span class="header-section-number">5</span> Discussion</h1>
 <p>Let us ignore the behaviour to the very left of the plots, as these are numerical artifacts, and focus on the multimodality shown. How multimodal a posterior is depends on the parametrisation. Similarly, we can always find a parametrisation where the posterior is a standard Gaussian. For the precision parametrisation, the most important information is in the decay rate for the tail of the distribution, which is not something we can easily visualise.</p>
 <p>All in all, this means that we cannot “interpret posterior plots by looking at them”, unless we are confident that the parametrisation represents the right thing. I would suggest using a parametrisation where the “model density” along the x-axis is in some sense “uniform”. This is true for the sigma parametrisation.</p>
-<p>To be on the safe side, I suggest just visualising the credible intervals, as these are “interpretable” on any (momotone) parametrisation.</p>
-<p>#Comments</p>
+<p>To be on the safe side, I suggest just visualising the credible intervals, as these are “interpretable” on any (monotone) parametrisation.</p>
 <div id="references" class="section level2">
 <h2><span class="header-section-number">5.1</span> References</h2>
 </div>
@@ -522,7 +532,7 @@ plot(m.sigma, type=&quot;l&quot;, xlab = &quot;Special 2&quot;, ylab = &quot;Pro
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -561,7 +571,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

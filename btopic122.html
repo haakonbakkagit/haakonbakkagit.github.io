@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -605,14 +616,14 @@ res = inla(formula, data=inla.stack.data(stack),
 ##    control.mode = list(restart = T, &quot;, &quot; theta = 
 ##    initial.theta))&quot;) 
 ## Time used:
-##     Pre = 1.66, Running = 12, Post = 0.11, Total = 13.8 
+##     Pre = 3.42, Running = 11.7, Post = 0.22, Total = 15.3 
 ## Fixed effects:
-##           mean    sd 0.5quant 0.025quant 0.975quant 0.1quant 0.9quant
-## intercept 0.92 0.291    0.923      0.332       1.49     0.55     1.28
-## x         2.00 0.017    1.996      1.962       2.03     1.97     2.02
-##           0.25quant 0.75quant  mode kld
-## intercept     0.731      1.11 0.929   0
-## x             1.985      2.01 1.996   0
+##            mean    sd 0.5quant 0.025quant 0.975quant 0.1quant
+## intercept 0.916 0.301     0.92      0.306       1.50    0.535
+## x         1.996 0.017     2.00      1.962       2.03    1.974
+##           0.9quant 0.25quant 0.75quant  mode kld
+## intercept     1.29     0.722      1.11 0.927   0
+## x             2.02     1.985      2.01 1.996   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -620,26 +631,26 @@ res = inla(formula, data=inla.stack.data(stack),
 ## 
 ## Model hyperparameters:
 ##                                          mean    sd 0.5quant
-## Precision for the Gaussian observations 10.38 0.247    10.37
-## Range for s                              1.99 0.199     1.97
-## Stdev for s                              1.47 0.123     1.46
+## Precision for the Gaussian observations 10.36 0.247    10.35
+## Range for s                              2.08 0.234     2.07
+## Stdev for s                              1.52 0.148     1.52
 ##                                         0.025quant 0.975quant
-## Precision for the Gaussian observations       9.89      10.87
-## Range for s                                   1.65       2.43
-## Stdev for s                                   1.25       1.74
+## Precision for the Gaussian observations       9.88      10.85
+## Range for s                                   1.63       2.55
+## Stdev for s                                   1.24       1.82
 ##                                         0.1quant 0.9quant 0.25quant
-## Precision for the Gaussian observations    10.06    10.69     10.21
-## Range for s                                 1.75     2.26      1.85
-## Stdev for s                                 1.32     1.63      1.38
+## Precision for the Gaussian observations    10.04    10.68     10.19
+## Range for s                                 1.77     2.38      1.91
+## Stdev for s                                 1.33     1.71      1.42
 ##                                         0.75quant  mode
-## Precision for the Gaussian observations     10.54 10.37
-## Range for s                                  2.12  1.93
-## Stdev for s                                  1.54  1.43
+## Precision for the Gaussian observations     10.52 10.34
+## Range for s                                  2.23  2.08
+## Stdev for s                                  1.62  1.53
 ## 
-## Expected number of effective parameters(stdev): 1087.66(15.82)
+## Expected number of effective parameters(stdev): 1086.93(15.99)
 ## Number of equivalent replicates : 4.60 
 ## 
-## Marginal log-Likelihood:  -2726.65</code></pre>
+## Marginal log-Likelihood:  -2726.63</code></pre>
 </div>
 <div id="plots" class="section level1">
 <h1><span class="header-section-number">7</span> Plots</h1>
@@ -720,7 +731,7 @@ arrows(5-0.5*len, 5, 5+0.5*len, 5, length=0.05, angle=90, code=3, lwd=3)</code><
 <p>Bakka, Haakon, Håvard Rue, Geir-Arne Fuglstad, Andrea Riebler, David Bolin, Elias Krainski, Daniel Simpson, and Finn Lindgren. 2018. “Spatial Modelling with R-Inla: A Review.” <em>arXiv Preprint arXiv:1802.06350</em>.</p>
 </div>
 <div id="ref-lindgren2011spdeapproach">
-<p>Lindgren, Finn, Håvard Rue, and Johan Lindström. 2011. “An Explicit Link Between Gaussian Fields and Gaussian Markov Random Fields: The Stochastic Partial Differential Equation Approach.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 73 (4). Blackwell Publishing Ltd: 423–98. <a href="https://doi.org/10.1111/j.1467-9868.2011.00777.x">https://doi.org/10.1111/j.1467-9868.2011.00777.x</a>.</p>
+<p>Lindgren, Finn, Håvard Rue, and Johan Lindström. 2011. “An Explicit Link Between Gaussian Fields and Gaussian Markov Random Fields: The Stochastic Partial Differential Equation Approach.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 73 (4): 423–98. <a href="https://doi.org/10.1111/j.1467-9868.2011.00777.x">https://doi.org/10.1111/j.1467-9868.2011.00777.x</a>.</p>
 </div>
 </div>
 </div>
@@ -737,7 +748,7 @@ arrows(5-0.5*len, 5, 5+0.5*len, 5, length=0.05, angle=90, code=3, lwd=3)</code><
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -776,7 +787,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

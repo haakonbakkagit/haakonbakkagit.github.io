@@ -28,6 +28,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -382,7 +393,7 @@ div.tocify {
 <h4 class="author">Francesco Serafini</h4>
 <h4 class="author">Runbing Zheng</h4>
 <h4 class="author">Haakon Bakka</h4>
-<h4 class="date">updated XX March 2018</h4>
+<h4 class="date">updated 16 March 2021</h4>
 
 </div>
 
@@ -391,30 +402,34 @@ div.tocify {
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>In this page we explain how to build polygons with the <code>INLA</code> and <code>sp</code> packages. This functionality is very useful in particular when we are dealing with physical barriers, which are important in statistical models on maps (spatial statistics). On this page we show several practical examples of how to deal with polygons. After that we show how to create polygons representing a geographical area of interest, how to build a mesh on this area, and how to get some nice plot from Google Maps.</p>
+<div id="polygons-for-physical-boundaries" class="section level2">
+<h2><span class="header-section-number">1.1</span> Polygons for Physical Boundaries</h2>
+<p>In many real spatial models we have to deal with areas with physical boundaries. Let us think about data coming from sensors placed in the sea recording a signal which doesn’t propagate on the earth. In this situation any island represents a physical boundary that we have to take into account when modeling. On the other hand we could think of the opposite situation: We are interested in what happens on land and do not care about the sea, and the sea acts as a boundary, e.g. in disease mapping. For these boundaries, Haakon developed the Barrier model, see <a href="btopic128.html">Btopic128</a>. This topic is also a guidance on how to make meshes for the Barrier model.</p>
 </div>
-<div id="polygons" class="section level1">
-<h1><span class="header-section-number">2</span> Polygons</h1>
-<div id="physical-boundaries" class="section level2">
-<h2><span class="header-section-number">2.1</span> Physical Boundaries</h2>
-<p>In many real spatial model we have to deal with areas with physical boundaries. Let us think about data coming from sensors placed in the sea recording a signal which doesn’t propagate on the earth. In this situation any island represents a physical boundary that we have to take into account when modeling. Pay attention to the boundary effect (link mesh page: <a href="https://haakonbakkagit.github.io/btopic126.html#21_what_is_mesh_and_why_we_need_it" class="uri">https://haakonbakkagit.github.io/btopic126.html#21_what_is_mesh_and_why_we_need_it</a>) On the other hand we could think of the opposite situation: We are interested in what happens on land and do not care about the sea. This is a pretty common situation in epidemiology in which we are interested in the diffusion of a certain disease where people live.</p>
+<div id="polygons-in-general-for-mesh-construction" class="section level2">
+<h2><span class="header-section-number">1.2</span> Polygons in general for mesh construction</h2>
+<p>More in general, having a mesh with holes is useful in some situations. Let us think about the following scenario: we have an area in which the data is missing. We can’t simply ignore that part of the total area. One possible solution is to treat it as an hole and then build a mesh with larger triangles on the missing data area. Then we get a continuous process over all of space, but we have less mesh nodes in the holes, and therefore faster computations.</p>
 </div>
-<div id="mesh-with-holes" class="section level2">
-<h2><span class="header-section-number">2.2</span> Mesh with holes</h2>
-<p>More in general, having a mesh with holes is useful in many other situations. Let us think about the following scenario: we have an area in which the data is missing. We can’t simply ignore that part of the total area. One possible solution is to treat it as an hole and then build a mesh with larger triangles on the missing data area, and still consider the process as a continuous process (in order to not be affected by the boundary effect).</p>
+<div id="libraries" class="section level2">
+<h2><span class="header-section-number">1.3</span> Libraries</h2>
+<pre class="r"><code>library(INLA)
+library(rgdal)
+library(rgeos)
+library(ggmap)
+set.seed(2018)</code></pre>
 </div>
+</div>
+<div id="simple-constructed-polygons" class="section level1">
+<h1><span class="header-section-number">2</span> Simple constructed polygons</h1>
+<p>First, we show an example of simple polygons that we construct manually. Our real polygon example is not dependent on this simple example. However, if you want to study the R objects, and how they behave, it is better to start with this simple example.</p>
 <div id="basic-polygon" class="section level2">
-<h2><span class="header-section-number">2.3</span> Basic Polygon</h2>
-<p>Let us create a simple study area composed of two parts. The first one has a hole and the second is non-convex. We can do that using the <span class="math inline">\(\texttt{Polygons()}\)</span> function of the <code>sp</code> package (Pebesma and Bivand, 2005) which creates an object of class Polygons. This function needs just two arguments:</p>
+<h2><span class="header-section-number">2.1</span> Basic Polygon</h2>
+<p>Let us create a simple study area composed of two parts. The first one has a hole and the second is non-convex. We can do that using the <span class="math inline">\(\texttt{Polygons()}\)</span> function of the <code>sp</code> package, which creates an object of class Polygons. This function needs just two arguments:</p>
 <ul>
 <li><p><code>coords</code> : 2 column numeric matrix with the coordinates of the vertices of the polygon.</p></li>
 <li><p><code>hole</code> : logical value for setting polygon as hole or not.</p></li>
 </ul>
-<p>Similar code could be found in “The R-INLA tutorial on SPDE models, 2017”. Before starting let us import all the libraries that we are going to use.</p>
-<pre class="r"><code>library(INLA)
-library(rgdal)
-library(rgeos)
-library(ggmap)</code></pre>
-<p>Let us define our first polygon:</p>
+<p>Let us define our first polygon. Similar code can be found in the <a href="https://becarioprecario.bitbucket.io/spde-gitbook/">SPDE-book</a>.</p>
 <pre class="r"><code># First polygon
 pl1 &lt;- Polygon(cbind(c(0,15,15,0,0), c(5,0,20,20,5)), hole=FALSE)
 # Hole in the first polygon
@@ -423,19 +438,23 @@ h1 &lt;- Polygon(cbind(c(5,12,10,5,5), c(7,7,15,15,7)), hole=TRUE)
 pl2 &lt;- Polygon(cbind(c(15,20,20,30,30,15,15), c(10,10,0,0,20,20,10)), hole=FALSE)</code></pre>
 <p>The function <span class="math inline">\(\texttt{SpatialPolygons()}\)</span> is used to create a single object containing the two above polygons. The function takes as argument a list of lists and gives as output an object of class <code>SpatialPolygons</code>.</p>
 <pre class="r"><code>sp &lt;- SpatialPolygons(list(Polygons(list(pl1, h1), &#39;0&#39;), 
-                           Polygons(list(pl2), &#39;1&#39;))) 
-
-mesh &lt;- inla.mesh.2d(boundary=sp, max.edge=2)</code></pre>
+                           Polygons(list(pl2), &#39;1&#39;))) </code></pre>
+<pre class="r"><code>plot(sp, main = &#39;Polygon&#39;)</code></pre>
 <p><img src="btopic127_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>As we said before one could be interested in building a finer mesh on the areas of interest and a poorer one in the other regions of the study area. It is possible to do that just expanding the study area.</p>
+</div>
+<div id="mesh-construction-on-this-polygon" class="section level2">
+<h2><span class="header-section-number">2.2</span> Mesh construction on this polygon</h2>
+<pre class="r"><code>mesh &lt;- inla.mesh.2d(boundary=sp, max.edge=2)
+plot(mesh, main = &#39;Mesh&#39;)</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>One could be interested in building a finer mesh on the areas of interest and a poorer one in the other regions (the holes) of the study area. It is possible to do that just expanding the study area.</p>
 <pre class="r"><code>mesh2 &lt;- inla.mesh.2d(boundary=sp, max.edge=c(1,4))</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 </div>
 <div id="polygons-from-coastlines" class="section level1">
 <h1><span class="header-section-number">3</span> Polygons from coastlines</h1>
-<p>As we said before in many applications in geographical statistics it is necessary to deal with coastlines. In this section we show how to use world coastlines data in order to build a mesh in an area of interest. We consider the case where we are interested in something progating in the sea, the other case is easily deducible. If you are interested on how to <strong>build a mesh given a coastline</strong> please check this site:</p>
-<p><a href="https://haakonbakkagit.github.io/btopic104.html" class="uri">https://haakonbakkagit.github.io/btopic104.html</a></p>
+<p>As we said before in many applications in geographical statistics it is necessary to deal with coastlines. In this section we show how to use real world coastlines data in order to create a polygon for our study area.</p>
 <div id="download-coastlines-data" class="section level2">
 <h2><span class="header-section-number">3.1</span> Download Coastlines Data</h2>
 <p>First of all we need to downlad the shape file of the coastlines. The data is available on this webpage:</p>
@@ -516,36 +535,33 @@ new_sp = SpatialPolygons(list(Polygons(append(hole_list, pll),&#39;1&#39;)))
 
 # take a look
 plot(new_sp)</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-16-1.png" width="1440" /></p>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-17-1.png" width="1440" /></p>
 </div>
-<div id="build-a-mesh" class="section level2">
-<h2><span class="header-section-number">3.4</span> Build a mesh</h2>
-<p>With the polygon on hand, we can easily create a mesh using <code>INLA</code>. We can just use the same code as before:</p>
+</div>
+<div id="build-a-mesh-from-this-polygon" class="section level1">
+<h1><span class="header-section-number">4</span> Build a mesh from this polygon</h1>
+<p>In this section we show how to build a mesh from the polygon we just made. A similar example can be found in <a href="btopic104.html">BTopic104</a>.</p>
 <pre class="r"><code>mesh_poly = inla.mesh.2d(boundary = new_sp, max.edge = 0.2)
-
 plot(mesh_poly, main = &#39;&#39;)</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-17-1.png" width="768" /></p>
-<p>Lets extend the study area. See the [link on mesh page] to see how to specify the parameters to build a nice mesh.</p>
-<pre class="r"><code>mesh_poly2 = inla.mesh.2d(boundary = new_sp, max.edge = c(0.1, 0.4),
-                          min.angle = c(0.1, 10),
-                          cutoff = c(0.02))
-
-plot(mesh_poly2, main = &#39;&#39;)</code></pre>
 <p><img src="btopic127_files/figure-html/unnamed-chunk-18-1.png" width="768" /></p>
-</div>
+<p>Lets extend the study area. See <a href="btopic104.html">BTopic104</a> for how to specify the parameters to build a good mesh.</p>
+<pre class="r"><code>mesh_poly2 = inla.mesh.2d(boundary = new_sp, max.edge = c(0.1, 0.4),
+                          cutoff = c(0.02))
+plot(mesh_poly2, main = &#39;&#39;)</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-19-1.png" width="768" /></p>
 </div>
 <div id="plotting-maps" class="section level1">
-<h1><span class="header-section-number">4</span> Plotting Maps</h1>
+<h1><span class="header-section-number">5</span> Plotting Maps</h1>
 <div id="map-from-google" class="section level2">
-<h2><span class="header-section-number">4.1</span> Map from Google</h2>
+<h2><span class="header-section-number">5.1</span> Map from Google</h2>
 <p>This last section is dedicated to how to use the shape file to have a nice plot using the <code>ggmap</code> library. Let us import the map from Google.</p>
 <pre class="r"><code>try({
   glgmap = get_map(location = shape5@bbox, maptype= &quot;terrain&quot;, zoom = 7)
   p = ggmap(glgmap) #p is the plot of glgmap
   print(p)
 })</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-19-1.png" width="576" /></p>
-<p>If the code fails in compilation, we manually insert the plot below. <img src="fig/btopic127/ggmap1.jpg" width = "300" alt="The study area" align=center /></p>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-20-1.png" width="576" /></p>
+<p>In case you have problems compiling this, we insert the plot below for comparison. <img src="fig/btopic127/ggmap1.jpg" width = "250" alt="The study area" align=center /></p>
 <p>We now highlight the area of interest.</p>
 <pre class="r"><code>try({
   p1 = p + xlab(&quot;Longitude&quot;) + ylab(&quot;Latitude&quot;) 
@@ -557,19 +573,20 @@ plot(mesh_poly2, main = &#39;&#39;)</code></pre>
                        fill = NA, colour = &quot;black&quot;, alpha = 1)
   print(p3)
 })</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-20-1.png" width="576" /></p>
-<p>If the code fails in compilation, we manually insert the plot below.</p>
-<p><img src="fig/btopic127/ggmap2.jpg" width = "300" alt="The study area" align=center /></p>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-21-1.png" width="576" /></p>
+<p>Again, we manually insert the plot below.</p>
+<p><img src="fig/btopic127/ggmap2.jpg" width = "250" alt="The study area" align=center /></p>
 </div>
 <div id="transform-the-data-to-utm" class="section level2">
-<h2><span class="header-section-number">4.2</span> Transform the Data to UTM</h2>
-<p>UTM is one of the most common map projections today. The most important attribute of UTM is that it represents the size of the area accurately. Let us transform the shape file into this format.<br />
-The procedure is the same as before, and we use the same function used for latitude longitude projection.</p>
-<pre class="r"><code>shape_utm = spTransform(shape5, CRS(&quot;+proj=utm +zone=35S ellps=WGS84&quot;)) 
-
-plot(shape_utm)</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-21-1.png" width="768" /></p>
-<p>We see that the obtained map is a little bit crooked. It depends on the UTM/WGS84 projection. Looking at the code we had to specify a zone in the <span class="math inline">\(\texttt{CRS()}\)</span> function. The specification of the zone influences the relation between longitude and latitude. Unfortunately, the area that we have chosen is between two different UTM zones, 34S and 35S. To find UTM zones anywhere in the world check <a href="http://www.dmap.co.uk/utmworld.htm" class="uri">http://www.dmap.co.uk/utmworld.htm</a>. In the above example we can use either of 34S and 35S, beacuse they both contain a large part of the study area.</p>
+<h2><span class="header-section-number">5.2</span> Transform the Data to UTM</h2>
+<p>UTM is one of the most common map projections today. The most important attribute of UTM is that it represents the size/dimensions of the area accurately. Let us transform the shape file into this format. Note that longitude and latitude is not a good representation! The procedure is the same as before, and we use the same function used for latitude longitude projection.</p>
+<pre class="r"><code>shape_utm = spTransform(shape5, CRS(&quot;+proj=utm +zone=35S ellps=WGS84&quot;)) </code></pre>
+<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;,
+## prefer_proj = prefer_proj): Discarded datum Unknown based on WGS84
+## ellipsoid in CRS definition</code></pre>
+<pre class="r"><code>plot(shape_utm)</code></pre>
+<p><img src="btopic127_files/figure-html/unnamed-chunk-22-1.png" width="768" /></p>
+<p>We see that the obtained map is a little bit crooked. It depends on the UTM/WGS84 projection. Looking at the code we had to specify a zone in the <span class="math inline">\(\texttt{CRS()}\)</span> function. The specification of the zone influences the relation between longitude and latitude. Unfortunately, the area that we have chosen is between two different UTM zones, 34S and 35S. To find UTM zones anywhere in the world check <a href="http://www.dmap.co.uk/utmworld.htm" class="uri">http://www.dmap.co.uk/utmworld.htm</a>. In the above example we can use either of 34S and 35S, because they both contain a large part of the study area.</p>
 </div>
 </div>
 
@@ -584,7 +601,7 @@ plot(shape_utm)</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -623,7 +640,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -432,9 +443,9 @@ res1 = inla(formula, family = &quot;gaussian&quot;, data = df,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res1$summary.fixed</code></pre>
 <pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  3.02 0.024       2.97     3.02      3.06  3.02 9.7e-08
-## x1           0.70 0.022       0.65     0.70      0.74  0.70 9.7e-08
-## x2          -0.31 0.021      -0.35    -0.31     -0.27 -0.31 9.7e-08</code></pre>
+## (Intercept)  3.02 0.024       2.97     3.02      3.06  3.02 1.1e-07
+## x1           0.70 0.022       0.65     0.70      0.74  0.70 1.1e-07
+## x2          -0.31 0.021      -0.35    -0.31     -0.27 -0.31 1.1e-07</code></pre>
 </div>
 <div id="results" class="section level2">
 <h2><span class="header-section-number">4.2</span> Results</h2>
@@ -456,11 +467,11 @@ res1 = inla(formula, family = &quot;gaussian&quot;, data = df,
 res2 = inla(formula, family = &quot;gaussian&quot;, data = df,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res2$summary.fixed</code></pre>
-<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  3.01 0.019       2.98     3.01      3.05  3.01 9.7e-08
-## x1           0.71 0.017       0.67     0.71      0.74  0.71 9.7e-08
-## x2          -0.30 0.017      -0.33    -0.30     -0.27 -0.30 9.7e-08
-## x3           0.28 0.017       0.25     0.28      0.32  0.28 9.7e-08</code></pre>
+<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode   kld
+## (Intercept)  3.01 0.019       2.98     3.01      3.05  3.01 1e-07
+## x1           0.71 0.017       0.67     0.71      0.74  0.71 1e-07
+## x2          -0.30 0.017      -0.33    -0.30     -0.27 -0.30 1e-07
+## x3           0.28 0.017       0.25     0.28      0.32  0.28 1e-07</code></pre>
 <p>With this model, the estimates are better, and the uncertainties smaller than with model 1.</p>
 </div>
 </div>
@@ -482,7 +493,7 @@ res2 = inla(formula, family = &quot;gaussian&quot;, data = df,
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -521,7 +532,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

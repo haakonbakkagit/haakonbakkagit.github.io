@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -441,7 +452,7 @@ res = inla(formula, data=df, family=&quot;Poisson&quot;, E = rep(1, N),
 ##    = rep(1, &quot;, &quot; N), control.predictor = list(compute = TRUE, 
 ##    link = 1))&quot; ) 
 ## Time used:
-##     Pre = 1.61, Running = 0.27, Post = 0.0834, Total = 1.97 
+##     Pre = 3.73, Running = 0.231, Post = 0.169, Total = 4.13 
 ## Fixed effects:
 ##             mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## (Intercept) 0.58 0.76       -1.1     0.62       1.9 0.69   0
@@ -453,13 +464,13 @@ res = inla(formula, data=df, family=&quot;Poisson&quot;, E = rep(1, N),
 ## 
 ## Model hyperparameters:
 ##                      mean    sd 0.025quant 0.5quant 0.97quant  mode
-## Precision for i     3.489 1.128      1.770    3.325     6.004 3.020
-## Precision for group 0.285 0.173      0.073    0.247     0.698 0.176
+## Precision for i     3.490 1.128      1.770    3.327     6.003 3.023
+## Precision for group 0.285 0.173      0.073    0.247     0.697 0.176
 ## 
 ## Expected number of effective parameters(stdev): 35.97(2.28)
 ## Number of equivalent replicates : 1.53 
 ## 
-## Marginal log-Likelihood:  -164.67 
+## Marginal log-Likelihood:  -164.66 
 ## Posterior marginals for the linear predictor and
 ##  the fitted values are computed</code></pre>
 <pre class="r"><code>plot(df$y, col=&quot;blue&quot;, pch=1)
@@ -484,7 +495,7 @@ for (j in 1:n.group) {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -523,7 +534,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

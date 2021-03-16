@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -423,7 +434,7 @@ formula1 = y ~ f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
 ##    Ntrials = Ntrials, &quot;, &quot; control.compute = list(config = T), 
 ##    control.family = control.family1)&quot; ) 
 ## Time used:
-##     Pre = 1.27, Running = 0.115, Post = 0.0829, Total = 1.47 
+##     Pre = 2.9, Running = 0.147, Post = 0.17, Total = 3.21 
 ## Fixed effects:
 ##               mean   sd 0.025quant 0.5quant 0.97quant   mode kld
 ## (Intercept) -0.026 0.16      -0.35   -0.025      0.27 -0.022   0
@@ -448,7 +459,7 @@ formula1 = y ~ f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
 <h2><span class="header-section-number">3.1</span> The average as a function of <code>x1</code></h2>
 <p>We compute the average (on linear predictor scale) for <span class="math inline">\(x_1=0\)</span> and <span class="math inline">\(x_1=1\)</span>. We ignore the intercept, as that is the same for all observations.</p>
 <pre class="r"><code>(avg.all = mean(res1$summary.random$plate$mean))</code></pre>
-<pre><code>## [1] 0.00076</code></pre>
+<pre><code>## [1] 0.00074</code></pre>
 <pre class="r"><code>(avg.x1.0 = mean(res1$summary.random$plate$mean[df$x1==0]))</code></pre>
 <pre><code>## [1] 0.14</code></pre>
 <pre class="r"><code>(avg.x1.1 = mean(res1$summary.random$plate$mean[df$x1==1]))</code></pre>
@@ -459,13 +470,13 @@ formula1 = y ~ f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
 <pre class="r"><code>n.samples = 10000
 samples = inla.posterior.sample(n.samples, result = res1)
 (mean(samples[[1]]$latent[(1:nrow(df))][df$x1==0]) - mean(samples[[1]]$latent[(1:nrow(df))][df$x1==1]))</code></pre>
-<pre><code>## [1] 0.56</code></pre>
+<pre><code>## [1] 0.42</code></pre>
 <pre class="r"><code># - this gives the average difference between the linear predictor values for plates with the two different seed types
 samples.avg.diff = unlist(lapply(samples, FUN = function(x) mean(x$latent[(1:nrow(df))][df$x1==0]) - mean(x$latent[(1:nrow(df))][df$x1==1])))
 # - this uses the line above in lapply, to get all the samples
 summary(samples.avg.diff)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   -0.37    0.18    0.29    0.29    0.40    0.97</code></pre>
+##   -0.20    0.19    0.29    0.30    0.40    0.95</code></pre>
 <pre class="r"><code># - Note that the mean equals avg.diff</code></pre>
 <p>We plot the result to see the distribution.</p>
 <pre class="r"><code>plot(density(samples.avg.diff))</code></pre>
@@ -484,10 +495,6 @@ summary(samples.avg.diff)</code></pre>
 <h2><span class="header-section-number">4.1</span> In the end, is this model wrong?</h2>
 <p>The result we get in this example (that the average difference is not zero) can be interpreted as “either something very strange happened accidentally, or your model is wrong”.</p>
 <p>One very useful way to think about model validity is “how would this model predict new data?” If we do a new experiment, with one of the same plates (and assume that <span class="math inline">\(x_1\)</span> cannot change when using the same plate), we would predict using the intercept and the posterior of the random effect <em>at that plate</em>. This is sensible. If we do another experiment, this time with a new plate, with seed type 0, what would we predict? With the current model, we would not use the knowledge that we have seed type 0. We would predict with the intercept and a new draw from the iid effect. This is clearly not what we want!</p>
-<p>If you want to do only descriptive modeling, and never do predictions, I have no way of concluding that the current model is wrong.</p>
-</div>
-<div id="references" class="section level2">
-<h2><span class="header-section-number">4.2</span> References</h2>
 </div>
 </div>
 
@@ -502,7 +509,7 @@ summary(samples.avg.diff)</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -541,7 +548,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -440,7 +451,7 @@ formula1 = y ~ x1 + x2 + f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></p
 ##    list(config = T), control.predictor = list(compute = T), &quot;, &quot; 
 ##    control.family = control.family1)&quot;) 
 ## Time used:
-##     Pre = 1.41, Running = 0.125, Post = 0.105, Total = 1.64 
+##     Pre = 3.3, Running = 0.156, Post = 0.198, Total = 3.66 
 ## Fixed effects:
 ##              mean   sd 0.025quant 0.5quant 0.97quant  mode kld
 ## (Intercept) -0.43 0.18      -0.79    -0.43    -0.074 -0.43   0
@@ -453,7 +464,7 @@ formula1 = y ~ x1 + x2 + f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></p
 ## 
 ## Model hyperparameters:
 ##                       mean      sd 0.025quant 0.5quant 0.97quant mode
-## Precision for plate 115.62 1331.96       2.71    10.24    224.56 5.58
+## Precision for plate 116.04 1339.92       2.71    10.24    224.67 5.58
 ## 
 ## Expected number of effective parameters(stdev): 9.28(2.66)
 ## Number of equivalent replicates : 2.05 
@@ -481,8 +492,8 @@ samples = inla.posterior.sample(n.samples, result = res1)</code></pre>
 <pre class="r"><code>## See one example value
 samples[[1]]$latent[holdout, , drop=F]</code></pre>
 <pre><code>##              sample:1
-## Predictor:7      1.64
-## Predictor:12    -0.27</code></pre>
+## Predictor:7       1.4
+## Predictor:12     -1.7</code></pre>
 <pre class="r"><code>## Draw this part of every sample
 samp = lapply(samples, function(x) x$latent[holdout])
 samp = matrix(unlist(samp), ncol = 2, byrow = T)</code></pre>
@@ -530,7 +541,7 @@ names(probs)[length(probs)] = &quot;Joint probability&quot;
 ## The result for this hold-out combo
 print(probs)</code></pre>
 <pre><code>##         holdout 7        holdout 12 Joint probability 
-##            0.0456            0.0701            0.0032</code></pre>
+##             0.043             0.069             0.003</code></pre>
 </div>
 </div>
 <div id="comments" class="section level1">
@@ -549,7 +560,7 @@ print(probs)</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -588,7 +599,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

@@ -1,9 +1,9 @@
-## ----setup, include=FALSE-------------------------------------------
+## ----setup, include=FALSE--------------------------------------
 rm(list=ls())
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ---- warning=FALSE, message=FALSE----------------------------------
+## ---- warning=FALSE, message=FALSE-----------------------------
 library(INLA)
 library(fields)
 library(rgdal)
@@ -14,7 +14,7 @@ set.inla.seed = 2016
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 smalldist = 0.2
 # - the width of the opening in the barrier
 width = 0.5
@@ -38,7 +38,7 @@ poly.original = SpatialPolygons(c(poly1@polygons, poly2@polygons))
 plot(poly.original, main="Barrier area polygon")
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 max.edge.length = 0.4
 # - The coarseness of the finite element approximation
 # - Corresponds to grid-square width in discretisations
@@ -50,7 +50,7 @@ max.edge.length = 0.4
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 loc1 = matrix(c(0,0, 10,0, 0,10, 10,10), 4, 2, byrow = T)
 # - This defines the extent of the interior part of the mesh
 # - In an application, if you want the mesh to depend on your 
@@ -63,7 +63,7 @@ mesh = inla.mesh.2d(loc=loc1, interior = seg,
 
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 tl = length(mesh$graph$tv[,1])
 # - the number of triangles in the mesh
 posTri = matrix(0, tl, 2)
@@ -82,14 +82,14 @@ poly.barrier = inla.barrier.polygon(mesh, barrier.triangles = barrier)
 # - in most cases this should be the same as poly.original
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 plot(mesh, main="Mesh and Omega")
 plot(poly.barrier, add=T, col='lightblue')
 plot(mesh, add=T)
 points(loc1)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 local.plot.field = function(field, ...){
   xlim = c(2, 8); ylim = xlim;
   proj = inla.mesh.projector(mesh, xlim = xlim, 
@@ -106,12 +106,12 @@ print(mesh$n)
 # - This is the appropriate length of the field variable
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 barrier.model = inla.barrier.pcmatern(mesh, barrier.triangles = barrier, prior.range = c(1.44, 0.5), prior.sigma = c(0.7, 0.5), range.fraction = 0.1)
 # - Set up the inla model, including the matrices for solving the SPDE
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 range = 3
 # - the spatial range parameter
 Q = inla.rgeneric.q(barrier.model, "Q", theta = c(0, log(range)))
@@ -119,7 +119,7 @@ Q = inla.rgeneric.q(barrier.model, "Q", theta = c(0, log(range)))
 # - Q is a function of the hyperparameters theta = c( log(sigma), log(range1), log(range2),...)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 u = inla.qsample(n=1, Q=Q, seed = set.inla.seed)
 u = u[ ,1]
 # - access the first sample
@@ -129,7 +129,7 @@ plot(poly.barrier, add=T, col='grey')
 # - Overlay the barrier
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 num.try = 500 
 # - try to sample this number of data locations
 loc.try = matrix(runif(num.try*2, min=2, max=8), 
@@ -151,7 +151,7 @@ u.data = A.data %*% u
 #   representation to the data locations
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 df = data.frame(loc.data)
 # - df is the dataframe used for modeling
 names(df) = c('locx', 'locy')
@@ -165,11 +165,11 @@ df$y = drop(sigma.u*u.data + sigma.epsilon*rnorm(nrow(df)))
 # - sample observations with gaussian noise
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 summary(df)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 stk <- inla.stack(data=list(y=df$y), A=list(A.data, 1),
                   effects=list(s=1:mesh$n, 
                                intercept=rep(1, nrow(df))), 
@@ -179,7 +179,7 @@ stk <- inla.stack(data=list(y=df$y), A=list(A.data, 1),
 # - - http://www.r-inla.org/examples/tutorials/spde-tutorial
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 model.stat = inla.spde2.pcmatern(mesh, prior.range = c(1, 0.5), prior.sigma = c(1, 0.5))
 # - Set up the model component for the spatial SPDE model: 
 #   Stationary Matern model
@@ -200,11 +200,11 @@ res.stationary <- inla(formula, data=inla.stack.data(stk),
             control.mode=list(restart=T, theta=c(4,-1.7,0.25)))
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 summary(res.stationary)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 local.plot.field(res.stationary$summary.random$s$mean,
           main="Spatial estimate with the stationary model")
 # - plot the posterior spatial marginal means
@@ -213,7 +213,7 @@ plot(poly.barrier, add=T, col='grey')
 # - Posterior spatial estimate using the stationary model
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 formula2 <- y ~ 0 + intercept + f(s, model=barrier.model)
 # - The spatial model component is different from before
 # - The rest of the model setup is the same as in the stationary case!
@@ -221,7 +221,7 @@ formula2 <- y ~ 0 + intercept + f(s, model=barrier.model)
 #     only this formula is different
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 res.barrier = inla(formula2, data=inla.stack.data(stk),
        control.predictor=list(A = inla.stack.A(stk)),
        family = 'gaussian',
@@ -231,11 +231,11 @@ res.barrier = inla(formula2, data=inla.stack.data(stk),
        control.mode=list(restart=T, theta=c(3.2, 0.4, 1.6)))
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 summary(res.barrier)
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 local.plot.field(res.barrier$summary.random$s$mean, 
                  main="Spatial posterior for Barrier model")
 # - plot the posterior spatial marginal means
@@ -244,11 +244,11 @@ plot(poly.barrier, add=T, col='grey')
 # - Posterior spatial estimate using the Barrier model
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 res.barrier$summary.hyperpar
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 tmp = inla.tmarginal(function(x) exp(x), res.barrier$marginals.hyperpar[[2]]) 
 plot(tmp, type = "l", xlab = "sigma", ylab = "Density")
 xvals = seq(0, 10, length.out=1000)
@@ -256,7 +256,7 @@ lambda = 0.99; lines(xvals, 3*exp(-lambda*xvals), lty='dashed')
 abline(v=1, col="blue")
 
 
-## -------------------------------------------------------------------
+## --------------------------------------------------------------
 tmp = inla.tmarginal(function(x) exp(x), res.barrier$marginals.hyperpar[[3]]) 
 plot(tmp, type = "l", xlab = "r", ylab = "Density")
 xvals = seq(0, 10, length.out=1000)

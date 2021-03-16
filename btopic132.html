@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -660,26 +671,26 @@ fits = list()</code></pre>
 }</code></pre>
 <pre><code>## [1] &quot;Running:   1&quot;
 ## Total 
-##     7 
+##    26 
 ## [1] &quot;Running:   2&quot;
 ## Total 
-##    71</code></pre>
+##   178</code></pre>
 <pre class="r"><code>## Check what we can set the initial values to
 for (i in 1:length(M)){
     print(paste(round(fits[[i]]$internal.summary.hyperpar$mean, 3), collapse = &quot; , &quot;))
 }</code></pre>
-<pre><code>## [1] &quot;1.776 , 0.154&quot;
-## [1] &quot;1.109 , -0.056&quot;</code></pre>
+<pre><code>## [1] &quot;1.779 , 0.154&quot;
+## [1] &quot;1.11 , -0.055&quot;</code></pre>
 <pre class="r"><code>## Comparison
 fits[[1]]$summary.hyperpar[ ,c(4,3,5)]</code></pre>
 <pre><code>##             0.5quant 0.025quant 0.97quant
-## Range for i      5.8       4.54       8.0
-## Stdev for i      1.2       0.92       1.5</code></pre>
+## Range for i      5.8       4.58       8.0
+## Stdev for i      1.2       0.94       1.5</code></pre>
 <pre class="r"><code>## This only works in this specific case, when we fixed the first hyper-parameter
 data.frame(var=c(&quot;Range&quot;, &quot;Stdev&quot;), exp(fits[[2]]$summary.hyperpar[c(1,2), c(4,3,5)]))</code></pre>
 <pre><code>##                       var X0.5quant X0.025quant X0.97quant
 ## Theta1 for i.nonsep Range      3.03        2.77        3.3
-## Theta2 for i.nonsep Stdev      0.94        0.83        1.1</code></pre>
+## Theta2 for i.nonsep Stdev      0.95        0.83        1.1</code></pre>
 </div>
 <div id="plot-results" class="section level1">
 <h1><span class="header-section-number">9</span> Plot results</h1>
@@ -740,7 +751,7 @@ local.plot.field(pred.nonsep-pred.sep, timepoint = 1, zlim=c(-1,1))</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -779,7 +790,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

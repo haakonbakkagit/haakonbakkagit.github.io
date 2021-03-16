@@ -25,6 +25,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -380,19 +391,18 @@ div.tocify {
 </div>
 
 
-<div id="latest" class="section level1">
-<h1><span class="header-section-number">1</span> Latest</h1>
-<p>(May 2020) After several people have told me the site is useful to them, I am dedicating time to upgrade it.</p>
+<div id="news" class="section level1">
+<h1><span class="header-section-number">1</span> NEWS</h1>
+<p><strong>March 2021:</strong> I did some spring cleaning, and added a topic on regularized regression: <a href="./btopic134.html">Ridge regression</a>.</p>
 </div>
 <div id="general" class="section level1">
 <h1><span class="header-section-number">2</span> General</h1>
 <p>This website is for hosting material related to Bayesian modeling, Generalised Additive Models (GAMs), the statistical tool R-INLA, the SPDE approach, and my own research.</p>
-<p>This website is always under development. Recent changes can be found at <a href="./feedback.html">Feedback and changes</a></p>
 <p>The website was recently moved from Bitbucket to Github (Dec 2019). This was mainly because Bitbucket support is ending for hg, and I like Githubs git interface.</p>
 </div>
 <div id="warning-on-r-versions" class="section level1">
 <h1><span class="header-section-number">3</span> Warning on R versions</h1>
-<p>I recently updated to R 3.6, and had to change some of the scripts because of this.</p>
+<p>I recently updated to R 4.0, and had to change some of the scripts because of this.</p>
 </div>
 <div id="the-.r-files" class="section level1">
 <h1><span class="header-section-number">4</span> The .R files</h1>
@@ -408,7 +418,7 @@ div.tocify {
 <li>Include code in my presentations?</li>
 </ul>
 <p>The answers to all of these is “yes”. Please add an acknowledgement of this webpage when you do so.</p>
-<p>If you are inspired to write papers based on some of the ideas you see here, I may already be doing that. I would be happy to hear from you, and I can clarify if we are working on the same idea.</p>
+<p>If you are inspired to do research based on some of the ideas you see here, I would be happy to hear from you.</p>
 </div>
 <div id="online-offline-use-and-older-versions" class="section level1">
 <h1><span class="header-section-number">6</span> Online / Offline use and older versions</h1>
@@ -418,8 +428,7 @@ div.tocify {
 </div>
 <div id="philosophy-of-this-website" class="section level1">
 <h1><span class="header-section-number">7</span> Philosophy (of this website)</h1>
-<p>The explanations in this website are focused on pictures and computer code.</p>
-<p>The text on the website is informal, trying to paint a picture and give the right notions, ideas and intuition. If you want rigorous mathematics, see the papers that are referenced/linked throughout the website. The goal of a paper is usually to be precise and impressive, but the goal of these pages is to make things look simple and to speak to your intuition. However, I have made an exception to this when it comes to the mathematical description of the model, as this is very important. In the hope that more people become confident with defining your models in mathematical language, I have started adding in the mathematical definition of models. This mathematical definition is in some sense equivalent to the computer code definition.</p>
+<p>The explanations in this website are focused on pictures and computer code. The text on the website is informal, trying to paint a picture and give the right notions, ideas and intuition. If you want rigorous mathematics, see the papers that are referenced. The goal of a paper is usually to be precise and impressive, but the goal of these pages is to make things look simple and to speak to your intuition. However, I have made an exception to this when it comes to the mathematical description of the model itself, as developing the capacity to translate between the mathematics and the code for the model is very important. In the hope that more people become confident with defining your models in mathematical language, I have started adding in the mathematical definition of models.</p>
 <p>Why am I using html and not pdf? Because I want to use hyperlinks! I want you to be able to open new tabs, and use the “back” arrow in your browser. To open a figure in a new tab (and you can look at two figures side by side in two windows). I want to integrate other websites and content, e.g. youtube videos.</p>
 </div>
 <div id="plan" class="section level1">
@@ -438,7 +447,7 @@ div.tocify {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -477,7 +486,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

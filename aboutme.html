@@ -22,6 +22,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -299,7 +310,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Haakon Bakka</h1>
-<h4 class="date">Updated 4th December 2017, partially updated June 2020</h4>
+<h4 class="date">Updated 4th December 2017, partially updated March 2021</h4>
 
 </div>
 
@@ -319,7 +330,7 @@ $(document).ready(function () {
 </div>
 <div id="research-in-space-time-statistics" class="section level3">
 <h3>Research in space-time statistics</h3>
-<p>My main general research interest is designing spatial (and space-time) random effects to incorporate valid scientific assumptions. This research is based on the SPDE paper by Lindgren et. al. (2011) I also focus on avoiding overfitting through sensible multi-level priors (or penalties) (based on Penalising Complexity priors).</p>
+<p>I spent several years designing spatial (and space-time) random effects to incorporate valid scientific assumptions. This research is based on the SPDE paper by Lindgren et. al. (2011) I also focus on avoiding overfitting through sensible multi-level priors (or penalties) (based on Penalising Complexity priors).</p>
 <p>Spatial statistics: You have data distributed in space, which, after all the fixed effects are modelled, still has a spatial structure.</p>
 </div>
 <div id="summary-of-phd" class="section level3">
@@ -359,12 +370,12 @@ $(document).ready(function () {
 <h3>A picture</h3>
 <p><img src="fig/bakka.jpg" alt="Drawing" style="width: 200px;"/></p>
 </div>
-<div id="typical-course-abstract-for-an-inlacourse" class="section level3">
-<h3>Typical course abstract for an INLAcourse</h3>
-<p>The INLAcourse starts with a general overview of the possibilities in INLA, for applied research and for model development. We will proceed to examples of generalised linear models with several random effects. We discuss the cool ideas making INLA fast; why most likelihoods are near-Gaussian in the posterior, how to represent random effects with sparse matrices, and more.</p>
+<div id="example-course-abstract-for-an-inlacourse" class="section level3">
+<h3>Example course abstract for an INLAcourse</h3>
+<p>The INLAcourse starts with a general overview of the possibilities in INLA, for applied research and for model development. We will proceed to examples of generalised linear models with several random effects. We discuss the cool ideas making INLA fast; why most likelihoods are near-Gaussian in their contribution to the posterior, how to represent random effects with sparse matrices, and more.</p>
 <p>The last part of the course is looking at spatial random effects and how they fit into the INLA framework; using the brilliant SPDE approach. In the SPDE approach we approximate the spatial random effect itself, representing it in the entire study area, without needing to know the observation locations.</p>
 <p>At the end of the course we will fit the hurdle model, a spatial joint model of bernoulli and binomial data (<a href="https://stats.stackexchange.com/questions/81457/what-is-the-difference-between-zero-inflated-and-hurdle-models" class="uri">https://stats.stackexchange.com/questions/81457/what-is-the-difference-between-zero-inflated-and-hurdle-models</a>).</p>
-<p>Inference in INLA is so fast that we can run all examples live in class! I am looking forwards to giving the course, and I hope to see you there.</p>
+<p>Inference in INLA is so fast that we can run all examples live in class!</p>
 </div>
 
 
@@ -376,7 +387,7 @@ $(document).ready(function () {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

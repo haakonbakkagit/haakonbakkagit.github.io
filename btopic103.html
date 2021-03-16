@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -391,8 +402,8 @@ div.tocify {
 <p>At the end follows sections on how to avoid errors when constructing an example like this, and some extra information on how to do things that are slightly different from this example.</p>
 <div id="initialisation" class="section level2">
 <h2><span class="header-section-number">1.1</span> Initialisation</h2>
-<p>We load the libraries and functions we need. <em>Attention:</em> You need to have a recent version of INLA (November 17th 2017 or later).</p>
-<p>You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>). Feel free to save the web location where the functions are defined as an R-file on your computer. We also set random seeds to be used later.</p>
+<p>We load the libraries and functions we need. You need to have a “testing version” of INLA.</p>
+<p>You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>). We also set random seeds to be used later.</p>
 <pre class="r"><code>library(INLA)
 library(fields)
 library(rgdal)
@@ -405,7 +416,7 @@ set.inla.seed = 2016</code></pre>
 <div id="polygons-and-the-mesh" class="section level1">
 <h1><span class="header-section-number">2</span> Polygons and the Mesh</h1>
 <p>We will create the representation of our spatial domain, i.e. the locations where the random effect is defined.</p>
-<p>We set up a square polygon <code>p</code> to define the barrier. In this example, I know I want to have a <span class="math inline">\([0, 10]\times [0, 10]\)</span> study area, and I construct the barrier to fit inside this. In general, to use these barrier models, you need the barrier region (e.g. land) to be represented by a polygon. In most cases, you will use shapefiles or maps or other sources for determining your barrier, as in <a href="btopic107.html">BTopic107</a>.</p>
+<p>We set up a square polygon <code>p</code> to define the barrier. In this example, I know I want to have a <span class="math inline">\([0, 10]\times [0, 10]\)</span> study area, and I construct the barrier to fit inside this. In general, to use these barrier models, you need the barrier region (e.g. land) to be represented by a polygon. In most cases, you will use shapefiles or maps or other sources for determining your barrier, as in <a href="btopic127.html">BTopic127</a> and <a href="btopic128.html">BTopic128</a>.</p>
 <p>Talking about polygons in general, however, is out of the scope of this tutorial. More information about polygons can be found in the R-packages <code>sp</code> and <code>maps</code>.</p>
 <pre class="r"><code>smalldist = 0.2
 # - the width of the opening in the barrier
@@ -520,8 +531,10 @@ Q = inla.rgeneric.q(barrier.model, &quot;Q&quot;, theta = c(0, log(range)))
 # - the precision matrix for fixed ranges
 # - Q is a function of the hyperparameters theta = c( log(sigma), log(range1), log(range2),...)</code></pre>
 <p>Now, we sample a spatial field using the precision matrix <span class="math inline">\(Q\)</span>. This is done through a sparse Cholesky factorization <span class="citation">(Rue and Held 2005)</span>. Then we plot that field, adding the barrier area in grey on top. The value of the field on the barrier is of no interest, as there can never be observations there.</p>
-<pre class="r"><code>u = inla.qsample(n=1, Q=Q, seed = set.inla.seed)
-u = u[ ,1]
+<pre class="r"><code>u = inla.qsample(n=1, Q=Q, seed = set.inla.seed)</code></pre>
+<pre><code>## Warning in inla.qsample(n = 1, Q = Q, seed = set.inla.seed): Since
+## &#39;seed!=0&#39;, parallel model is disabled and serial model is selected</code></pre>
+<pre class="r"><code>u = u[ ,1]
 # - access the first sample
 
 local.plot.field(u, main=&quot;The true (simulated) spatial field&quot;)
@@ -613,10 +626,10 @@ res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
 ##    0.5)))), control.mode = list(restart = T, &quot;, &quot; theta = c(4, 
 ##    -1.7, 0.25)))&quot;) 
 ## Time used:
-##     Pre = 1.57, Running = 14, Post = 0.112, Total = 15.7 
+##     Pre = 3.3, Running = 9.09, Post = 0.218, Total = 12.6 
 ## Fixed effects:
 ##           mean   sd 0.025quant 0.5quant 0.97quant  mode kld
-## intercept -0.2 0.59       -1.4    -0.22      0.97 -0.23   0
+## intercept -0.2 0.59       -1.4    -0.22      0.98 -0.23   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -624,18 +637,18 @@ res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
 ## 
 ## Model hyperparameters:
 ##                                          mean    sd 0.025quant
-## Precision for the Gaussian observations 26.17 2.731     21.240
-## Range for s                              3.39 0.818      2.223
-## Stdev for s                              1.38 0.280      0.965
+## Precision for the Gaussian observations 26.18 2.724     21.262
+## Range for s                              3.33 0.780      2.185
+## Stdev for s                              1.36 0.269      0.949
 ##                                         0.5quant 0.97quant  mode
-## Precision for the Gaussian observations    26.03     31.70 25.73
-## Range for s                                 3.24      5.27  2.92
-## Stdev for s                                 1.33      2.01  1.22
+## Precision for the Gaussian observations    26.03     31.71 25.72
+## Range for s                                 3.20      5.10  2.93
+## Stdev for s                                 1.32      1.96  1.23
 ## 
-## Expected number of effective parameters(stdev): 209.30(11.02)
+## Expected number of effective parameters(stdev): 209.23(10.89)
 ## Number of equivalent replicates : 2.24 
 ## 
-## Marginal log-Likelihood:  -179.05</code></pre>
+## Marginal log-Likelihood:  -179.31</code></pre>
 <p>We plot the result of the stationary model in the next figure.</p>
 <pre class="r"><code>local.plot.field(res.stationary$summary.random$s$mean,
           main=&quot;Spatial estimate with the stationary model&quot;)
@@ -648,7 +661,7 @@ plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
 <div id="barrier-model" class="section level1">
 <h1><span class="header-section-number">5</span> Barrier model</h1>
 <p>This is the same model as we used for simulating the data. Except that we have now “forgotten” the range <span class="math inline">\(r_b\)</span> in the barrier area. This range is never known, so it is unreasonable to use it for inference. However, using any small value for the range in the barrier region is OK, it does not need to be the “true value”. For more information about this, see appendix “Choosing barrier range” in <span class="citation">(Bakka et al. 2016)</span>. The Barrier model is a special case of the Different</p>
-<p>First we set up extra variables needed for my implementation of the new model. My implementation is based on “rgeneric” in INLA, see <code>\inlinecode{inla.doc(&quot;rgeneric&quot;)}</code>. This part of the code defines what range parameters belong to each area.</p>
+<p>First we set up extra variables needed for my implementation of the new model. My implementation is based on “rgeneric” in INLA, see <code>\inlinecode{inla.doc("rgeneric")}</code>. This part of the code defines what range parameters belong to each area.</p>
 <pre class="r"><code>formula2 &lt;- y ~ 0 + intercept + f(s, model=barrier.model)
 # - The spatial model component is different from before
 # - The rest of the model setup is the same as in the stationary case!
@@ -672,7 +685,7 @@ plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
 ##    0.5)))), control.mode = list(restart = T, &quot;, &quot; theta = c(3.2, 
 ##    0.4, 1.6)))&quot;) 
 ## Time used:
-##     Pre = 1.27, Running = 20.7, Post = 0.136, Total = 22.1 
+##     Pre = 2.82, Running = 14.1, Post = 0.203, Total = 17.1 
 ## Fixed effects:
 ##            mean   sd 0.025quant 0.5quant 0.97quant  mode kld
 ## intercept -0.15 0.59       -1.3    -0.17         1 -0.19   0
@@ -683,18 +696,18 @@ plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
 ## 
 ## Model hyperparameters:
 ##                                           mean    sd 0.025quant
-## Precision for the Gaussian observations 24.179 2.433     19.740
-## Theta1 for s                             0.204 0.190     -0.136
-## Theta2 for s                             1.331 0.222      0.933
+## Precision for the Gaussian observations 24.113 2.443     19.663
+## Theta1 for s                             0.212 0.187     -0.131
+## Theta2 for s                             1.343 0.221      0.939
 ##                                         0.5quant 0.97quant   mode
-## Precision for the Gaussian observations   24.061    29.065 23.832
-## Theta1 for s                               0.191     0.588  0.145
-## Theta2 for s                               1.315     1.781  1.259
+## Precision for the Gaussian observations   23.993    29.015 23.762
+## Theta1 for s                               0.202     0.588  0.164
+## Theta2 for s                               1.330     1.786  1.285
 ## 
-## Expected number of effective parameters(stdev): 182.12(11.65)
+## Expected number of effective parameters(stdev): 181.90(11.64)
 ## Number of equivalent replicates : 2.58 
 ## 
-## Marginal log-Likelihood:  -156.54</code></pre>
+## Marginal log-Likelihood:  -156.46</code></pre>
 <p>We plot the result of the Barrier model in the next figure.</p>
 <pre class="r"><code>local.plot.field(res.barrier$summary.random$s$mean, 
                  main=&quot;Spatial posterior for Barrier model&quot;)
@@ -708,14 +721,14 @@ plot(poly.barrier, add=T, col=&#39;grey&#39;)</code></pre>
 <h3><span class="header-section-number">5.0.1</span> Plotting the posterior of the hyper-parameters</h3>
 <p>For how to plot the posterior of the hyper-parameters in the stationary model, see <a href="btopic108.html">BTopic108</a>.</p>
 <pre class="r"><code>res.barrier$summary.hyperpar</code></pre>
-<pre><code>##                                         mean   sd 0.025quant 0.5quant
-## Precision for the Gaussian observations 24.2 2.43      19.74    24.06
-## Theta1 for s                             0.2 0.19      -0.14     0.19
-## Theta2 for s                             1.3 0.22       0.93     1.32
-##                                         0.97quant  mode
-## Precision for the Gaussian observations     29.07 23.83
-## Theta1 for s                                 0.59  0.14
-## Theta2 for s                                 1.78  1.26</code></pre>
+<pre><code>##                                          mean   sd 0.025quant
+## Precision for the Gaussian observations 24.11 2.44      19.66
+## Theta1 for s                             0.21 0.19      -0.13
+## Theta2 for s                             1.34 0.22       0.94
+##                                         0.5quant 0.97quant  mode
+## Precision for the Gaussian observations     24.0     29.01 23.76
+## Theta1 for s                                 0.2      0.59  0.16
+## Theta2 for s                                 1.3      1.79  1.28</code></pre>
 <p>This shows the ordering of the hyper-parameters, and is how we know what index to use later in the plots.</p>
 <p>To plot the hyper-parameters in the Barrier model, we must know the transformations. <span class="math display">\[\begin{align}
 \sigma &amp;= e^ {\theta_1} \quad \text{is the marginal standard deviation} \\
@@ -739,7 +752,6 @@ abline(v=range, col=&quot;blue&quot;)</code></pre>
 </div>
 <div id="comments" class="section level1">
 <h1><span class="header-section-number">6</span> Comments</h1>
-<p>The example ends here. The following sections are comments to this example.</p>
 <div id="mistakes-to-avoid" class="section level2">
 <h2><span class="header-section-number">6.1</span> Mistakes to avoid</h2>
 <p>I will not discuss potential mistakes from the definition of the mesh or the barrier, as that is included in other topics. Make sure that you do not mix up what area is the barrier, and what is the normal.</p>
@@ -747,9 +759,9 @@ abline(v=range, col=&quot;blue&quot;)</code></pre>
 <div id="how-to-use-this-as-a-model-component-in-other-models" class="section level2">
 <h2><span class="header-section-number">6.2</span> How to use this as a model component in other models</h2>
 <p>Here, I outline how to do things that are slightly different.</p>
-<p>To add more covariates in the model, add them in the <code>inla.stack</code>. See the <a href="http://www.r-inla.org/examples/tutorials/spde-tutorial">SPDE-tutorial</a> for more information on this .</p>
+<p>To add more covariates in the model, add them in the <code>inla.stack</code>. See the <a href="https://becarioprecario.bitbucket.io/spde-gitbook/">SPDE-book</a> for more information on this .</p>
 <p>You can easily use other likelihoods, by changing the  argument of the -call. See  for a description of these. Please make sure you choose good priors for any hyper-parameters in the likelihood (the choice we made in the code here is aarbitrary and not good).</p>
-<p>You can also add different random effects to the formula (see info about latent models on ). When you use additional random effects, you must include them into the stack, similarly to how the intercept is here included in the stack. For examples of this, use the SPDE tutorial .</p>
+<p>You can also add different random effects to the formula (see info about latent models on ). When you use additional random effects, you must include them into the stack, similarly to how the intercept is here included in the stack. For examples of this, use the <a href="https://becarioprecario.bitbucket.io/spde-gitbook/">SPDE-book</a>.</p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>References</h2>
@@ -775,7 +787,7 @@ abline(v=range, col=&quot;blue&quot;)</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -814,7 +826,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

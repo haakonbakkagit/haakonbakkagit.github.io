@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -385,7 +396,7 @@ div.tocify {
 
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>In this webside, we would like to show what the AR(1) model is and how to use INLA to analyse practical data with AR(1) model. We focus on the priors and posteriors for the hyper-parameters on the AR1 process. We do not discuss the data, nor claim that the final model is a good model for the dataset. We mainly highlight difficulties with overfitting and show some technical tools to resolve it.</p>
+<p>In this topic, we would like to show what the AR(1) model is and how to use INLA to analyse practical data with AR(1) model. The focus is on difficulties with overfitting and we show some technical tools to resolve it.</p>
 <div id="initialisation" class="section level2">
 <h2><span class="header-section-number">1.1</span> Initialisation</h2>
 <p>We load libraries, including INLA (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
@@ -394,7 +405,7 @@ library(shiny)</code></pre>
 </div>
 <div id="the-shiny-app" class="section level2">
 <h2><span class="header-section-number">1.2</span> The Shiny App</h2>
-<p>Whenever you are asked to run the shiny app <strong>shiny-ar1.R</strong> you need to do the following. Please note that new folders and files are created in the current working folder! This step is not needed if you are viewing the website offline (after downloading repository).</p>
+<p>To run the shiny app <strong>shiny-ar1.R</strong> you need to do the following. Please note that new folders and files are created in the current working folder! This step is not needed if you are viewing the website offline (after downloading the repository).</p>
 <p>Please be aware: The shiny app has not been checked in detail for errors.</p>
 <pre><code>## Copy the source file for the Shiny app
 dir.create(&quot;shiny/&quot;)
@@ -402,7 +413,7 @@ download.file(url = &quot;https://haakonbakkagit.github.io/shiny/shiny-ar1.R&quo
 </code></pre>
 <p>Run the shiny app, and select the second dataset.</p>
 <pre><code>runApp(&#39;shiny/shiny-ar1.R&#39;)</code></pre>
-<p>We recommend starting up a new R process, for example directly from the Terminal, and running the Shiny app in this.</p>
+<p>We recommend starting up a new R process, for example directly from the Terminal, and running the Shiny app in this, as the shiny app will block your RStudio while in use.</p>
 </div>
 <div id="the-data" class="section level2">
 <h2><span class="header-section-number">1.3</span> The data</h2>
@@ -412,8 +423,8 @@ download.file(url = &quot;https://haakonbakkagit.github.io/data/harmonised-unemp
 download.file(url = &quot;https://haakonbakkagit.github.io/data/temperature-data&quot;, destfile = &quot;data/temperature-data&quot;)</code></pre>
 </div>
 </div>
-<div id="introduction-of-ar1-model" class="section level1">
-<h1><span class="header-section-number">2</span> Introduction of AR(1) Model</h1>
+<div id="introduction-to-ar1-model" class="section level1">
+<h1><span class="header-section-number">2</span> Introduction to AR(1) Model</h1>
 <div id="arp-model" class="section level2">
 <h2><span class="header-section-number">2.1</span> 1.0. AR(p) Model</h2>
 <p>For time series, the autoregressive(AR) model is a representation of a type of random process, which specifies that the output variable depends linearly on its own previous values and a stochastic term.</p>
@@ -452,15 +463,15 @@ download.file(url = &quot;https://haakonbakkagit.github.io/data/temperature-data
 <div id="read-the-data" class="section level2">
 <h2><span class="header-section-number">4.1</span> Read the data</h2>
 <pre class="r"><code>temp = read.csv(&quot;data/harmonised-unemployment-rates-mo.csv&quot;)
-n = nrow(temp)
-data = data.frame(y = temp[,2], t=1:n)
-dates &lt;- temp[,1]</code></pre>
+n = nrow(temp)-1
+data = data.frame(y = temp[1:n,2], t=1:n)
+dates &lt;- temp[1:n,1]</code></pre>
 </div>
 <div id="plot-the-data" class="section level2">
 <h2><span class="header-section-number">4.2</span> Plot the Data</h2>
-<pre class="r"><code>plot(dates, data$y, lwd=2,
+<pre class="r"><code>plot(data$t, data$y, lwd=2, pch=19,
     xlab=&#39;month&#39;, ylab=&#39;Unemployment Rates&#39;)
-lines(dates,data$y)
+lines(data$t,data$y)
 abline(h=2*(-8:9), lty=2, col=gray(.5))</code></pre>
 <p><img src="btopic115_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <pre><code>Please run shiny-ar1.R and open tab 1 to plot the data.</code></pre>
@@ -477,14 +488,14 @@ abline(h=2*(-8:9), lty=2, col=gray(.5))</code></pre>
 </div>
 <div id="formula" class="section level2">
 <h2><span class="header-section-number">4.4</span> Formula</h2>
-<pre class="r"><code>formula1 &lt;- y~ f(t,model=&#39;ar1&#39;)</code></pre>
-<p>This specifies the formula, which means we want use AR(1) model in this case and just use the default setting here. See <code>inla.doc(&quot;ar1&quot;)</code> for details.</p>
+<pre class="r"><code>formula1 &lt;- y ~ f(t,model=&#39;ar1&#39;)</code></pre>
+<p>This specifies the formula, which means we want use AR(1) model in this case and just use the default setting here. See <code>inla.doc("ar1")</code> for details.</p>
 </div>
 <div id="call-inla" class="section level2">
 <h2><span class="header-section-number">4.5</span> Call INLA</h2>
 <p>Next we run the inla-call, where we just collect variables we have defined.</p>
 <pre class="r"><code>res1 &lt;- inla(formula=formula1,data=data,family=family)</code></pre>
-<p>We use inla to calculate the posterior of the hyperparameters, i.e. <span class="math inline">\(\pi(\theta|y)\)</span>.</p>
+<p>We use inla to calculate the posterior of the hyperparameters, i.e. <span class="math inline">\(\pi(\theta|y)\)</span>.</p>
 <p>And then we can get <span class="math inline">\(\pi(\kappa|y)\)</span> and <span class="math inline">\(\pi(\rho|y)\)</span> from it by certain transformations.</p>
 </div>
 <div id="look-at-results" class="section level2">
@@ -494,7 +505,7 @@ abline(h=2*(-8:9), lty=2, col=gray(.5))</code></pre>
 ## Call:
 ##    &quot;inla(formula = formula1, family = family, data = data)&quot; 
 ## Time used:
-##     Pre = 1.31, Running = 0.354, Post = 0.0792, Total = 1.74 
+##     Pre = 3.25, Running = 0.35, Post = 0.179, Total = 3.78 
 ## Fixed effects:
 ##             mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## (Intercept)  8.5 0.69        7.1      8.6       9.8  8.6   0
@@ -505,26 +516,26 @@ abline(h=2*(-8:9), lty=2, col=gray(.5))</code></pre>
 ## 
 ## Model hyperparameters:
 ##                                             mean       sd 0.025quant
-## Precision for the Gaussian observations 1.86e+04 1.84e+04   1267.822
+## Precision for the Gaussian observations 1.88e+04 1.84e+04   1265.349
 ## Precision for t                         2.62e-01 8.20e-02      0.123
 ## Rho for t                               8.93e-01 3.40e-02      0.822
 ##                                         0.5quant 0.97quant     mode
-## Precision for the Gaussian observations 1.32e+04  6.38e+04 3466.879
-## Precision for t                         2.57e-01  4.31e-01    0.243
-## Rho for t                               8.95e-01  9.49e-01    0.900
+## Precision for the Gaussian observations 1.34e+04  6.42e+04 3461.364
+## Precision for t                         2.56e-01  4.32e-01    0.242
+## Rho for t                               8.95e-01  9.49e-01    0.901
 ## 
-## Expected number of effective parameters(stdev): 142.96(0.05)
+## Expected number of effective parameters(stdev): 142.97(0.05)
 ## Number of equivalent replicates : 1.00 
 ## 
-## Marginal log-Likelihood:  -199.90</code></pre>
-<p>This summary shows many of the results, including the distribution of the intercept, precision for the Gaussian observations, precision for t and the Rho for t, i.e. <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\tau&#39;\)</span> ,<span class="math inline">\(\kappa\)</span> and <span class="math inline">\(\rho\)</span> in above formulas.</p>
+## Marginal log-Likelihood:  -199.92</code></pre>
+<p>This summary shows many of the results, including the distribution of the intercept, precision for the Gaussian observations, precision for t and the Rho for t, i.e. <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\tau&#39;\)</span> ,<span class="math inline">\(\kappa\)</span> and <span class="math inline">\(\rho\)</span> in above formulas.</p>
 </div>
-<div id="look-at-the-quick-fitting-result-an-overfitting-situation" class="section level2">
-<h2><span class="header-section-number">4.7</span> Look at the Quick Fitting Result (an Overfitting Situation)</h2>
+<div id="the-quick-fitting-result-overfitting-situation" class="section level2">
+<h2><span class="header-section-number">4.7</span> The quick fitting result (overfitting situation)</h2>
 <pre class="r"><code>plot(res1$summary.random$t[ ,&quot;mean&quot;]+res1$summary.fixed$mean[1],ylab=&quot;fitting result&quot;,type=&quot;l&quot;)
 points(data$y, col=&quot;blue&quot;)</code></pre>
 <p><img src="btopic115_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p>In this image, the black points are the fitting result and the blue points are the real data. We can see that the two kinds of points almost overlap everywhere, which means the model result and the data are almost the same.</p>
+<p>In this image, the black lines are the fitting result and the blue points are the real data. We can see that the two kinds of points almost overlap everywhere, which means the model result and the data are almost the same.</p>
 <p>This situation is called overfitting and we do not want to have such situation. We will try to amend it.</p>
 </div>
 </div>
@@ -590,7 +601,7 @@ lines(res2$summary.random$t[ ,&quot;mean&quot;]+res2$summary.fixed$mean[1])</cod
 <p><span class="math display">\[Prob(\sigma&gt;u)=\alpha,u&gt;0,0&lt;\alpha&lt;1,\]</span></p>
 <p>where the standard deviation is <span class="math inline">\(\sigma=1/\sqrt{\kappa}\)</span>.</p>
 <p>By the way, since <span class="math inline">\(\sigma=\frac{1}{\sqrt{\kappa}}\)</span>,we also have <span class="math inline">\(\pi(\sigma)=\lambda e^{-\lambda\sigma}\)</span>.</p>
-<p>Please see <code>inla.doc(&quot;pc.prec&quot;)</code> for further details.</p>
+<p>Please see <code>inla.doc("pc.prec")</code> for further details.</p>
 <p>The PC prior for precision is as following with different values of parameters <span class="math inline">\((u,\alpha)\)</span>.</p>
 <pre><code>Please run shiny-ar1.R and open Tab 3</code></pre>
 <p><strong>pc.cor1</strong>:</p>
@@ -604,7 +615,7 @@ lines(res2$summary.random$t[ ,&quot;mean&quot;]+res2$summary.fixed$mean[1])</cod
 <p>The parameter <span class="math inline">\(\lambda\)</span> is defined through</p>
 <p><span class="math display">\[ Prob(\rho&gt;u)=\alpha,-1&lt;u&lt;1,\sqrt{\frac{1-u}{2}}&lt;\alpha&lt;1\]</span></p>
 <p>where <span class="math inline">\((u,\alpha)\)</span> are the parameters to this prior.</p>
-<p>Please see <code>inla.doc(&quot;pc.cor1&quot;)</code> for further details.</p>
+<p>Please see <code>inla.doc("pc.cor1")</code> for further details.</p>
 <p>The PC prior for the correlation <span class="math inline">\(\rho\)</span> where <span class="math inline">\(\rho\)</span> as the base-model is as following with different values of parameters <span class="math inline">\((u,\alpha)\)</span>.</p>
 <pre><code>Please run shiny-ar1.R and open Tab 4</code></pre>
 <p>We should notice that some values of the parameters are legtimate, while some are illegtimate.</p>
@@ -719,7 +730,7 @@ plot(m.theta3, type=&quot;l&quot;, xlab = &quot;intercept&quot;, ylab = &quot;Pr
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -758,7 +769,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

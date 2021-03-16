@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -570,10 +581,10 @@ fits[[1]] = inla(form.lmm,
 ##    control.predictor = list(compute = T), &quot;, &quot; control.inla = 
 ##    list(int.strategy = \&quot;eb\&quot;), num.threads = 3)&quot; ) 
 ## Time used:
-##     Pre = 1.4, Running = 1.52, Post = 0.176, Total = 3.09 
+##     Pre = 3.26, Running = 1.18, Post = 0.28, Total = 4.72 
 ## Fixed effects:
 ##              mean    sd 0.025quant 0.5quant 0.97quant  mode kld
-## (Intercept) 23.48 0.756      22.00    23.48     24.91 23.48   0
+## (Intercept) 23.49 0.777      21.96    23.49     24.95 23.49   0
 ## locy        -0.44 0.011      -0.47    -0.44     -0.42 -0.44   0
 ## 
 ## Random effects:
@@ -583,16 +594,16 @@ fits[[1]] = inla(form.lmm,
 ## 
 ## Model hyperparameters:
 ##                                          mean    sd 0.025quant
-## Precision for the Gaussian observations 0.148 0.004      0.140
-## Precision for time                      0.872 0.604      0.172
+## Precision for the Gaussian observations 0.148 0.004      0.141
+## Precision for time                      0.829 0.584      0.168
 ##                                         0.5quant 0.97quant  mode
-## Precision for the Gaussian observations    0.148     0.156 0.148
-## Precision for time                         0.728     2.325 0.454
+## Precision for the Gaussian observations    0.148     0.157 0.148
+## Precision for time                         0.685     2.246 0.434
 ## 
-## Expected number of effective parameters(stdev): 6.91(0.00)
-## Number of equivalent replicates : 458.19 
+## Expected number of effective parameters(stdev): 6.92(0.00)
+## Number of equivalent replicates : 457.68 
 ## 
-## Marginal log-Likelihood:  -8182.31 
+## Marginal log-Likelihood:  -8178.85 
 ## Posterior marginals for the linear predictor and
 ##  the fitted values are computed</code></pre>
 <pre class="r"><code>resid = df2$y - fits[[1]]$summary.linear.predictor$mean
@@ -749,52 +760,52 @@ for (i in 2:3){
     print(round(fits[[i]]$cpu.used[4],2))
 }</code></pre>
 <pre><code>## Total 
-##   3.1 
+##   4.7 
 ## Total 
-##    25 
+##    41 
 ## Total 
-##   290</code></pre>
+##   547</code></pre>
 <p>The nonseparable is slower than the separable model, because the nonseparable model is coded in R, while the separable is coded in C.</p>
 <p>We compute good initial values as follows.</p>
 <pre class="r"><code>for (i in 1:length(M)){
     print(paste(round(fits[[i]]$internal.summary.hyperpar$mean, 3), collapse = &quot; , &quot;))
 }</code></pre>
-<pre><code>## [1] &quot;-1.908 , -0.353&quot;
-## [1] &quot;0.318 , 2.024 , 1.746 , 3.711&quot;
-## [1] &quot;0.325 , 6.999 , 2.452 , 2.16&quot;</code></pre>
+<pre><code>## [1] &quot;-1.908 , -0.403&quot;
+## [1] &quot;0.321 , 2.023 , 1.745 , 3.705&quot;
+## [1] &quot;0.323 , 6.977 , 2.457 , 2.158&quot;</code></pre>
 </div>
 <div id="quick-summaries" class="section level2">
 <h2><span class="header-section-number">8.2</span> Quick summaries</h2>
 <pre class="r"><code>## Comparison of the Precision for Gaussian observations
 fits[[2]]$summary.hyperpar</code></pre>
 <pre><code>##                                         mean     sd 0.025quant
-## Precision for the Gaussian observations 1.38 0.0500       1.28
-## Range for i                             7.60 0.7027       6.32
-## Stdev for i                             5.76 0.5140       4.81
-## GroupRho for i                          0.95 0.0068       0.94
+## Precision for the Gaussian observations 1.38 0.0506       1.28
+## Range for i                             7.59 0.6810       6.35
+## Stdev for i                             5.74 0.4947       4.84
+## GroupRho for i                          0.95 0.0069       0.94
 ##                                         0.5quant 0.97quant mode
-## Precision for the Gaussian observations     1.37      1.47 1.37
-## Range for i                                 7.57      9.01 7.50
-## Stdev for i                                 5.73      6.79 5.69
+## Precision for the Gaussian observations     1.38      1.48 1.38
+## Range for i                                 7.56      8.96 7.49
+## Stdev for i                                 5.72      6.74 5.67
 ## GroupRho for i                              0.95      0.96 0.95</code></pre>
 <pre class="r"><code>fits[[3]]$summary.hyperpar</code></pre>
 <pre><code>##                                         mean    sd 0.025quant
-## Precision for the Gaussian observations  1.4 0.052        1.3
-## Theta1 for i.nonsep                      7.0 0.252        6.5
-## Theta2 for i.nonsep                      2.5 0.102        2.3
-## Theta3 for i.nonsep                      2.2 0.099        2.0
+## Precision for the Gaussian observations  1.4 0.051        1.3
+## Theta1 for i.nonsep                      7.0 0.292        6.3
+## Theta2 for i.nonsep                      2.5 0.115        2.2
+## Theta3 for i.nonsep                      2.2 0.112        1.9
 ##                                         0.5quant 0.97quant mode
 ## Precision for the Gaussian observations      1.4       1.5  1.4
-## Theta1 for i.nonsep                          7.0       7.5  7.0
-## Theta2 for i.nonsep                          2.5       2.6  2.4
+## Theta1 for i.nonsep                          7.0       7.5  7.1
+## Theta2 for i.nonsep                          2.5       2.7  2.5
 ## Theta3 for i.nonsep                          2.2       2.3  2.2</code></pre>
 <pre class="r"><code>## To compare the 3 other hyper-parameters, we need to transform the
 ## hyperparameters of the non-separable model as follows
 data.frame(var=c(&quot;Range.s&quot;, &quot;Stdev&quot;, &quot;Range.t&quot;), exp(fits[[3]]$summary.hyperpar[c(3,4,2), c(4,3,5)]))</code></pre>
 <pre><code>##                         var X0.5quant X0.025quant X0.97quant
-## Theta2 for i.nonsep Range.s      11.6         9.5         14
-## Theta3 for i.nonsep   Stdev       8.7         7.2         10
-## Theta1 for i.nonsep Range.t    1091.9       674.7       1775</code></pre>
+## Theta2 for i.nonsep Range.s      11.8         9.1         14
+## Theta3 for i.nonsep   Stdev       8.7         6.8         10
+## Theta1 for i.nonsep Range.t    1103.6       566.8       1727</code></pre>
 <p>The two Gaussian precisions are very similar, showing that the residuals are similar. The range in space is estimated in a similar way between the two models. The <span class="math inline">\(\sigma\)</span> (<code>Stdev</code>) also gets similar estimates between the two models. The <code>Group.rho</code> however, is hard to compare to <code>Range.t</code>, as they are two different ways of thinking about correlation strength in time. In addition, because the time series in this example is very short, they are both poorly identified. The only conclusion we can draw is that there is a very very strong time dependency (in the space-time random effect).</p>
 <p>We could have summarised the two models as follows.</p>
 <pre class="r"><code>#summary(fits[[2]])
@@ -912,7 +923,7 @@ for (i in 1:3) {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -951,7 +962,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

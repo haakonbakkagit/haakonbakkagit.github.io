@@ -26,6 +26,17 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -435,7 +446,7 @@ res1 = inla(formula1, family = &quot;poisson&quot;, data = df,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res1$summary.fixed</code></pre>
 <pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  2.99 0.018       2.95     2.99      3.02  2.99 7.7e-07
+## (Intercept)  2.99 0.018       2.95     2.99      3.02  2.99 7.6e-07
 ## x1           0.74 0.014       0.71     0.74      0.77  0.74 1.0e-06
 ## x2          -0.28 0.012      -0.31    -0.28     -0.26 -0.28 9.2e-07</code></pre>
 </div>
@@ -447,9 +458,9 @@ res2 = inla(formula2, family = &quot;poisson&quot;,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res2$summary.fixed</code></pre>
 <pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  2.95 0.032       2.88     2.95      3.00  2.95 1.7e-06
-## x1           0.71 0.029       0.66     0.71      0.77  0.71 1.3e-06
-## x2          -0.29 0.026      -0.34    -0.29     -0.24 -0.29 9.9e-07</code></pre>
+## (Intercept)  2.95 0.032       2.88     2.95      3.00  2.95 2.8e-06
+## x1           0.71 0.029       0.66     0.71      0.77  0.71 1.5e-06
+## x2          -0.29 0.026      -0.34    -0.29     -0.24 -0.29 1.4e-06</code></pre>
 </div>
 <div id="model-3-the-true-model" class="section level2">
 <h2><span class="header-section-number">4.3</span> Model 3: The true model</h2>
@@ -510,28 +521,28 @@ colnames(res.sim) = NULL
 table(res.sim[1, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##    75    25</code></pre>
+##    76    24</code></pre>
 <pre class="r"><code>## Model 1: beta2
 table(res.sim[2, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##    42    58</code></pre>
+##    35    65</code></pre>
 <pre class="r"><code>## Model 2: beta1
 table(res.sim[3, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##     7    93</code></pre>
+##     5    95</code></pre>
 <pre class="r"><code>## Model 2: beta2
 table(res.sim[4, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##    23    77</code></pre>
+##    15    85</code></pre>
 <p>We see that Model 1 has a very bad coverage. This is due to bad estimates of the uncertainty, and hence bad estimates of the credible intervals. The coverage of Model 2 is better, because the <span class="math inline">\(v_1x_3\)</span> term is taken into account by the overdispersion (the iid effect). Curiously enough, with our initial random seed, the coverage of Model 2 is a little too good.</p>
 </div>
 </div>
 <div id="discussion" class="section level1">
 <h1><span class="header-section-number">6</span> Discussion</h1>
-<p>When it comes to fitting Poisson count data, I always include the iid effect, as in Model 2. This is to cover for any unmeasured covariates, in the same way that the Gaussian likelihood automatically covers for unmeasured covariates. I like to have this “overdispersion effect” as a Gaussian on the linear predictor scale, because that is where/how I would add other linear or non-linear effects (e.g. <span class="math inline">\(v_1x_3\)</span>) if I knew about them. The way I test overdispersion is whether this iid effect is small (in the posterior).</p>
+<p>When it comes to fitting Poisson count data, I always include the iid effect, as in Model 2. This is to cover for any unmeasured covariates, in the same way that the Gaussian likelihood automatically covers for unmeasured covariates. I like to have this “overdispersion effect” as a Gaussian on the linear predictor scale, because that is where/how I would add other linear or non-linear effects (e.g. <span class="math inline">\(v_1x_3\)</span>) if I knew about them. The way I test overdispersion is whether this iid effect is small (in the posterior).</p>
 <p>This topic was created, essentially, so that I can use it to show to collaborators, since adding this iid effect in the likelihood/linear predictor is not standard practice. (More commonly, researchers test for overdispersion and use a Negative Binomial likelihood if that is the case.)</p>
 </div>
 
@@ -546,7 +557,7 @@ table(res.sim[4, ])</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -585,7 +596,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
