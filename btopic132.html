@@ -14,20 +14,28 @@
 
 <title>Comparing forecasts from separable models and non-separable diffusion models</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,25 +343,33 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">Comparing forecasts from separable models and non-separable diffusion models</h1>
+<h1 class="title toc-ignore">Comparing forecasts from separable models
+and non-separable diffusion models</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">btopic132 updated 18 March 2020</h4>
 
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>In this example we show the difference between the forecasts from 2 space-time models, one separable model, and one non-separable diffusion-based model.</p>
-<p>This is supplementary material to the paper <em>The diffusion-based extension of the Matérn field to space-time</em> by Bakka et. al. <a href="https://arxiv.org/abs/2006.04917" class="uri">https://arxiv.org/abs/2006.04917</a> Here we see a comparison of the two first of the three main examples in that paper.</p>
-<div id="setup" class="section level2">
+<p>In this example we show the difference between the forecasts from 2
+space-time models, one separable model, and one non-separable
+diffusion-based model.</p>
+<p>This is supplementary material to the paper <em>The diffusion-based
+extension of the Matérn field to space-time</em> by Bakka et. al. <a
+href="https://arxiv.org/abs/2006.04917"
+class="uri">https://arxiv.org/abs/2006.04917</a> Here we see a
+comparison of the two first of the three main examples in that
+paper.</p>
+<div id="setup" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Setup</h2>
-<p>First, you need to download the functions we will use to your current working directory <code>getwd()</code>.</p>
+<p>First, you need to download the functions we will use to your current
+working directory <code>getwd()</code>.</p>
 <pre><code>download.file(&quot;https://raw.githubusercontent.com/haakonbakkagit/haakonbakkagit.github.io/master/functions-rgeneric-121-march2020.R&quot;, destfile=&quot;functions-rgeneric-121-march2020.R&quot;)</code></pre>
 <pre class="r"><code>library(INLA)
 library(fields)
@@ -412,7 +380,7 @@ source(&quot;functions-rgeneric-121-march2020.R&quot;)
 ## Seed
 set.seed(20200119)</code></pre>
 </div>
-<div id="input" class="section level2">
+<div id="input" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Input</h2>
 <p>These are the variables you may want to change and explore.</p>
 <pre class="r"><code>## Range in time
@@ -434,9 +402,12 @@ max.e = 1
 t.max = 5</code></pre>
 </div>
 </div>
-<div id="create-spatial-and-temporal-meshes" class="section level1">
-<h1><span class="header-section-number">2</span> Create spatial and temporal meshes</h1>
-<p>We create the 1 dimensional temporal mesh, as a completely regular mesh.</p>
+<div id="create-spatial-and-temporal-meshes" class="section level1"
+number="2">
+<h1><span class="header-section-number">2</span> Create spatial and
+temporal meshes</h1>
+<p>We create the 1 dimensional temporal mesh, as a completely regular
+mesh.</p>
 <pre class="r"><code>mesh.t = inla.mesh.1d(1:t.max)</code></pre>
 <p>We create a simple 2 dimensional spatial mesh.</p>
 <pre class="r"><code>fake.locations = matrix(c(0,0,10,10, 0, 10, 10, 0), nrow = 4, byrow = T)
@@ -444,17 +415,40 @@ mesh.s = inla.mesh.2d(loc = fake.locations, max.edge=max.e*c(1, 2))</code></pre>
 <pre class="r"><code>plot(mesh.s)</code></pre>
 <p><img src="btopic132_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
-<div id="standard-inla-separable-model" class="section level1">
-<h1><span class="header-section-number">3</span> Standard INLA separable model</h1>
-<p>Here we run the standard separable (group) model that can be found in many INLA applications. See the SPDE book for details. <a href="https://becarioprecario.bitbucket.io/spde-gitbook/" class="uri">https://becarioprecario.bitbucket.io/spde-gitbook/</a></p>
-<div id="temporal-part" class="section level2">
+<div id="standard-inla-separable-model" class="section level1"
+number="3">
+<h1><span class="header-section-number">3</span> Standard INLA separable
+model</h1>
+<p>Here we run the standard separable (group) model that can be found in
+many INLA applications. See the SPDE book for details. <a
+href="https://becarioprecario.bitbucket.io/spde-gitbook/"
+class="uri">https://becarioprecario.bitbucket.io/spde-gitbook/</a></p>
+<div id="temporal-part" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Temporal part</h2>
-<p>First we use a hidden function to extract the Q matrix used by the AR1 model, to investigate it. This part is only to showcase exatcly what the AR1 model is.</p>
+<p>First we use a hidden function to extract the Q matrix used by the
+AR1 model, to investigate it. This part is only to showcase exatcly what
+the AR1 model is.</p>
 <pre class="r"><code>## Approx rho for decay in 6 time points
 approx.rho = 0.13^(1/6)
 theta2 = logit(approx.rho)
 N = t.max 
-Q = INLA:::inla.extract.Q(&#39;i&#39;, formula = y ~ f(i, model=&#39;ar1&#39;, hyper = list(prec=list(initial=0, fixed=T), theta2=list(initial=theta2, fixed=T))), data = data.frame(y=1:N, i=1:N))
+## old syntax: Q = INLA:::inla.extract.Q(&#39;i&#39;, formula = y ~ f(i, model=&#39;ar1&#39;, hyper = list(prec=list(initial=0, fixed=T), theta2=list(initial=theta2, fixed=T))), data = data.frame(y=1:N, i=1:N))
+res1 = inla(formula = y ~ f(i, model=&#39;ar1&#39;, hyper = list(prec=list(initial=0, fixed=T), theta2=list(initial=theta2, fixed=T))), data = data.frame(y=1:N, i=1:N), control.compute=list(config=T))
+## Does not work: Q = INLA:::inla.extract.Q(&quot;i&quot;, result = res1)
+if (T) {
+  ## New way, but bad code:
+  ## Lowest row of matrix a 0
+  res1$misc$configs$contents$tag
+  result=res1
+  what = &quot;i&quot;
+  conf &lt;- result$misc$configs
+  k=6
+  Q1 &lt;- conf$config[[k]]$Qprior
+  Q = t(Q1)+Q1
+  diag(Q) = diag(Q)/2
+  Q = Q[1:5, 1:5]
+  
+}
 Q</code></pre>
 <pre><code>## 5 x 5 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                                   
@@ -472,17 +466,20 @@ Q</code></pre>
 ## [4,] 0.075 0.178 0.42 1.000 0.422
 ## [5,] 0.032 0.075 0.18 0.422 1.000</code></pre>
 </div>
-<div id="spatial-part" class="section level2">
+<div id="spatial-part" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Spatial part</h2>
 <p>We set up the standard spatial model.</p>
 <pre class="r"><code>mco.space = inla.spde2.pcmatern(mesh = mesh.s, prior.range = c(5, .5), prior.sigma = c(1, .5))</code></pre>
-<p>We extract the preciison matrix of the spatial model, using our chosen spatial range.</p>
+<p>We extract the precision matrix of the spatial model, using our
+chosen spatial range.</p>
 <pre class="r"><code>Qsep.s = inla.spde2.precision(spde = mco.space, theta = log(c(range.s,1)))</code></pre>
 </div>
 </div>
-<div id="simulate-for-t1" class="section level1">
+<div id="simulate-for-t1" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Simulate for t=1</h1>
-<p>We simulate a dataset for <span class="math inline">\(t=1\)</span>. We will only observe data at <span class="math inline">\(t=1\)</span>, and no data at <span class="math inline">\(t&gt;1\)</span>.</p>
+<p>We simulate a dataset for <span class="math inline">\(t=1\)</span>.
+We will only observe data at <span class="math inline">\(t=1\)</span>,
+and no data at <span class="math inline">\(t&gt;1\)</span>.</p>
 <pre class="r"><code>## Gaussian noise
 sig.eps = 0.01
 ## Seed used in C code
@@ -497,13 +494,15 @@ df1 = data.frame(y=u.sim+sim.noise,
                 year=1)
 summary(df1)</code></pre>
 <pre><code>##        y            u.sim        sim.noise           year  
-##  Min.   :-3.4   Min.   :-3.4   Min.   :-0.027   Min.   :1  
-##  1st Qu.:-0.8   1st Qu.:-0.8   1st Qu.:-0.006   1st Qu.:1  
-##  Median :-0.2   Median :-0.2   Median : 0.001   Median :1  
+##  Min.   :-4.5   Min.   :-4.5   Min.   :-0.038   Min.   :1  
+##  1st Qu.:-0.7   1st Qu.:-0.7   1st Qu.:-0.007   1st Qu.:1  
+##  Median : 0.0   Median : 0.0   Median :-0.001   Median :1  
 ##  Mean   : 0.0   Mean   : 0.0   Mean   : 0.000   Mean   :1  
-##  3rd Qu.: 0.6   3rd Qu.: 0.7   3rd Qu.: 0.007   3rd Qu.:1  
-##  Max.   : 5.5   Max.   : 5.5   Max.   : 0.042   Max.   :1</code></pre>
-<p>The easiest way to get predictions for <span class="math inline">\(t&gt;1\)</span> is to add fake data locations, with no observation (coded as <code>NA</code>).</p>
+##  3rd Qu.: 0.7   3rd Qu.: 0.7   3rd Qu.: 0.007   3rd Qu.:1  
+##  Max.   : 2.6   Max.   : 2.6   Max.   : 0.030   Max.   :1</code></pre>
+<p>The easiest way to get predictions for <span
+class="math inline">\(t&gt;1\)</span> is to add fake data locations,
+with no observation (coded as <code>NA</code>).</p>
 <pre class="r"><code>## df2: Augment df1 with the needed prediction locations
 temp.na = rep(NA, (t.max-1)*mesh.s$n)
 df2 = data.frame(y=c(df1$y, temp.na), 
@@ -515,17 +514,21 @@ df2 = data.frame(y=c(df1$y, temp.na),
 ## Our final dataframe
 summary(df2)</code></pre>
 <pre><code>##        y             locx           locy           year  
-##  Min.   :-3     Min.   :-3.0   Min.   :-3.0   Min.   :1  
+##  Min.   :-4     Min.   :-3.0   Min.   :-3.0   Min.   :1  
 ##  1st Qu.:-1     1st Qu.: 1.7   1st Qu.: 1.6   1st Qu.:2  
 ##  Median : 0     Median : 5.0   Median : 5.0   Median :3  
 ##  Mean   : 0     Mean   : 5.0   Mean   : 5.0   Mean   :3  
 ##  3rd Qu.: 1     3rd Qu.: 8.4   3rd Qu.: 8.3   3rd Qu.:4  
-##  Max.   : 6     Max.   :13.0   Max.   :13.0   Max.   :5  
+##  Max.   : 3     Max.   :13.0   Max.   :13.0   Max.   :5  
 ##  NA&#39;s   :1736</code></pre>
 </div>
-<div id="nonseparable-model-rgeneric-object" class="section level1">
-<h1><span class="header-section-number">5</span> Nonseparable model: rgeneric object</h1>
-<p>In January 2020, the nonseparable model is coded in the rgeneric interface of INLA. This will make it slower than if it was implemented in C.</p>
+<div id="nonseparable-model-rgeneric-object" class="section level1"
+number="5">
+<h1><span class="header-section-number">5</span> Nonseparable model:
+rgeneric object</h1>
+<p>In January 2020, the nonseparable model is coded in the rgeneric
+interface of INLA. This will make it slower than if it was implemented
+in C.</p>
 <pre class="r"><code>## Rgeneric object containing needed variables
 ## Mesh in space and time
 ## Lambdas for exponential prior on ransformed hyper-param (1/rt, 1/rs and sig)
@@ -541,8 +544,9 @@ nm = mesh.s$n*mesh.t$n
 mco.nonsep = inla.rgeneric.define(
   model=stmodel121.interpret, debug=FALSE, n=nm, obj=rgen.obj)</code></pre>
 </div>
-<div id="function-for-plotting" class="section level1">
-<h1><span class="header-section-number">6</span> Function for plotting</h1>
+<div id="function-for-plotting" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Function for
+plotting</h1>
 <p>A generic function for plotting spatial fields in this example.</p>
 <pre class="r"><code>local.plot.field = function(field, mesh=mesh.s, 
                             timepoint=1, xlim, ylim, ...){
@@ -568,26 +572,32 @@ mco.nonsep = inla.rgeneric.define(
   image.plot(list(x = proj$x, y=proj$y, z = field.proj), col = plasma(64),
              xlim = xlim, ylim = ylim, ...)  
 }</code></pre>
-<div id="plot-simulation" class="section level2">
+<div id="plot-simulation" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Plot simulation</h2>
-<p>We plot the simulated true field. The observations are this truth added some measurement noise.</p>
+<p>We plot the simulated true field. The observations are this truth
+added some measurement noise.</p>
 <pre class="r"><code>local.plot.field(field = df1$u.sim, mesh = mesh.s)</code></pre>
 <p><img src="btopic132_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
 </div>
-<div id="model-setup" class="section level1">
+<div id="model-setup" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Model setup</h1>
 <p>We define an empty list to conatin our prior models.</p>
 <pre class="r"><code>M = list()
 for (i in 1:2) M[[i]] = list()</code></pre>
-<div id="stack-setup" class="section level2">
+<div id="stack-setup" class="section level2" number="7.1">
 <h2><span class="header-section-number">7.1</span> Stack setup</h2>
-<p>We set up the stack as in the SPDE book <a href="https://becarioprecario.bitbucket.io/spde-gitbook/" class="uri">https://becarioprecario.bitbucket.io/spde-gitbook/</a>.</p>
+<p>We set up the stack as in the SPDE book <a
+href="https://becarioprecario.bitbucket.io/spde-gitbook/"
+class="uri">https://becarioprecario.bitbucket.io/spde-gitbook/</a>.</p>
 <pre class="r"><code>iset = inla.spde.make.index(&#39;i&#39;, n.spde = mesh.s$n, n.group = t.max)
 A = inla.spde.make.A(mesh = mesh.s, loc = cbind(df2$locx, df2$locy), group = df2$year) 
 sum(A-Diagonal(nrow(A)))</code></pre>
 <pre><code>## [1] -3.6e-14</code></pre>
-<p>Note that this A matrix is a diagonal matrix, since we have observations only on the nodes of the mesh. In this case the stack is not really needed, but we include it anyway to make the code generalise more easily (to your needs).</p>
+<p>Note that this A matrix is a diagonal matrix, since we have
+observations only on the nodes of the mesh. In this case the stack is
+not really needed, but we include it anyway to make the code generalise
+more easily (to your needs).</p>
 <pre class="r"><code>stack = list()
 stack[[1]] = inla.stack(
   data = list(y = df2$y), 
@@ -605,9 +615,12 @@ stack[[2]] = inla.stack(
   effects = list(i.nonsep=i.nonsep, m = rep(1, nrow(df2))),
   tag = &#39;stdata&#39;) </code></pre>
 </div>
-<div id="separable-model" class="section level2">
+<div id="separable-model" class="section level2" number="7.2">
 <h2><span class="header-section-number">7.2</span> Separable model</h2>
-<p>Next we create the kronecker product (group) model. We cannot infer the temporal dependency, since we only have data for <span class="math inline">\(t=1\)</span>, so we have to fix this parameter.</p>
+<p>Next we create the kronecker product (group) model. We cannot infer
+the temporal dependency, since we only have data for <span
+class="math inline">\(t=1\)</span>, so we have to fix this
+parameter.</p>
 <pre class="r"><code>## We want to fix the autocorrelation in time
 ## The theta2 as defined before is the INLA internal parametrisation of rho
 hyper.ar1.rho = list(rho = list(initial=theta2, fixed=TRUE))
@@ -615,9 +628,11 @@ form.sep = y ~ -1 + m + f(i, model = mco.space, group = i.group,
                      control.group = list(model=&quot;ar1&quot;, hyper = hyper.ar1.rho))
 M[[1]]$formula = form.sep</code></pre>
 </div>
-<div id="nonseparable-model" class="section level2">
-<h2><span class="header-section-number">7.3</span> Nonseparable model</h2>
-<p>We redefined the nonseparable model. Here we add the <code>fixed.theta</code> argument.</p>
+<div id="nonseparable-model" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> Nonseparable
+model</h2>
+<p>We redefined the nonseparable model. Here we add the
+<code>fixed.theta</code> argument.</p>
 <pre class="r"><code>## We need to fix the temporal range in the non-separable model
 rgen.obj2 = rgen.obj
 rgen.obj2$fixed.theta = c(log(range.t), NA, NA)
@@ -626,8 +641,10 @@ mco.nonsep.fix = inla.rgeneric.define(model=stmodel121.interpret, debug=FALSE, n
 form.nonsep = y ~ -1 + m + f(i.nonsep, model=mco.nonsep.fix, n=nm)
 M[[2]]$formula = form.nonsep</code></pre>
 </div>
-<div id="check-that-formulas-are-correct" class="section level2">
-<h2><span class="header-section-number">7.4</span> Check that formulas are correct</h2>
+<div id="check-that-formulas-are-correct" class="section level2"
+number="7.4">
+<h2><span class="header-section-number">7.4</span> Check that formulas
+are correct</h2>
 <pre class="r"><code>print(M)</code></pre>
 <pre><code>## [[1]]
 ## [[1]]$formula
@@ -640,7 +657,7 @@ M[[2]]$formula = form.nonsep</code></pre>
 ## y ~ -1 + m + f(i.nonsep, model = mco.nonsep.fix, n = nm)</code></pre>
 </div>
 </div>
-<div id="inference" class="section level1">
+<div id="inference" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> Inference</h1>
 <p>Setup some initial values (use NULL if you do not know them).</p>
 <pre class="r"><code>## WARNING: Set these variables to NULL if you change the model in any way!
@@ -648,7 +665,9 @@ M[[1]]$init = c(1.775 , 0.153)
 M[[2]]$init = c(1.11 , -0.056)
 
 fits = list()</code></pre>
-<p>Run the INLA algorithm. This is the time consuming part of this script. Here, we fix the Gaussian nugget effect to be of the correct size, to save time and to get a more accurate comparison.</p>
+<p>Run the INLA algorithm. This is the time consuming part of this
+script. Here, we fix the Gaussian nugget effect to be of the correct
+size, to save time and to get a more accurate comparison.</p>
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(&quot;Running:  &quot;, i))
   stk = stack[[i]]
@@ -671,35 +690,42 @@ fits = list()</code></pre>
 }</code></pre>
 <pre><code>## [1] &quot;Running:   1&quot;
 ## Total 
-##    26 
+##   5.1 
 ## [1] &quot;Running:   2&quot;
 ## Total 
-##   178</code></pre>
+##   174</code></pre>
 <pre class="r"><code>## Check what we can set the initial values to
 for (i in 1:length(M)){
     print(paste(round(fits[[i]]$internal.summary.hyperpar$mean, 3), collapse = &quot; , &quot;))
 }</code></pre>
-<pre><code>## [1] &quot;1.779 , 0.154&quot;
-## [1] &quot;1.11 , -0.055&quot;</code></pre>
+<pre><code>## [1] &quot;1.519 , -0.1&quot;
+## [1] &quot;0.986 , -0.265&quot;</code></pre>
 <pre class="r"><code>## Comparison
 fits[[1]]$summary.hyperpar[ ,c(4,3,5)]</code></pre>
 <pre><code>##             0.5quant 0.025quant 0.97quant
-## Range for i      5.8       4.58       8.0
-## Stdev for i      1.2       0.94       1.5</code></pre>
+## Range for i      4.5       3.59       6.0
+## Stdev for i      0.9       0.74       1.1</code></pre>
 <pre class="r"><code>## This only works in this specific case, when we fixed the first hyper-parameter
 data.frame(var=c(&quot;Range&quot;, &quot;Stdev&quot;), exp(fits[[2]]$summary.hyperpar[c(1,2), c(4,3,5)]))</code></pre>
 <pre><code>##                       var X0.5quant X0.025quant X0.97quant
-## Theta1 for i.nonsep Range      3.03        2.77        3.3
-## Theta2 for i.nonsep Stdev      0.95        0.83        1.1</code></pre>
+## Theta1 for i.nonsep Range      2.67        2.44       2.96
+## Theta2 for i.nonsep Stdev      0.76        0.68       0.87</code></pre>
 </div>
-<div id="plot-results" class="section level1">
+<div id="plot-results" class="section level1" number="9">
 <h1><span class="header-section-number">9</span> Plot results</h1>
 <p>We extract the predictions that we want to plot. This</p>
 <pre class="r"><code>pred.sep = fits[[1]]$summary.random$i$mean + fits[[1]]$summary.fixed$mean[1]
 pred.nonsep = fits[[2]]$summary.random$i$mean + fits[[2]]$summary.fixed$mean[1]</code></pre>
-<div id="year-1" class="section level2">
+<div id="year-1" class="section level2" number="9.1">
 <h2><span class="header-section-number">9.1</span> Year 1</h2>
-<p>We set up some clever variables to improve visualisation across years. We define <code>zlim</code> to see the plots on the same scale. However, forecasts will regress to the mean as you go into the future, approximately by <code>approx.rho</code>. Since the mean is close to zero, we can use the factor <code>approx.rho</code> to discount the <code>zlim</code> every year. In the end we plot with different <code>zlim</code> every year, but the same <code>zlim</code> within each year.</p>
+<p>We set up some clever variables to improve visualisation across
+years. We define <code>zlim</code> to see the plots on the same scale.
+However, forecasts will regress to the mean as you go into the future,
+approximately by <code>approx.rho</code>. Since the mean is close to
+zero, we can use the factor <code>approx.rho</code> to discount the
+<code>zlim</code> every year. In the end we plot with different
+<code>zlim</code> every year, but the same <code>zlim</code> within each
+year.</p>
 <pre class="r"><code>## zlim for plots
 local.zlim = c(-2, 3)
 ## Yearly reduction in zlim
@@ -710,14 +736,20 @@ zlim.disc = approx.rho # discount factor</code></pre>
 <p>Predictions from nonseparable model at year 1.</p>
 <pre class="r"><code>local.plot.field(pred.nonsep, timepoint = 1, zlim=local.zlim)</code></pre>
 <p><img src="btopic132_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
-<p>The difference between the two predictions (or estimates) are very small. This is because we fitted a very informative spatial dataset at year 1.</p>
+<p>The difference between the two predictions (or estimates) are very
+small. This is because we fitted a very informative spatial dataset at
+year 1.</p>
 <pre class="r"><code>## Difference between predictions.
 local.plot.field(pred.nonsep-pred.sep, timepoint = 1, zlim=c(-1,1))</code></pre>
 <p><img src="btopic132_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 </div>
-<div id="year-2" class="section level2">
+<div id="year-2" class="section level2" number="9.2">
 <h2><span class="header-section-number">9.2</span> Year 2</h2>
-<p>For year 2 we already see a large difference between the two models. This is large because the correlation between years is so small. With <code>range.t</code> set to 3.5, every year, there is a large change from the year before. If we set a longer temporal range, we observe less difference between the models at the 1 year forecast.</p>
+<p>For year 2 we already see a large difference between the two models.
+This is large because the correlation between years is so small. With
+<code>range.t</code> set to 3.5, every year, there is a large change
+from the year before. If we set a longer temporal range, we observe less
+difference between the models at the 1 year forecast.</p>
 <pre class="r"><code>local.plot.field(pred.sep, timepoint = 2, zlim=local.zlim*zlim.disc)</code></pre>
 <p><img src="btopic132_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
 <pre class="r"><code>local.plot.field(pred.nonsep, timepoint = 2, zlim=local.zlim*zlim.disc)</code></pre>
@@ -725,9 +757,12 @@ local.plot.field(pred.nonsep-pred.sep, timepoint = 1, zlim=c(-1,1))</code></pre>
 <pre class="r"><code>local.plot.field(pred.nonsep-pred.sep, timepoint = 2, zlim=c(-1,1))</code></pre>
 <p><img src="btopic132_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 </div>
-<div id="year-5" class="section level2">
+<div id="year-5" class="section level2" number="9.3">
 <h2><span class="header-section-number">9.3</span> Year 5</h2>
-<p>You can plot any of the years; we plotted year 1 and 2, and now we show year 5. Year 5 illustrates how, into the far future, both the models have regressed so close to the mean that the pointwise difference is small.</p>
+<p>You can plot any of the years; we plotted year 1 and 2, and now we
+show year 5. Year 5 illustrates how, into the far future, both the
+models have regressed so close to the mean that the pointwise difference
+is small.</p>
 <pre class="r"><code>if(t.max&gt;=5) local.plot.field(pred.sep, timepoint = 5, zlim=local.zlim*zlim.disc^5)</code></pre>
 <p><img src="btopic132_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <pre class="r"><code>if(t.max&gt;=5) local.plot.field(pred.nonsep, timepoint = 5, zlim=local.zlim*zlim.disc^5)</code></pre>
@@ -736,7 +771,7 @@ local.plot.field(pred.nonsep-pred.sep, timepoint = 1, zlim=c(-1,1))</code></pre>
 <p><img src="btopic132_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 </div>
 </div>
-<div id="end" class="section level1">
+<div id="end" class="section level1" number="10">
 <h1><span class="header-section-number">10</span> END</h1>
 </div>
 
@@ -769,7 +804,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -778,6 +813,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

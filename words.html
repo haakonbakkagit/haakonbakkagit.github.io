@@ -14,20 +14,28 @@
 
 <title>Words - their meaning when used here</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -91,10 +70,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -111,40 +86,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -172,7 +123,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -184,7 +135,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -194,11 +145,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -210,13 +178,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -224,16 +191,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -336,7 +296,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -350,7 +310,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -382,7 +342,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -395,7 +355,8 @@ div.tocify {
 
 <div id="general" class="section level2">
 <h2>General</h2>
-<p>This is two lists of words, with explanations, as they are used throuhout this webpage.</p>
+<p>This is two lists of words, with explanations, as they are used
+throuhout this webpage.</p>
 <p>This page is at an early stage, and far from complete.</p>
 </div>
 <div id="the-detailed-list" class="section level2">
@@ -407,7 +368,9 @@ div.tocify {
 </div>
 <div id="stage-2" class="section level4">
 <h4>Stage 2</h4>
-<p>The linear predictor and the random effects. And the formula. Usually more than one parameter per observation. Notation <span class="math inline">\(\eta_i, f_i, u_i\)</span>.</p>
+<p>The linear predictor and the random effects. And the formula. Usually
+more than one parameter per observation. Notation <span
+class="math inline">\(\eta_i, f_i, u_i\)</span>.</p>
 <p>Also: Level 2 (of the hierarchical model), predictor.</p>
 </div>
 <div id="stage-3" class="section level4">
@@ -417,15 +380,22 @@ div.tocify {
 </div>
 <div id="domain" class="section level4">
 <h4>Domain</h4>
-<p>Also: Spatial domain, study region, study area, or total area. The domain is where (in space) you allow fitting and predictions. This is where you intend to plot the spatial field.</p>
-<p>Domain can also be used for “region” of values of other variables, e.g. time domain.</p>
+<p>Also: Spatial domain, study region, study area, or total area. The
+domain is where (in space) you allow fitting and predictions. This is
+where you intend to plot the spatial field.</p>
+<p>Domain can also be used for “region” of values of other variables,
+e.g. time domain.</p>
 </div>
 <div id="objectivity-and-truth" class="section level4">
 <h4>Objectivity and Truth</h4>
-<p>When modeling, we want to be somewhat objective, and we want to get the “truth” in some fashion. However, these words are not so useful for discourse, and we would rather use</p>
+<p>When modeling, we want to be somewhat objective, and we want to get
+the “truth” in some fashion. However, these words are not so useful for
+discourse, and we would rather use</p>
 <ul>
-<li>Transparency: How well the assumptions (subjective or objective) are presented and clarified</li>
-<li>Ability to generalize: How well the conclusions generalize to other situations</li>
+<li>Transparency: How well the assumptions (subjective or objective) are
+presented and clarified</li>
+<li>Ability to generalize: How well the conclusions generalize to other
+situations</li>
 </ul>
 </div>
 <div id="bayesian-inference" class="section level4">
@@ -433,8 +403,10 @@ div.tocify {
 <p>This word can mean several things. we would rather use</p>
 <ul>
 <li>Bayesian modeling: Fully specified probabilistic (prior) models</li>
-<li>Bayesian computation: Efficient computation and representation of the posterior</li>
-<li>Assumption-Conclusion inference: Connecting different prior models to posterior conclusions</li>
+<li>Bayesian computation: Efficient computation and representation of
+the posterior</li>
+<li>Assumption-Conclusion inference: Connecting different prior models
+to posterior conclusions</li>
 </ul>
 </div>
 <div id="prior" class="section level4">
@@ -442,21 +414,39 @@ div.tocify {
 <p>When talking about the prior, it can be</p>
 <ul>
 <li>Priors for hyper-parameters</li>
-<li>Priors for the random effects (e.g. spatial covariance structure)</li>
-<li>Assumptions on distributions (e.g. the likelihood, or Gaussianity assumptions)</li>
+<li>Priors for the random effects (e.g. spatial covariance
+structure)</li>
+<li>Assumptions on distributions (e.g. the likelihood, or Gaussianity
+assumptions)</li>
 </ul>
 </div>
 </div>
 <div id="the-simple-list" class="section level2">
 <h2>The simple list</h2>
-<p><strong>Hyper-parameter</strong>: A parameter controlling other parameters. The parameters controlling the structure in a random effect, e.g. range and sigma in a spatial effect. The parameter(s) in the observation likelihood.</p>
-<p><strong>Parameter(s)</strong>: In theory, any parameter in the model, i.e. any random variable except <span class="math inline">\(Y\)</span>. In practice, used to denote the large set of Gaussian variables in a random effect, or in the</p>
+<p><strong>Hyper-parameter</strong>: A parameter controlling other
+parameters. The parameters controlling the structure in a random effect,
+e.g. range and sigma in a spatial effect. The parameter(s) in the
+observation likelihood.</p>
+<p><strong>Parameter(s)</strong>: In theory, any parameter in the model,
+i.e. any random variable except <span class="math inline">\(Y\)</span>.
+In practice, used to denote the large set of Gaussian variables in a
+random effect, or in the</p>
 <p><strong>Family</strong>: Same as likelihood, see likelihood.</p>
-<p><strong>Observation likelihood</strong>: Same as likelihood, see likelihood.</p>
-<p><strong>Likelihood</strong>: The distributions for the observations given the model for the predictor (formula).</p>
-<p><strong>Predictor</strong>: Symbol <span class="math inline">\(\eta\)</span>. The model, represented by the formula. This is assumed to be Gaussian when the hyper-parameters are fixed/known. This is where you believe the effects in the model to be additive, that they add up to the total underlying true distribution/intensity.</p>
-<p><strong>Linear predictor</strong>: Same as predictor, see predictor. There is no assumption that the predictor is a linear regression, it can be any additive model.</p>
-<p><strong>Latent variable</strong>: Same as predictor, see predictor.</p>
+<p><strong>Observation likelihood</strong>: Same as likelihood, see
+likelihood.</p>
+<p><strong>Likelihood</strong>: The distributions for the observations
+given the model for the predictor (formula).</p>
+<p><strong>Predictor</strong>: Symbol <span
+class="math inline">\(\eta\)</span>. The model, represented by the
+formula. This is assumed to be Gaussian when the hyper-parameters are
+fixed/known. This is where you believe the effects in the model to be
+additive, that they add up to the total underlying true
+distribution/intensity.</p>
+<p><strong>Linear predictor</strong>: Same as predictor, see predictor.
+There is no assumption that the predictor is a linear regression, it can
+be any additive model.</p>
+<p><strong>Latent variable</strong>: Same as predictor, see
+predictor.</p>
 </div>
 
 
@@ -488,7 +478,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -497,6 +487,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

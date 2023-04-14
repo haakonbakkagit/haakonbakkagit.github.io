@@ -14,20 +14,28 @@
 
 <title>Visualising spatial prior models</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,30 +59,28 @@ if (window.hljs) {
 
 
 
+
+
 <style type="text/css">
-h1 {
-  font-size: 34px;
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
 }
-h1.title {
-  font-size: 38px;
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
 }
-h2 {
-  font-size: 30px;
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
 }
-h3 {
-  font-size: 24px;
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
 }
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
+div.csl-indent {
+  margin-left: 2em;
 }
 </style>
 
@@ -92,10 +93,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +109,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +146,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +158,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +168,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +201,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +214,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +319,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +333,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,7 +365,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -394,14 +376,22 @@ div.tocify {
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>This topic covers how to visualize spatial models near a coast. The method for visualizing spatial models can be used for other models. The knowledge we gain on the spatial models we are looking at is useful when using these models. Note that this is only about the prior model, before we have introduced data!</p>
-<p>This topic is out of date (and removed from the list of all topics).</p>
-<div id="initialisation" class="section level2">
+<p>This topic covers how to visualize spatial models near a coast. The
+method for visualizing spatial models can be used for other models. The
+knowledge we gain on the spatial models we are looking at is useful when
+using these models. Note that this is only about the prior model, before
+we have introduced data!</p>
+<p>This topic is out of date (and removed from the list of all
+topics).</p>
+<div id="initialisation" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Initialisation</h2>
-<p>We load the libraries and functions we need. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>). Feel free to save the web location where the data is as an R-file on your computer. We also set random seeds to be used later.</p>
+<p>We load the libraries and functions we need. You may need to install
+these libraries (<a href="btopic109.html">Installation and general
+troubleshooting</a>). Feel free to save the web location where the data
+is as an R-file on your computer. We also set random seeds to be used
+later.</p>
 <pre class="r"><code>library(INLA) 
 library(sp) 
 library(fields)
@@ -409,11 +399,11 @@ library(fields)
 set.seed(2016)
 set.inla.seed = 2016</code></pre>
 </div>
-<div id="download-data" class="section level2">
+<div id="download-data" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Download data</h2>
 <pre><code>dir.create(&quot;data/&quot;)
 download.file(url = &quot;https://haakonbakkagit.github.io/data/WebSiteData-Archipelago.RData&quot;, destfile = &quot;data/WebSiteData-Archipelago.RData&quot;)</code></pre>
-<div id="load-data" class="section level3">
+<div id="load-data" class="section level3" number="1.2.1">
 <h3><span class="header-section-number">1.2.1</span> Load data</h3>
 <pre class="r"><code>## Load data
 load(file = &quot;data/WebSiteData-Archipelago.RData&quot;)
@@ -426,14 +416,18 @@ load(file = &quot;data/WebSiteData-Archipelago.RData&quot;)
 str(poly.water, 1)</code></pre>
 <pre><code>## Formal class &#39;SpatialPolygons&#39; [package &quot;sp&quot;] with 4 slots</code></pre>
 </div>
-<div id="data-citations" class="section level3">
+<div id="data-citations" class="section level3" number="1.2.2">
 <h3><span class="header-section-number">1.2.2</span> Data citations</h3>
-<p>For a description of the data see <span class="citation">(Kallasvuo, Vanhatalo, and Veneranta 2016)</span>. Data collection was funded by VELMU and Natural Resources Institute Finland (Luke).</p>
+<p>For a description of the data see <span class="citation">(Kallasvuo,
+Vanhatalo, and Veneranta 2016)</span>. Data collection was funded by
+VELMU and Natural Resources Institute Finland (Luke).</p>
 </div>
 </div>
-<div id="dependency-btopic104" class="section level2">
-<h2><span class="header-section-number">1.3</span> Dependency <a href="btopic104.html">BTopic104</a></h2>
-<p>The following code is copy-pasted from the dependency. You probably want to read this dependency topic.</p>
+<div id="dependency-btopic104" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Dependency <a
+href="btopic104.html">BTopic104</a></h2>
+<p>The following code is copy-pasted from the dependency. You probably
+want to read this dependency topic.</p>
 <pre class="r"><code>max.edge = 0.95
 mesh1 = inla.mesh.2d(loc=cbind(df$locx, df$locy),
                     max.edge = max.edge)
@@ -452,9 +446,11 @@ mesh4 = inla.mesh.2d(boundary = poly.water,
 plot(mesh4, main=&quot;4th attempt&quot;, lwd=0.5); points(df$locx, df$locy, col=&quot;red&quot;)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
-<div id="weak-dependency-btopic103" class="section level2">
-<h2><span class="header-section-number">1.4</span> Weak dependency <a href="btopic103.html">BTopic103</a></h2>
-<p>You may want to read BTopic103 also, but it is not strictly necessary.</p>
+<div id="weak-dependency-btopic103" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Weak dependency <a
+href="btopic103.html">BTopic103</a></h2>
+<p>You may want to read BTopic103 also, but it is not strictly
+necessary.</p>
 <pre class="r"><code>local.plot.field = function(field, mesh, xlim, ylim, ...){
   stopifnot(length(field) == mesh$n)
   # - error when using the wrong mesh
@@ -472,10 +468,21 @@ plot(mesh4, main=&quot;4th attempt&quot;, lwd=0.5); points(df$locx, df$locy, col
 }</code></pre>
 </div>
 </div>
-<div id="how-to-compute-the-sd-and-correlation-plots" class="section level1">
-<h1><span class="header-section-number">2</span> How to compute the SD and Correlation plots</h1>
-<p>In INLA, we always talk about precision matrices <span class="math inline">\(Q\)</span>, which are the inverse of the covariance matrices. To compute standard deviations, we first have to compute parts of <span class="math inline">\(\sigma = Q^{-1}\)</span> through <code>inla.qinv</code>. The parts we compute always include the diagonal. The marginal standard deviations <code>sd</code> are just the square root of elements on this diagonal.</p>
-<p>To compute the correlation, we need to first decide on a reference location. The correlation is then computed between the field at any point and this reference location. You may wait with studying this function until you see the example.</p>
+<div id="how-to-compute-the-sd-and-correlation-plots"
+class="section level1" number="2">
+<h1><span class="header-section-number">2</span> How to compute the SD
+and Correlation plots</h1>
+<p>In INLA, we always talk about precision matrices <span
+class="math inline">\(Q\)</span>, which are the inverse of the
+covariance matrices. To compute standard deviations, we first have to
+compute parts of <span class="math inline">\(\sigma = Q^{-1}\)</span>
+through <code>inla.qinv</code>. The parts we compute always include the
+diagonal. The marginal standard deviations <code>sd</code> are just the
+square root of elements on this diagonal.</p>
+<p>To compute the correlation, we need to first decide on a reference
+location. The correlation is then computed between the field at any
+point and this reference location. You may wait with studying this
+function until you see the example.</p>
 <pre class="r"><code>local.find.correlation = function(Q, location, mesh) {
   sd = sqrt(diag(inla.qinv(Q)))
   # - the marginal standard deviations
@@ -499,9 +506,12 @@ plot(mesh4, main=&quot;4th attempt&quot;, lwd=0.5); points(df$locx, df$locy, col
   return(corr)
 }</code></pre>
 </div>
-<div id="example-1-the-bad-mesh-mesh1" class="section level1">
-<h1><span class="header-section-number">3</span> Example 1: The bad mesh <code>mesh1</code></h1>
-<p>Here, we set up the SPDE based Matérn model in INLA. (If you do not know what this means, think of it as a common spatial model.)</p>
+<div id="example-1-the-bad-mesh-mesh1" class="section level1"
+number="3">
+<h1><span class="header-section-number">3</span> Example 1: The bad mesh
+<code>mesh1</code></h1>
+<p>Here, we set up the SPDE based Matérn model in INLA. (If you do not
+know what this means, think of it as a common spatial model.)</p>
 <pre class="r"><code>spde = inla.spde2.pcmatern(mesh1, prior.range = c(5, .5), prior.sigma = c(.5, .5))
 # - ignore the priors, they are not used at all (in this topic)
 Q = inla.spde2.precision(spde, theta = c(log(4),log(1)))
@@ -520,10 +530,15 @@ points(16.52, 6.93)</code></pre>
 <pre class="r"><code>local.plot.field(corr, mesh1, zlim=c(0.1, 1))
 points(7.62, 6.77)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>This correlation is slightly smaller than the previous figure. [The difference was smaller than I expected.] For the model to be the stationary Matérn model, the correlation surfaces must look the same (when they are inside the study area).</p>
+<p>This correlation is slightly smaller than the previous figure. [The
+difference was smaller than I expected.] For the model to be the
+stationary Matérn model, the correlation surfaces must look the same
+(when they are inside the study area).</p>
 </div>
-<div id="the-stationary-model-on-a-good-mesh-respecting-the-coastline" class="section level1">
-<h1><span class="header-section-number">4</span> The stationary model on a good mesh respecting the coastline</h1>
+<div id="the-stationary-model-on-a-good-mesh-respecting-the-coastline"
+class="section level1" number="4">
+<h1><span class="header-section-number">4</span> The stationary model on
+a good mesh respecting the coastline</h1>
 <pre class="r"><code>spde = inla.spde2.pcmatern(mesh4, prior.range = c(5, .5), prior.sigma = c(.5, .5))
 # - You can ignore the prior, we do not use that
 Q = inla.spde2.precision(spde, theta = c(log(4),log(1)))
@@ -533,7 +548,8 @@ local.plot.field(sd, mesh4)
 points(df$locx, df$locy)
 plot(poly.water, add=T)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>We see that the standard deviation is near 1 in the water, but not far inland. However, we only care about the water region.</p>
+<p>We see that the standard deviation is near 1 in the water, but not
+far inland. However, we only care about the water region.</p>
 <p>Similarly, we plot the correlation.</p>
 <pre class="r"><code>corr = local.find.correlation(Q, loc = c(7,10.3), mesh4)</code></pre>
 <pre><code>## [1] &quot;The location used was c( 6.9022 ,  10.2071 )&quot;</code></pre>
@@ -541,12 +557,20 @@ plot(poly.water, add=T)</code></pre>
 points(6.90, 10.21)
 plot(poly.water, add=T)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<p>Here, we see that the values in water are correlated to the values on land. This is no problem! The field on land is just a computational tool; it is never used. In other words, the likelihood on land is always 100% chance of getting 0 fish, independent on the predictor there.</p>
-<p>Let us therefore stop plotting the field, and correlation etc on land.</p>
-<div id="the-polygons-for-mesh4" class="section level2">
-<h2><span class="header-section-number">4.1</span> The polygons for <code>mesh4</code></h2>
-<p>The problem with using the polygon <code>poly.water</code> for plotting is that we have re-defined the polygon when we created the mesh. It has been simplified somewhat.</p>
-<p>The following are code from the Barrier model example <a href="btopic103.html">Topic 103</a>.</p>
+<p>Here, we see that the values in water are correlated to the values on
+land. This is no problem! The field on land is just a computational
+tool; it is never used. In other words, the likelihood on land is always
+100% chance of getting 0 fish, independent on the predictor there.</p>
+<p>Let us therefore stop plotting the field, and correlation etc on
+land.</p>
+<div id="the-polygons-for-mesh4" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> The polygons for
+<code>mesh4</code></h2>
+<p>The problem with using the polygon <code>poly.water</code> for
+plotting is that we have re-defined the polygon when we created the
+mesh. It has been simplified somewhat.</p>
+<p>The following are code from the Barrier model example <a
+href="btopic103.html">Topic 103</a>.</p>
 <pre class="r"><code>## Remove this and update the code to use the new functionality in INLA
 # - Use inla.barrier.pcmaterns instead of the code below
 source(&quot;functions-barriers-dt-models-march2017.R&quot;)</code></pre>
@@ -565,13 +589,13 @@ water = over(poly.water, SpatialPoints(posTri), returnList=T)
 water = unlist(water)
 Omega = list(water, setdiff(1:tl, water))
 Omega.SP = dt.polygon.omega(mesh, Omega)</code></pre>
-<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
-## intersection at or near point 0 0</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;):
+## Self-intersection at or near point 3.14334413 4.3036498099999996</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
 <pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider
 ## using set_RGEOS_CheckValidity(2L)</code></pre>
-<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
-## intersection at or near point -4.5999999999999996 -0.91499688999999995</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;):
+## Self-intersection at or near point 13.745764599999999 -0.5268853</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
 <pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider
 ## using set_RGEOS_CheckValidity(2L)</code></pre>
@@ -591,21 +615,38 @@ plot(Omega.SP[[2]], add=T, col=&quot;grey&quot;)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <pre class="r"><code># - adding the land polygon filled with grey
 # - this hides the field on land</code></pre>
-<p>This looks better. But, something is weird here! Let us look closer…</p>
+<p>This looks better. But, something is weird here! Let us look
+closer…</p>
 <pre class="r"><code>local.plot.field(corr, mesh, xlim = c(5, 9), ylim = c(8, 12), zlim=c(0.1, 1))
 points(6.90, 10.21)
 plot(Omega.SP[[2]], add=T, col=&quot;grey&quot;)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
-<p>The model is stationary, implying that all parts of space is treated in the same way. And so, strength is borrowed from one side of a land barrier to another. As discussed in <span class="citation">(Bakka et al. 2016)</span> this usually makes no sense.</p>
+<p>The model is stationary, implying that all parts of space is treated
+in the same way. And so, strength is borrowed from one side of a land
+barrier to another. As discussed in <span class="citation">(Bakka et al.
+2016)</span> this usually makes no sense.</p>
 </div>
 </div>
-<div id="a-secret-model---visualising-the-unknown" class="section level1">
-<h1><span class="header-section-number">5</span> A secret model - visualising the unknown</h1>
-<p>We are going to take some spatial (prior) model and pretend we know nothing about it. The idea is to understand how to visualize and interpret it.</p>
-<p>The model has two parameters, one sigma-parameter (scaling parameter) and one spatial range parameter.</p>
+<div id="a-secret-model---visualising-the-unknown"
+class="section level1" number="5">
+<h1><span class="header-section-number">5</span> A secret model -
+visualising the unknown</h1>
+<p>We are going to take some spatial (prior) model and pretend we know
+nothing about it. The idea is to understand how to visualize and
+interpret it.</p>
+<p>The model has two parameters, one sigma-parameter (scaling parameter)
+and one spatial range parameter.</p>
 <p>First we need some setup.</p>
-<pre class="r"><code>Q.function = dt.create.Q(mesh, Omega, fixed.ranges = c(NA, 0.5))
-# - the 0.5-fixed range is for the barrier area
+<pre class="r"><code>Q.function = dt.create.Q(mesh, Omega, fixed.ranges = c(NA, 0.5))</code></pre>
+<pre><code>## Warning in sparseMatrix(i = index.i, j = index.j, x = Aij, dims =
+## c(mesh$n, : &#39;giveCsparse&#39; is deprecated; setting repr=&quot;T&quot; for you
+
+## Warning in sparseMatrix(i = index.i, j = index.j, x = Aij, dims =
+## c(mesh$n, : &#39;giveCsparse&#39; is deprecated; setting repr=&quot;T&quot; for you
+
+## Warning in sparseMatrix(i = index.i, j = index.j, x = Aij, dims =
+## c(mesh$n, : &#39;giveCsparse&#39; is deprecated; setting repr=&quot;T&quot; for you</code></pre>
+<pre class="r"><code># - the 0.5-fixed range is for the barrier area
 # - - it is not sensitive to the exact value here, 
 #     just make it &quot;small&quot;</code></pre>
 <p>The code to produce <span class="math inline">\(Q\)</span> is</p>
@@ -614,84 +655,167 @@ plot(Omega.SP[[2]], add=T, col=&quot;grey&quot;)</code></pre>
 sigma = 1
 # - some chosen sigma scaling
 
-Q = Q.function(theta = c(log(sigma), log(r)))
-# - the precision matrix for fixed ranges
+Q = Q.function(theta = c(log(sigma), log(r)))</code></pre>
+<pre><code>## Warning in sparseMatrix(i = 1:N, j = 1:N, x = 1/Cdiag, dims = c(N,
+## N), giveCsparse = FALSE): &#39;giveCsparse&#39; is deprecated; setting
+## repr=&quot;T&quot; for you</code></pre>
+<pre class="r"><code># - the precision matrix for fixed ranges
 # - Q is a function of the hyperparameters theta = c( log(sigma), log(range1), log(range2),...)</code></pre>
-<p>In total, <span class="math display">\[Q = Q(\sigma, r) = \sigma^{-2} Q(r).\]</span></p>
-<p>This is written as a function, since when you know both <span class="math inline">\(r\)</span> and <span class="math inline">\(\sigma\)</span>, you know <span class="math inline">\(Q\)</span>. (The notation in the above equation is a bit sloppy.)</p>
-<div id="the-claim" class="section level2">
+<p>In total, <span class="math display">\[Q = Q(\sigma, r) = \sigma^{-2}
+Q(r).\]</span></p>
+<p>This is written as a function, since when you know both <span
+class="math inline">\(r\)</span> and <span
+class="math inline">\(\sigma\)</span>, you know <span
+class="math inline">\(Q\)</span>. (The notation in the above equation is
+a bit sloppy.)</p>
+<div id="the-claim" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> The claim</h2>
-<p>I (who created this <span class="math inline">\(Q\)</span>) claim that <span class="math inline">\(\sigma\)</span> gives the marginal standard deviation, and that the range parameter <span class="math inline">\(r\)</span> does not affect the marginal standard deviation. I also claim that this range is roughly the distance at which correlation drops to 0.13 when moving over water.</p>
+<p>I (who created this <span class="math inline">\(Q\)</span>) claim
+that <span class="math inline">\(\sigma\)</span> gives the marginal
+standard deviation, and that the range parameter <span
+class="math inline">\(r\)</span> does not affect the marginal standard
+deviation. I also claim that this range is roughly the distance at which
+correlation drops to 0.13 when moving over water.</p>
 <p>The question now is “How can we check my claim?”</p>
 </div>
-<div id="studying-the-scaling-parameter-sigma" class="section level2">
-<h2><span class="header-section-number">5.2</span> Studying the scaling parameter <span class="math inline">\(\sigma\)</span></h2>
-<p>The first thing we want is to check is if the <span class="math inline">\(\sigma\)</span> parameter is the same as the marginal standard deviation. First we need to check if the <span class="math inline">\(Q\)</span> with <span class="math inline">\(\sigma=1\)</span> has standard deviation 1.</p>
-<pre class="r"><code>Q = Q.function(theta = c(log(1), log(r)))
-sd = diag(inla.qinv(Q))
+<div id="studying-the-scaling-parameter-sigma" class="section level2"
+number="5.2">
+<h2><span class="header-section-number">5.2</span> Studying the scaling
+parameter <span class="math inline">\(\sigma\)</span></h2>
+<p>The first thing we want is to check is if the <span
+class="math inline">\(\sigma\)</span> parameter is the same as the
+marginal standard deviation. First we need to check if the <span
+class="math inline">\(Q\)</span> with <span
+class="math inline">\(\sigma=1\)</span> has standard deviation 1.</p>
+<pre class="r"><code>Q = Q.function(theta = c(log(1), log(r)))</code></pre>
+<pre><code>## Warning in sparseMatrix(i = 1:N, j = 1:N, x = 1/Cdiag, dims = c(N,
+## N), giveCsparse = FALSE): &#39;giveCsparse&#39; is deprecated; setting
+## repr=&quot;T&quot; for you</code></pre>
+<pre class="r"><code>sd = diag(inla.qinv(Q))
 local.plot.field(sd, mesh)
 plot(Omega.SP[[2]], add=T, col=&quot;grey&quot;)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <pre class="r"><code># - we only care about our study area</code></pre>
-<p>It turns out that the marginal standard deviation <code>sd</code> is not constant. However, it is close to 1 in most of our study area, so the <span class="math inline">\(\sigma\)</span> parameter is sensible.</p>
-<p>Additionally, we see, from the way <span class="math inline">\(Q\)</span> is created, that the covariance matrix is scaled by <span class="math inline">\(\sigma^2\)</span>, i.e. that the field is scaled by <span class="math inline">\(\sigma\)</span>. Hence, e.g. when <span class="math inline">\(\sigma=7\)</span> the <code>sd</code> will be close to 7 in our study area. Feel free to check this.</p>
-<p>The last thing that remains is to use different ranges, and check that <code>sd</code> does not change too much. Feel free to check this.</p>
+<p>It turns out that the marginal standard deviation <code>sd</code> is
+not constant. However, it is close to 1 in most of our study area, so
+the <span class="math inline">\(\sigma\)</span> parameter is
+sensible.</p>
+<p>Additionally, we see, from the way <span
+class="math inline">\(Q\)</span> is created, that the covariance matrix
+is scaled by <span class="math inline">\(\sigma^2\)</span>, i.e. that
+the field is scaled by <span class="math inline">\(\sigma\)</span>.
+Hence, e.g. when <span class="math inline">\(\sigma=7\)</span> the
+<code>sd</code> will be close to 7 in our study area. Feel free to check
+this.</p>
+<p>The last thing that remains is to use different ranges, and check
+that <code>sd</code> does not change too much. Feel free to check
+this.</p>
 </div>
-<div id="studying-the-range-parameter" class="section level2">
-<h2><span class="header-section-number">5.3</span> Studying the range parameter</h2>
-<p>The claim is that the correlation distance should be roughly equal to the range. To check this, we can select many different locations <code>loc</code> in space, and different ranges <code>r</code> and look at how big the radius of the correlation circle is (truncated at 0.13).</p>
+<div id="studying-the-range-parameter" class="section level2"
+number="5.3">
+<h2><span class="header-section-number">5.3</span> Studying the range
+parameter</h2>
+<p>The claim is that the correlation distance should be roughly equal to
+the range. To check this, we can select many different locations
+<code>loc</code> in space, and different ranges <code>r</code> and look
+at how big the radius of the correlation circle is (truncated at
+0.13).</p>
 <pre class="r"><code>r = 4
-Q = Q.function(theta = c(log(1), log(r)))
-corr = local.find.correlation(Q, loc = c(5,5), mesh)</code></pre>
+Q = Q.function(theta = c(log(1), log(r)))</code></pre>
+<pre><code>## Warning in sparseMatrix(i = 1:N, j = 1:N, x = 1/Cdiag, dims = c(N,
+## N), giveCsparse = FALSE): &#39;giveCsparse&#39; is deprecated; setting
+## repr=&quot;T&quot; for you</code></pre>
+<pre class="r"><code>corr = local.find.correlation(Q, loc = c(5,5), mesh)</code></pre>
 <pre><code>## [1] &quot;The location used was c( 5.0402 ,  5.003 )&quot;</code></pre>
 <pre class="r"><code>local.plot.field(corr, mesh, zlim=c(0.13, 1))
 plot(Omega.SP[[2]], add=T, col=&quot;grey&quot;)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <pre class="r"><code>r = 3
-Q = Q.function(theta = c(log(1), log(r)))
-corr = local.find.correlation(Q, loc = c(5,9), mesh)</code></pre>
+Q = Q.function(theta = c(log(1), log(r)))</code></pre>
+<pre><code>## Warning in sparseMatrix(i = 1:N, j = 1:N, x = 1/Cdiag, dims = c(N,
+## N), giveCsparse = FALSE): &#39;giveCsparse&#39; is deprecated; setting
+## repr=&quot;T&quot; for you</code></pre>
+<pre class="r"><code>corr = local.find.correlation(Q, loc = c(5,9), mesh)</code></pre>
 <pre><code>## [1] &quot;The location used was c( 4.903 ,  8.906 )&quot;</code></pre>
 <pre class="r"><code>local.plot.field(corr, mesh, zlim=c(0.13, 1))
 plot(Omega.SP[[2]], add=T, col=&quot;grey&quot;)</code></pre>
 <p><img src="btopic105_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
-<p>These were just two example plots. We see that the claim is correct for these two plots. Feel free to plot more plots and check.</p>
+<p>These were just two example plots. We see that the claim is correct
+for these two plots. Feel free to plot more plots and check.</p>
 </div>
-<div id="studying-the-spatial-structure" class="section level2">
-<h2><span class="header-section-number">5.4</span> Studying the spatial structure</h2>
-<p>Now that we have checked that the parameters do as we were told, it is time to investigate how the spatial model is smoothing / borrowing strength.</p>
-<p>One way to do this is to plot the spatial correlation with respect to many different locations. Here, I expect you to use the above code, and change <code>loc</code> and <code>range</code>. If you suddenly see nothing, it may be because you have put the <code>loc</code> on land (or outside the mesh).</p>
-<p><strong>Summarising the results:</strong> (that you get when performing this experimentation)</p>
+<div id="studying-the-spatial-structure" class="section level2"
+number="5.4">
+<h2><span class="header-section-number">5.4</span> Studying the spatial
+structure</h2>
+<p>Now that we have checked that the parameters do as we were told, it
+is time to investigate how the spatial model is smoothing / borrowing
+strength.</p>
+<p>One way to do this is to plot the spatial correlation with respect to
+many different locations. Here, I expect you to use the above code, and
+change <code>loc</code> and <code>range</code>. If you suddenly see
+nothing, it may be because you have put the <code>loc</code> on land (or
+outside the mesh).</p>
+<p><strong>Summarising the results:</strong> (that you get when
+performing this experimentation)</p>
 <ol style="list-style-type: decimal">
 <li>The model does not smooth across land</li>
 <li>The dependencies can go around sharp corners/features</li>
-<li>The “ranges around land” seems to be of similar length to “the range in water”, but this is not true for small gaps</li>
-<li>A more narrow passage gives less dependency (between the values at either side of the passage)</li>
+<li>The “ranges around land” seems to be of similar length to “the range
+in water”, but this is not true for small gaps</li>
+<li>A more narrow passage gives less dependency (between the values at
+either side of the passage)</li>
 </ol>
 </div>
-<div id="but-correlation" class="section level2">
-<h2><span class="header-section-number">5.5</span> But, correlation?</h2>
-<p>There is one problem that we have not discussed, namely that correlation is not a good scale. What is does it mean to be “not a good scale”? That is a scale where equal increments does not represent equal changes. For correlation this is seen e.g. in that the difference in behavior between correlation 0 and 0.1 is almost indistinguishable, but the difference in behavior between correlation 0.7 and 0.8 is significant, and the difference between correlation 0.9 and 1 is enormous.</p>
-<p>There may be another way to think about the spatial dependency/correlation, on a scale that is sensible. Unfortunately I have not had time to about this yet. [TODO long term: Create topic on “smoothed white noise”]</p>
+<div id="but-correlation" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> But,
+correlation?</h2>
+<p>There is one problem that we have not discussed, namely that
+correlation is not a good scale. What is does it mean to be “not a good
+scale”? That is a scale where equal increments does not represent equal
+changes. For correlation this is seen e.g. in that the difference in
+behavior between correlation 0 and 0.1 is almost indistinguishable, but
+the difference in behavior between correlation 0.7 and 0.8 is
+significant, and the difference between correlation 0.9 and 1 is
+enormous.</p>
+<p>There may be another way to think about the spatial
+dependency/correlation, on a scale that is sensible. Unfortunately I
+have not had time to about this yet. [TODO long term: Create topic on
+“smoothed white noise”]</p>
 </div>
-<div id="which-model-this-is" class="section level2">
-<h2><span class="header-section-number">5.6</span> Which model this is</h2>
-<p>This model is the Barrier model, devised to give physically realistic inference, by avoiding smoothing across land, see <span class="citation">(Bakka et al. 2016)</span>.</p>
+<div id="which-model-this-is" class="section level2" number="5.6">
+<h2><span class="header-section-number">5.6</span> Which model this
+is</h2>
+<p>This model is the Barrier model, devised to give physically realistic
+inference, by avoiding smoothing across land, see <span
+class="citation">(Bakka et al. 2016)</span>.</p>
 </div>
 </div>
-<div id="comments" class="section level1">
+<div id="comments" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Comments</h1>
-<div id="does-the-model-depend-on-the-study-area" class="section level2">
-<h2><span class="header-section-number">6.1</span> Does the model depend on the study area?</h2>
-<p>Yes. In general, when making a model you have to know roughly the area where you allow predictions to happen. Inside this area, your model must be sensible, outside of this area, you don’t have to be careful about how the model behaves.</p>
+<div id="does-the-model-depend-on-the-study-area" class="section level2"
+number="6.1">
+<h2><span class="header-section-number">6.1</span> Does the model depend
+on the study area?</h2>
+<p>Yes. In general, when making a model you have to know roughly the
+area where you allow predictions to happen. Inside this area, your model
+must be sensible, outside of this area, you don’t have to be careful
+about how the model behaves.</p>
 </div>
 <div id="references" class="section level2 unnumbered">
-<h2>References</h2>
-<div id="refs" class="references">
-<div id="ref-tech125">
-<p>Bakka, H., J. Vanhatalo, J. Illian, D. Simpson, and H. Rue. 2016. “Accounting for Physical Barriers in Species Distribution Modeling with Non-Stationary Spatial Random Effects.” ArXiv preprint arXiv:1608.03787. Norwegian University of Science; Technology, Trondheim, Norway.</p>
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-tech125" class="csl-entry">
+Bakka, H., J. Vanhatalo, J. Illian, D. Simpson, and H. Rue. 2016.
+<span>“Accounting for Physical Barriers in Species Distribution Modeling
+with Non-Stationary Spatial Random Effects.”</span> arXiv preprint
+arXiv:1608.03787. <span>N</span>orwegian University of Science;
+Technology, <span>T</span>rondheim, <span>N</span>orway.
 </div>
-<div id="ref-kallasvuo2016modeling">
-<p>Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016. “Modeling the Spatial Distribution of Larval Fish Abundance Provides Essential Information for Management.” <em>Canadian Journal of Fisheries and Aquatic Sciences</em>, no. ja.</p>
+<div id="ref-kallasvuo2016modeling" class="csl-entry">
+Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016.
+<span>“Modeling the Spatial Distribution of Larval Fish Abundance
+Provides Essential Information for Management.”</span> <em>Canadian
+Journal of Fisheries and Aquatic Sciences</em>, no. ja.
 </div>
 </div>
 </div>
@@ -726,7 +850,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -735,6 +859,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

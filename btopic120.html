@@ -14,20 +14,28 @@
 
 <title>Basic computations with precision matrix: AR1 example</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,47 +343,78 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">Basic computations with precision matrix: AR1 example</h1>
+<h1 class="title toc-ignore">Basic computations with precision matrix:
+AR1 example</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic120 updated 10. March 2017</h4>
 
 </div>
 
 
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>In this topic we compute with the precision matrix for the AR1 model component.</p>
+<p>In this topic we compute with the precision matrix for the AR1 model
+component.</p>
 <ol style="list-style-type: decimal">
 <li>Calculate <span class="math inline">\(Q\)</span> entries</li>
 <li>Use sparse matrices (not keep the 0s)</li>
-<li>Compute probabilities with <span class="math inline">\(Q\)</span></li>
-<li>Sample from <span class="math inline">\(\mathcal N(0, Q)\)</span></li>
+<li>Compute probabilities with <span
+class="math inline">\(Q\)</span></li>
+<li>Sample from <span class="math inline">\(\mathcal N(0,
+Q)\)</span></li>
 </ol>
-<div id="packages" class="section level2">
+<div id="packages" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Packages</h2>
 <pre class="r"><code>library(INLA)</code></pre>
 </div>
-<div id="model-component-1-ar1" class="section level2">
-<h2><span class="header-section-number">1.2</span> Model component 1: AR1</h2>
-<p>We model <span class="math inline">\(u\)</span> as an autoregressive model of order 1 over time <code>t</code>.</p>
-<p>This is described as <span class="math display">\[u_t = \rho u_{t-1} + \epsilon_t\]</span> where <span class="math inline">\(\epsilon_t\)</span> is iid Gaussian randomness.</p>
-<p>The two hyper-parameters for this component are <span class="math inline">\(\rho\)</span> and the marginal standard deviation <span class="math inline">\(\sigma_u\)</span>.</p>
+<div id="model-component-1-ar1" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Model component 1:
+AR1</h2>
+<p>We model <span class="math inline">\(u\)</span> as an autoregressive
+model of order 1 over time <code>t</code>.</p>
+<p>This is described as <span class="math display">\[u_t = \rho u_{t-1}
++ \epsilon_t\]</span> where <span
+class="math inline">\(\epsilon_t\)</span> is iid Gaussian
+randomness.</p>
+<p>The two hyper-parameters for this component are <span
+class="math inline">\(\rho\)</span> and the marginal standard deviation
+<span class="math inline">\(\sigma_u\)</span>.</p>
 </div>
-<div id="the-precision-matrix" class="section level2">
-<h2><span class="header-section-number">1.3</span> The precision matrix</h2>
-<p>The this topic is about is the <span class="math inline">\(Q\)</span> matrix in <span class="math display">\[{u} \sim \mathcal N(0, Q^ {-1}) \]</span></p>
+<div id="the-precision-matrix" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> The precision
+matrix</h2>
+<p>The this topic is about is the <span class="math inline">\(Q\)</span>
+matrix in <span class="math display">\[{u} \sim \mathcal N(0, Q^ {-1})
+\]</span></p>
 </div>
 </div>
-<div id="calculate-q-entries" class="section level1">
-<h1><span class="header-section-number">2</span> Calculate <span class="math inline">\(Q\)</span> entries</h1>
-<p>Per definition of precision matrix <span class="math display">\[\log(\pi(u)) = c - \frac{1}{2}  u^\top Q  u.  \]</span></p>
-<p>Rewrite definition of our model component as a function of <span class="math inline">\(\epsilon\)</span>. <span class="math display">\[ \epsilon_t = u_t - \rho u_{t-1}, \]</span> giving the joint distribution <span class="math display">\[\log(\pi(u)) = c - \frac{1}{2}  (\epsilon_2^2 + \epsilon_3^2 + \epsilon_4^2 + ... + \epsilon_T^2) . \]</span> Further, <span class="math display">\[\log(\pi(u)) = c - \frac{1}{2}  ((u_2 - \rho u_{1})^2 + (u_3 - \rho u_{2})^2 + (u_4 - \rho u_{3})^2 + ... + (u_T - \rho u_{T-1})^2) . \]</span></p>
-<p>Matching this term to the <span class="math inline">\(Q\)</span> matrix, we get <span class="math display">\[u^\top Q  u = u_2^2 -2 \rho u_2 u_1 + \rho^2u_1^2 + u_3^2 -2\rho u_3u_2 + \rho^2u_2 + u_4^2 -2\rho u_4u_3 + \rho^2u_3 +...\]</span></p>
-<p>By experimenting a bit with the <span class="math inline">\(u^\top Q u\)</span> (quadratic) form, we see that the only way to make a symmetric <span class="math inline">\(Q\)</span> is by definig the following <span class="math inline">\(Q\)</span>.</p>
+<div id="calculate-q-entries" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Calculate <span
+class="math inline">\(Q\)</span> entries</h1>
+<p>Per definition of precision matrix <span
+class="math display">\[\log(\pi(u)) = c - \frac{1}{2}  u^\top
+Q  u.  \]</span></p>
+<p>Rewrite definition of our model component as a function of <span
+class="math inline">\(\epsilon\)</span>. <span class="math display">\[
+\epsilon_t = u_t - \rho u_{t-1}, \]</span> giving the joint distribution
+<span class="math display">\[\log(\pi(u)) = c -
+\frac{1}{2}  (\epsilon_2^2 + \epsilon_3^2 + \epsilon_4^2 + ... +
+\epsilon_T^2) . \]</span> Further, <span
+class="math display">\[\log(\pi(u)) = c - \frac{1}{2}  ((u_2 - \rho
+u_{1})^2 + (u_3 - \rho u_{2})^2 + (u_4 - \rho u_{3})^2 + ... + (u_T -
+\rho u_{T-1})^2) . \]</span></p>
+<p>Matching this term to the <span class="math inline">\(Q\)</span>
+matrix, we get <span class="math display">\[u^\top Q  u = u_2^2 -2 \rho
+u_2 u_1 + \rho^2u_1^2 + u_3^2 -2\rho u_3u_2 + \rho^2u_2 + u_4^2 -2\rho
+u_4u_3 + \rho^2u_3 +...\]</span></p>
+<p>By experimenting a bit with the <span class="math inline">\(u^\top Q
+u\)</span> (quadratic) form, we see that the only way to make a
+symmetric <span class="math inline">\(Q\)</span> is by definig the
+following <span class="math inline">\(Q\)</span>.</p>
 <pre class="r"><code>N = 10
 rho = 0.95
 Q = matrix(0, N, N)
@@ -444,15 +435,22 @@ print(Q)</code></pre>
 ##  [8,]  0.00  0.00  0.00  0.00  0.00  0.00 -0.95  1.90 -0.95  0.00
 ##  [9,]  0.00  0.00  0.00  0.00  0.00  0.00  0.00 -0.95  1.90 -0.95
 ## [10,]  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00 -0.95  1.90</code></pre>
-<div id="an-important-detail-we-will-skip" class="section level2">
-<h2><span class="header-section-number">2.1</span> An important detail we will skip</h2>
-<p>A confusing part of the AR1 model is that we must define the first value to have the correct distribution to make the process stationary, see <code>inla.doc("ar1")</code> for details. We fix this now:</p>
+<div id="an-important-detail-we-will-skip" class="section level2"
+number="2.1">
+<h2><span class="header-section-number">2.1</span> An important detail
+we will skip</h2>
+<p>A confusing part of the AR1 model is that we must define the first
+value to have the correct distribution to make the process stationary,
+see <code>inla.doc("ar1")</code> for details. We fix this now:</p>
 <pre class="r"><code>Q[1,1] = 1
 Q[N,N] = 1</code></pre>
 </div>
-<div id="create-a-function" class="section level2">
-<h2><span class="header-section-number">2.2</span> Create a function</h2>
-<p>For comparison later, we now create a function for <span class="math inline">\(Q\)</span>, summarising our computations so far.</p>
+<div id="create-a-function" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Create a
+function</h2>
+<p>For comparison later, we now create a function for <span
+class="math inline">\(Q\)</span>, summarising our computations so
+far.</p>
 <pre class="r"><code>precision.ar1 = function(N, rho){
   Q = matrix(0, N, N)
   diag(Q) = 1+rho^2
@@ -466,9 +464,12 @@ Q[N,N] = 1</code></pre>
 }</code></pre>
 </div>
 </div>
-<div id="use-sparse-matrices" class="section level1">
-<h1><span class="header-section-number">3</span> Use sparse matrices</h1>
-<p>The matrix <span class="math inline">\(Q\)</span> we have created stores all the zeroes! Let us convert this to a sparse matrix and compare them.</p>
+<div id="use-sparse-matrices" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Use sparse
+matrices</h1>
+<p>The matrix <span class="math inline">\(Q\)</span> we have created
+stores all the zeroes! Let us convert this to a sparse matrix and
+compare them.</p>
 <pre class="r"><code>Q = precision.ar1(10, 0.9)
 print(Q)</code></pre>
 <pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
@@ -485,7 +486,7 @@ print(Q)</code></pre>
 <pre class="r"><code>Q = precision.ar1(10, 0.9)
 Q = as(Q, &quot;sparseMatrix&quot;)
 print(Q)</code></pre>
-<pre><code>## 10 x 10 sparse Matrix of class &quot;dgCMatrix&quot;
+<pre><code>## 10 x 10 sparse Matrix of class &quot;dsCMatrix&quot;
 ##                                                        
 ##  [1,]  1.0 -0.9  .    .    .    .    .    .    .    .  
 ##  [2,] -0.9  1.8 -0.9  .    .    .    .    .    .    .  
@@ -497,18 +498,25 @@ print(Q)</code></pre>
 ##  [8,]  .    .    .    .    .    .   -0.9  1.8 -0.9  .  
 ##  [9,]  .    .    .    .    .    .    .   -0.9  1.8 -0.9
 ## [10,]  .    .    .    .    .    .    .    .   -0.9  1.0</code></pre>
-<p>The “.” signifies that the zeroes are not stored. How is this done instead? A list of indices <span class="math inline">\((i,j)\)</span> together with their value <span class="math inline">\(x_{i,j}\)</span> are stored as 3 lists.</p>
+<p>The “.” signifies that the zeroes are not stored. How is this done
+instead? A list of indices <span class="math inline">\((i,j)\)</span>
+together with their value <span class="math inline">\(x_{i,j}\)</span>
+are stored as 3 lists.</p>
 <pre class="r"><code>str(Q)</code></pre>
-<pre><code>## Formal class &#39;dgCMatrix&#39; [package &quot;Matrix&quot;] with 6 slots
-##   ..@ i       : int [1:28] 0 1 0 1 2 1 2 3 2 3 ...
-##   ..@ p       : int [1:11] 0 2 5 8 11 14 17 20 23 26 ...
+<pre><code>## Formal class &#39;dsCMatrix&#39; [package &quot;Matrix&quot;] with 7 slots
+##   ..@ i       : int [1:19] 0 0 1 1 2 2 3 3 4 4 ...
+##   ..@ p       : int [1:11] 0 1 3 5 7 9 11 13 15 17 ...
 ##   ..@ Dim     : int [1:2] 10 10
 ##   ..@ Dimnames:List of 2
 ##   .. ..$ : NULL
 ##   .. ..$ : NULL
-##   ..@ x       : num [1:28] 1 -0.9 -0.9 1.81 -0.9 -0.9 1.81 -0.9 -0.9 1.81 ...
+##   ..@ x       : num [1:19] 1 -0.9 1.81 -0.9 1.81 -0.9 1.81 -0.9 1.81 -0.9 ...
+##   ..@ uplo    : chr &quot;U&quot;
 ##   ..@ factors : list()</code></pre>
-<p>As you see, this “dgCMatrix” uses <span class="math inline">\(p\)</span> instead of <span class="math inline">\(j\)</span>, storing the entries in a slightly different way.</p>
+<p>As you see, this “dgCMatrix” uses <span
+class="math inline">\(p\)</span> instead of <span
+class="math inline">\(j\)</span>, storing the entries in a slightly
+different way.</p>
 <p>What is all the fuzz about?</p>
 <pre class="r"><code>for (N in c(10, 1E2, 1E3, 5E3 )) {
   Q = precision.ar1(N, 0.9)
@@ -519,33 +527,62 @@ print(Q)</code></pre>
 }</code></pre>
 <pre><code>## [1] &quot;For N is 10 we go from 1 kb to 2 kb&quot;
 ## [1] &quot;For N is 100 we go from 80 kb to 5 kb&quot;
-## [1] &quot;For N is 1000 we go from 8000 kb to 41 kb&quot;
-## [1] &quot;For N is 5000 we go from 2e+05 kb to 201 kb&quot;</code></pre>
-<div id="note-for-implementation" class="section level2">
-<h2><span class="header-section-number">3.1</span> Note for implementation</h2>
-<p>Creating a full matrix and then using <code>as.sparse</code> is bad practice. You should create the <code>i, j, x</code> indices/values and use <code>?sparseMatrix</code>. Your entire inference algorithm, for large problems, might be quicker than writing down the full matrix even once.</p>
+## [1] &quot;For N is 1000 we go from 8000 kb to 30 kb&quot;
+## [1] &quot;For N is 5000 we go from 2e+05 kb to 142 kb&quot;</code></pre>
+<div id="note-for-implementation" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Note for
+implementation</h2>
+<p>Creating a full matrix and then using <code>as.sparse</code> is bad
+practice. You should create the <code>i, j, x</code> indices/values and
+use <code>?sparseMatrix</code>. Your entire inference algorithm, for
+large problems, might be quicker than writing down the full matrix even
+once.</p>
 </div>
 </div>
-<div id="compute-probabilities-with-q" class="section level1">
-<h1><span class="header-section-number">4</span> Compute probabilities with <span class="math inline">\(Q\)</span></h1>
-<div id="cholesky" class="section level2">
+<div id="compute-probabilities-with-q" class="section level1"
+number="4">
+<h1><span class="header-section-number">4</span> Compute probabilities
+with <span class="math inline">\(Q\)</span></h1>
+<div id="cholesky" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Cholesky</h2>
-<p>The basic part of computing with precision matrices is being able to do the cholesky factorisation to get <span class="math inline">\(Q = L L^\top\)</span>.</p>
+<p>The basic part of computing with precision matrices is being able to
+do the cholesky factorisation to get <span class="math inline">\(Q = L
+L^\top\)</span>.</p>
 <pre class="r"><code>Q = precision.ar1(1000, 0.99)
 L = chol(Q)
 print(sum(abs(Q- t(L)%*%L)))</code></pre>
 <pre><code>## [1] 0</code></pre>
 </div>
-<div id="computing-determinant-of-q" class="section level2">
-<h2><span class="header-section-number">4.2</span> Computing determinant of <span class="math inline">\(Q\)</span></h2>
-<p>We know that <span class="math display">\[det(Q) = det(L^ \top) det(L) = det(L)^ 2. \]</span> It is very important to know that we never want to compute determinants, only log-determinants. Similarly to how we never compute probabilities only log probabilities. This is because of numerical stability (if you don’t take the log, most things are infinite or zero).</p>
-<p><span class="math display">\[logdet(Q) = 2 logdet(L) \]</span> How to find the determinant of <span class="math inline">\(L\)</span>? Since the cholesky is lower or upper triangular, we can just take the product of the diagonal! If you look at the matrix <span class="math inline">\(L\)</span> this is actually upper triangular, since this is R default.</p>
-<p><span class="math display">\[logdet(Q) = 2 \sum_i \log(L_{i,i}) \]</span></p>
+<div id="computing-determinant-of-q" class="section level2"
+number="4.2">
+<h2><span class="header-section-number">4.2</span> Computing determinant
+of <span class="math inline">\(Q\)</span></h2>
+<p>We know that <span class="math display">\[det(Q) = det(L^ \top)
+det(L) = det(L)^ 2. \]</span> It is very important to know that we never
+want to compute determinants, only log-determinants. Similarly to how we
+never compute probabilities only log probabilities. This is because of
+numerical stability (if you don’t take the log, most things are infinite
+or zero).</p>
+<p><span class="math display">\[logdet(Q) = 2 logdet(L) \]</span> How to
+find the determinant of <span class="math inline">\(L\)</span>? Since
+the cholesky is lower or upper triangular, we can just take the product
+of the diagonal! If you look at the matrix <span
+class="math inline">\(L\)</span> this is actually upper triangular,
+since this is R default.</p>
+<p><span class="math display">\[logdet(Q) = 2 \sum_i \log(L_{i,i})
+\]</span></p>
 </div>
-<div id="computing-a-probability" class="section level2">
-<h2><span class="header-section-number">4.3</span> Computing a probability</h2>
-<p>Assume that we want to compute the (joint) probability that <span class="math inline">\(u_i=0.1\)</span> for all <span class="math inline">\(i\)</span> simultaneously (as an example).</p>
-<p>The general formula <span class="math display">\[\log(\pi(u)) = \frac{1}{2}\log \left| (2\pi)^ {-1} Q \right| - \frac{1}{2} \vec u^\top Q \vec u\]</span> gives us <span class="math display">\[\log(\pi(u=0.1)) = -\frac{N}{2}\log(2\pi) + \frac{1}{2}\log \left| Q \right| - \frac{1}{2} 0.1^\top Q  0.1.\]</span></p>
+<div id="computing-a-probability" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Computing a
+probability</h2>
+<p>Assume that we want to compute the (joint) probability that <span
+class="math inline">\(u_i=0.1\)</span> for all <span
+class="math inline">\(i\)</span> simultaneously (as an example).</p>
+<p>The general formula <span class="math display">\[\log(\pi(u)) =
+\frac{1}{2}\log \left| (2\pi)^ {-1} Q \right| - \frac{1}{2} \vec u^\top
+Q \vec u\]</span> gives us <span class="math display">\[\log(\pi(u=0.1))
+= -\frac{N}{2}\log(2\pi) + \frac{1}{2}\log \left| Q \right| -
+\frac{1}{2} 0.1^\top Q  0.1.\]</span></p>
 <p>In code this is:</p>
 <pre class="r"><code>pt1 = rep(0.1, nrow(Q))
 log.prob.pt1 = -nrow(Q)/2*log(2*pi) + 0.5*2*sum(log(diag(L))) - 0.5 *pt1 %*% Q %*% pt1
@@ -554,9 +591,16 @@ print(log.prob.pt1)</code></pre>
 ## [1,] -921</code></pre>
 </div>
 </div>
-<div id="sample-from-mathcal-n0-q" class="section level1">
-<h1><span class="header-section-number">5</span> Sample from <span class="math inline">\(\mathcal N(0, Q)\)</span></h1>
-<p>To sample from <span class="math inline">\(Q\)</span> we just define <span class="math inline">\(u\)</span> as the solution to <span class="math display">\[Lu = z \]</span> where <span class="math inline">\(z\)</span> are iid Gaussians <span class="math inline">\(\mathcal N(0, 1)\)</span>. Then <span class="math display">\[precision(u) = L^\top L.\]</span> The sampling code we can write as follows.</p>
+<div id="sample-from-mathcal-n0-q" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Sample from <span
+class="math inline">\(\mathcal N(0, Q)\)</span></h1>
+<p>To sample from <span class="math inline">\(Q\)</span> we just define
+<span class="math inline">\(u\)</span> as the solution to <span
+class="math display">\[Lu = z \]</span> where <span
+class="math inline">\(z\)</span> are iid Gaussians <span
+class="math inline">\(\mathcal N(0, 1)\)</span>. Then <span
+class="math display">\[precision(u) = L^\top L.\]</span> The sampling
+code we can write as follows.</p>
 <pre class="r"><code>set.seed(2017)
 z.sample = rnorm(nrow(Q))
 u.sample = solve(L, z.sample)
@@ -593,7 +637,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -602,6 +646,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

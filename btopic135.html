@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>An explanation of PC priors</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">An explanation of PC priors</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">BTopic 135 updated 7 April 2021 (not finished)</h4>
+
+</div>
+
+
+<div id="about" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>In this topic I explain the PC (Penalizing Complexity) priors, with
+insights from my personal point of view.</p>
+<p>TODO: Rewrite this from a more applied point of view, further away
+from the PC paper.</p>
+<div id="the-models-we-are-talking-about" class="section level2"
+number="1.1">
+<h2><span class="header-section-number">1.1</span> The models we are
+talking about</h2>
+<p>Assume you have a Generalised Additive Model (GAM): <span
+class="math display">\[\begin{align}
+y &amp;\sim \text{Likelihood}(\eta) \\
+\eta &amp;= f_1(x_1) + f_2(x_2) + f_3(x_3) \\
+f_1(x_1) &amp;\sim \mathcal N(0, Q_1^{-1}(\theta_1))
+\end{align}\]</span> Here, <span class="math inline">\(y\)</span> is the
+response, an can follow “any usual” likelihood (Gaussian, Poisson,
+Binomial, etc). The <span class="math inline">\(f_1\)</span> is the
+first model component, and it is a function of covariate <span
+class="math inline">\(x_1\)</span>. All the model components have a
+Gaussian distribution, specifically for <span
+class="math inline">\(f_1\)</span> we use the Gaussian distribution with
+precision matrix <span class="math inline">\(Q_1^(\theta_1)\)</span>,
+which depends on hyperparameters <span
+class="math inline">\(\theta_1\)</span> (usually 1-3 parameters).</p>
+</div>
+<div id="the-priors-we-are-talking-about" class="section level2"
+number="1.2">
+<h2><span class="header-section-number">1.2</span> The priors we are
+talking about</h2>
+<p>Many authors refer to the choice of the precision matrix as the prior
+for <span class="math inline">\(f_1\)</span>, however, this is not what
+we call a prior (this we call for <span
+class="math inline">\(f_1\)</span>). What we call priors are the priors
+on the hyperparameters (<span
+class="math inline">\(\theta\)</span>’s).</p>
+</div>
+<div id="libraries" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Libraries</h2>
+<pre class="r"><code>library(ggplot2)
+set.seed(2021)</code></pre>
+</div>
+</div>
+<div id="motivating-example-the-precision-parameter"
+class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Motivating example: The
+precision parameter</h1>
+<p>Assume <span class="math display">\[Q_1 = \tau R_1 \]</span> where
+<span class="math inline">\(\tau\)</span> is the hyperparameter called
+<code>prec</code> (because it scales the precision matrix), and <span
+class="math inline">\(R_1\)</span> is some precision matrix. The
+following arguments are very general, but to simplify the example, the
+reader can assume that <span class="math inline">\(R_1\)</span> is the
+identity matrix, i.e.<br />
+<span class="math display">\[Q_1 = \tau I. \]</span> The marginal
+variance of <span class="math inline">\(f_1\)</span> is then <span
+class="math inline">\(1/\tau\)</span>, and the marginal standard
+deviation is <span class="math display">\[\sigma = \tau^{-1/2}.
+\]</span></p>
+<div id="old-bad-prior-on-tau" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Old (bad) prior on
+<span class="math inline">\(\tau\)</span></h2>
+<p>A common prior for the <span class="math inline">\(\tau\)</span> is
+the exponential prior, also known as a Gamma prior, <span
+class="math display">\[\pi_o(\tau) = \Gamma(1, b)(\tau) = b e^{-b
+\tau}  \]</span> where <span class="math inline">\(b\)</span> is a small
+number, e.g. 0.001.</p>
+<p>We transform this to a prior on <span
+class="math inline">\(\sigma\)</span>, for use later: <span
+class="math display">\[\pi_o(\tau) = 2 b \sigma^{-3} e^{-b
+\sigma^{-2}}  \]</span></p>
+</div>
+<div id="my-favourite-prior-on-tau" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> My favourite prior on
+<span class="math inline">\(\tau\)</span></h2>
+<p>The prior I use, which is the PC prior (more on that later), is an
+exponential prior on <span class="math inline">\(\sigma\)</span>, <span
+class="math display">\[\pi(\sigma) = \lambda e^{-\lambda
+\sigma},  \]</span> where <span class="math inline">\(\lambda\)</span>
+could e.g. be 0.1. This can be transformed into a prior on <span
+class="math inline">\(\tau\)</span>, <span
+class="math display">\[\pi_n(\tau) = \frac{\lambda}{2} \tau^{-3/2}
+\exp(-\lambda \tau^{-1/2}). \]</span> This distribution happens to be
+called a type-2 Gumbel distribution.</p>
+</div>
+<div id="comparing-the-two-priors-on-tau-and-sigma"
+class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Comparing the two
+priors on <span class="math inline">\(\tau\)</span> and <span
+class="math inline">\(\sigma\)</span></h2>
+<pre class="r"><code>b = 0.0076
+lambda = 4.75
+tau = seq(0.0001, 200, length.out=1E4)
+pri.tau.old = b*exp(-b*tau)
+pri.tau.new = lambda/2 * tau^(-3/2) *exp(-lambda * tau^(-1/2))
+plot(tau, pri.tau.old, type=&quot;l&quot;, ylim=c(0, max(c(pri.tau.old, pri.tau.new))), ylab=&quot;density&quot;)
+lines(tau, pri.tau.new, col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic135_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>sigma = seq(0.0001, 0.6, length.out=1E4)
+pri.sig.old = 2*b*sigma^(-3) *exp(-b*sigma^(-2))
+pri.sig.new = lambda*exp(-lambda*sigma)
+plot(sigma, pri.sig.old, type=&quot;l&quot;, ylim=c(0, max(c(pri.sig.old, pri.sig.new))), ylab=&quot;density&quot;)
+lines(sigma, pri.sig.new, col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic135_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Why is the “old” prior (black line) bad? For the precision, it is
+hard to say anything about what the right shape is. However, for <span
+class="math inline">\(\sigma\)</span>, we do not want a prior that
+pushes us away from 0. Values of <span
+class="math inline">\(\sigma\)</span> near 0 are very meaningful, and
+represent simpler models than large values of sigma do. The “old” prior
+forces overfitting in cases where the model component should not be
+used.</p>
+</div>
+<div id="motivating-challenge" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Motivating
+challenge</h2>
+<p>Consider the AR(1) model <span class="math display">\[u_{t+1} = \rho
+u_t + z_t \]</span> where <span class="math inline">\(z\)</span> is iid
+Gaussian (e.g. <span class="math inline">\(\mathcal N(0, 1)\)</span>),
+and <span class="math inline">\(\rho \in [0, 1)\)</span></p>
+<p>We want to put a prior on <span
+class="math inline">\(\rho\)</span>.</p>
+<p>Naively, we could say that we use a uniform prior, since that is a
+proper prior in this case. However, that is very very bad. The problem
+is that the model at <span class="math inline">\(\rho=0.5\)</span> is
+very similar for the model at <span
+class="math inline">\(\rho=0.55\)</span>, but the model at <span
+class="math inline">\(\rho=0.94\)</span> is very different from the
+model at <span class="math inline">\(\rho=0.99\)</span></p>
+<p>To figure out what prior to put, we have to generalise the
+exponential prior on <span class="math inline">\(\sigma\)</span> to a
+general concept.</p>
+</div>
+<div id="pc-prior-paper" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> PC prior paper</h2>
+<p>The main paper on PC priors is <span class="citation">Simpson et al.
+(2017)</span>. Instead of copying text from the paper here, we will
+refer to specific parts of the paper.</p>
+</div>
+</div>
+<div id="principles-of-pc-priors" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Principles of PC
+priors</h1>
+<div id="base-model" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Base model</h2>
+<p>The PC prior assumes that there is a <em>base model</em>, a simpler
+sub-model that we can shrink towards, when a parameter is set to a
+certain value.</p>
+<p>For our first example, the base model is <span
+class="math inline">\(\sigma=0\)</span> (<span
+class="math inline">\(\tau = \infty\)</span>). In this case the size of
+the model component is zero, and the model component is no longer there.
+For our AR1 example, one can argue that <span
+class="math inline">\(\rho=0\)</span> and <span
+class="math inline">\(\rho=1\)</span> are both base model, and the PC
+prior paper does. In general any value of <span
+class="math inline">\(\rho\)</span> could be considered a base model,
+and each such choice would lead to a different prior. However, I think
+only <span class="math inline">\(\rho=1\)</span> is a natural base
+model, due to a reduced model component complexity, and a reduced chance
+of overfitting.</p>
+</div>
+<div id="desiderata" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Desiderata</h2>
+<p>See <span class="citation">Simpson et al. (2017)</span> section 2.5
+page 6. D1-D8.</p>
+<p>The prior should be informative. We want the prior to be sceptical of
+introducing complexity in the model. If we see uninformative data, we
+want the result to be a simple model. In other words we want to bias
+estimates towards simplicity. When the model changes so should the
+prior. Of course, if the definition of the model component changes, we
+might have a completely different prior.</p>
+<p>The prior should be based on the effect of the parameter, not on the
+parameters values. So, any reparametrisation, e.g. <span
+class="math inline">\(\tau = \sigma^{-2}\)</span> should give the same
+outse for defining the prior.</p>
+</div>
+<div id="principles" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Principles</h2>
+<p>See <span class="citation">Simpson et al. (2017)</span> section 3
+page 7. Principle 1-4.</p>
+<p>Principle 1: More complex models are more penalised than simpler
+models. I.e. more complex models have less prior mass (per unit change
+in model structure).</p>
+<p>Principle 2: The model complexity is measured by the KLD. Let <span
+class="math inline">\(\xi\)</span> be our chosen parametrisation, with
+<span class="math inline">\(\xi=0\)</span> the base model, then <span
+class="math display">\[d(\xi) = \sqrt{2 KLD(\pi(u|\xi), \pi(u|\xi=0))}
+\]</span></p>
+<p>Principle 3: For <span class="math inline">\(\sigma\)</span> in
+example 1, the correct prior is the exponential function. This
+generalises to an exponential prior on <span
+class="math inline">\(d(\xi)\)</span>.</p>
+<p>Principle 4: The <span class="math inline">\(\lambda\)</span> in the
+exponential prior should be set by the user, and depends on the choice
+of likelihood and the scale of the response variable.</p>
+</div>
+<div id="ar1-prior" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> AR1 prior</h2>
+<p>The PC prior for the AR1 process is as follows.</p>
+<pre class="r"><code>library(INLA)</code></pre>
+<pre class="r"><code>corvals = seq(0.01, 0.99, length.out = 1000)
+d = inla.pc.dcor1(corvals, lambda=1)
+plot(corvals, d, type=&quot;l&quot;)</code></pre>
+<p><img src="btopic135_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>There is a large density around 1, where the base model is. The
+closer we get to 1, the more different the models are (in a <span
+class="math inline">\(\Delta \rho\)</span>). Therefore, the prior
+density goes to infinity. To get the mathematical expression for the
+prior, print the function <code>inla.pc.dcor1</code>.</p>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-simpson2017penalising" class="csl-entry">
+Simpson, Daniel, Håvard Rue, Andrea Riebler, Thiago G Martins, and
+Sigrunn H Sørbye. 2017. <span>“Penalising Model Component Complexity: A
+Principled, Practical Approach to Constructing Priors.”</span>
+<em>Statistical Science</em>, 1–28.
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

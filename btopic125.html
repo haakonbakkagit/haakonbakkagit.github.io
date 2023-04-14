@@ -14,20 +14,28 @@
 
 <title>What I think about overdispersed Poisson</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,46 +343,74 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">What I think about overdispersed Poisson</h1>
+<h1 class="title toc-ignore">What I think about overdispersed
+Poisson</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic125 updated 07. March 2018</h4>
 
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>This topic is about Poisson overdispersion and how it related to model misspecification, i.e. unknown covariates.</p>
-<div id="initialisation" class="section level2">
+<p>This topic is about Poisson overdispersion and how it related to
+model misspecification, i.e. unknown covariates.</p>
+<div id="initialisation" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Initialisation</h2>
-<p>We load libraries, including INLA (<a href="btopic109.html">Installation and general troubleshooting</a>), and set random seed. Note that the results change when you change the random seed.</p>
+<p>We load libraries, including INLA (<a
+href="btopic109.html">Installation and general troubleshooting</a>), and
+set random seed. Note that the results change when you change the random
+seed.</p>
 <pre class="r"><code>library(INLA)
 library(fields)
 library(ggplot2)
 set.seed(201803)</code></pre>
 </div>
 </div>
-<div id="the-true-model" class="section level1">
+<div id="the-true-model" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> The true model</h1>
-<p>The data is generated by <span class="math display">\[y_i \sim  \text{Pois}(\lambda_i = \text{exp}(\eta_i)) \]</span> The linear predictor is <span class="math display">\[\eta_i = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + v_1 x_3,\]</span> The three <span class="math inline">\(\beta\)</span>s we want to infer from the data, and we know the two covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. However, we do not know the covariate <span class="math inline">\(x_3\)</span>, and so, we cannot infer <span class="math inline">\(v1\)</span>!</p>
-<div id="why-we-consider-this-problem" class="section level2">
-<h2><span class="header-section-number">2.1</span> Why we consider this problem</h2>
-<p>Does this happen in practice? (An unmeasured covariate?) Yes, nearly in all applications!</p>
-<p>What people do in most cases is ignore the unknown covariate(s), and fit a model to the data you have. From a statistical point of view, this is treating the <span class="math inline">\(v_1 x_3\)</span> as noise, and inferring the rest of the model. Next, we explore what happens when you do this.</p>
+<p>The data is generated by <span class="math display">\[y_i
+\sim  \text{Pois}(\lambda_i = \text{exp}(\eta_i)) \]</span> The linear
+predictor is <span class="math display">\[\eta_i = \beta_0 + \beta_1 x_1
++ \beta_2 x_2 + v_1 x_3,\]</span> The three <span
+class="math inline">\(\beta\)</span>s we want to infer from the data,
+and we know the two covariates <span class="math inline">\(x_1\)</span>
+and <span class="math inline">\(x_2\)</span>. However, we do not know
+the covariate <span class="math inline">\(x_3\)</span>, and so, we
+cannot infer <span class="math inline">\(v1\)</span>!</p>
+<div id="why-we-consider-this-problem" class="section level2"
+number="2.1">
+<h2><span class="header-section-number">2.1</span> Why we consider this
+problem</h2>
+<p>Does this happen in practice? (An unmeasured covariate?) Yes, nearly
+in all applications!</p>
+<p>What people do in most cases is ignore the unknown covariate(s), and
+fit a model to the data you have. From a statistical point of view, this
+is treating the <span class="math inline">\(v_1 x_3\)</span> as noise,
+and inferring the rest of the model. Next, we explore what happens when
+you do this.</p>
 </div>
-<div id="topic-similar-to-btopic124" class="section level2">
-<h2><span class="header-section-number">2.2</span> Topic similar to <a href="./btopic124.html">BTopic124</a></h2>
-<p>The main difference between the two topics is the use of a Poisson likelihood instead of a Gaussian likelihood. We will refer to BTopic124 as the “Gaussian case”.</p>
+<div id="topic-similar-to-btopic124" class="section level2"
+number="2.2">
+<h2><span class="header-section-number">2.2</span> Topic similar to <a
+href="./btopic124.html">BTopic124</a></h2>
+<p>The main difference between the two topics is the use of a Poisson
+likelihood instead of a Gaussian likelihood. We will refer to BTopic124
+as the “Gaussian case”.</p>
 </div>
 </div>
-<div id="simulating-a-dataset" class="section level1">
-<h1><span class="header-section-number">3</span> Simulating a dataset</h1>
-<p>Set the parameters and covariates. Assuming the covariates are scaled, we create covariates with a mean of 0 and a standard deviation near 1. Feel free to download the R code and change these parameter values, note that you get wildly different results when you use different values.</p>
+<div id="simulating-a-dataset" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Simulating a
+dataset</h1>
+<p>Set the parameters and covariates. Assuming the covariates are
+scaled, we create covariates with a mean of 0 and a standard deviation
+near 1. Feel free to download the R code and change these parameter
+values, note that you get wildly different results when you use
+different values.</p>
 <pre class="r"><code>N = 200
 x1 = runif(N, min=-2, max=2)
 x2 = runif(N, min=-2, max=2)
@@ -434,55 +422,67 @@ v1 = 0.3</code></pre>
 <p>Simulate the truth.</p>
 <pre class="r"><code>eta = beta0 + beta1*x1 + beta2*x2 + v1*x3
 y = rpois(n=N, lambda = exp(eta))</code></pre>
-<p>Create the dataframe representing the data collected in the field. Note that we do not add <span class="math inline">\(x_3\)</span> as this is not measured (it was too expensive or it was never considered).</p>
+<p>Create the dataframe representing the data collected in the field.
+Note that we do not add <span class="math inline">\(x_3\)</span> as this
+is not measured (it was too expensive or it was never considered).</p>
 <pre class="r"><code>df = data.frame(y = y, x1=x1, x2=x2)</code></pre>
 </div>
-<div id="inference" class="section level1">
+<div id="inference" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Inference</h1>
-<div id="model-1-poisson" class="section level2">
+<div id="model-1-poisson" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Model 1: Poisson</h2>
 <pre class="r"><code>formula1 = y ~ x1 + x2
 res1 = inla(formula1, family = &quot;poisson&quot;, data = df,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res1$summary.fixed</code></pre>
-<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  2.99 0.018       2.95     2.99      3.02  2.99 7.6e-07
-## x1           0.74 0.014       0.71     0.74      0.77  0.74 1.0e-06
-## x2          -0.28 0.012      -0.31    -0.28     -0.26 -0.28 9.2e-07</code></pre>
+<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode kld
+## (Intercept)  2.99 0.018       2.95     2.99      3.02  2.99   0
+## x1           0.74 0.014       0.71     0.74      0.77  0.74   0
+## x2          -0.28 0.012      -0.31    -0.28     -0.26 -0.28   0</code></pre>
 </div>
-<div id="model-2-overdispersed-poisson" class="section level2">
-<h2><span class="header-section-number">4.2</span> Model 2: Overdispersed Poisson</h2>
+<div id="model-2-overdispersed-poisson" class="section level2"
+number="4.2">
+<h2><span class="header-section-number">4.2</span> Model 2:
+Overdispersed Poisson</h2>
 <pre class="r"><code>formula2 = y ~ x1 + x2 + f(id.iid, model=&quot;iid&quot;)
 res2 = inla(formula2, family = &quot;poisson&quot;, 
             data = data.frame(df, id.iid = 1:nrow(df)),
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res2$summary.fixed</code></pre>
 <pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  2.95 0.032       2.88     2.95      3.00  2.95 2.8e-06
-## x1           0.71 0.029       0.66     0.71      0.77  0.71 1.5e-06
-## x2          -0.29 0.026      -0.34    -0.29     -0.24 -0.29 1.4e-06</code></pre>
+## (Intercept)  2.95 0.032       2.88     2.95      3.00  2.95 3.2e-09
+## x1           0.71 0.029       0.66     0.71      0.77  0.71 5.6e-10
+## x2          -0.29 0.026      -0.34    -0.29     -0.24 -0.29 1.0e-09</code></pre>
 </div>
-<div id="model-3-the-true-model" class="section level2">
-<h2><span class="header-section-number">4.3</span> Model 3: The true model</h2>
-<p>We will not comment on this, but I put it up in case you want to see it.</p>
+<div id="model-3-the-true-model" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Model 3: The true
+model</h2>
+<p>We will not comment on this, but I put it up in case you want to see
+it.</p>
 <pre class="r"><code>formula3 = y ~ x1 + x2 + x3
 res3 = inla(formula3, family = &quot;poisson&quot;, 
             data = data.frame(df, id.iid = 1:nrow(df)),
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res3$summary.fixed</code></pre>
-<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  2.99 0.018       2.95     2.99      3.02  2.99 7.8e-07
-## x1           0.71 0.014       0.68     0.71      0.74  0.71 1.0e-06
-## x2          -0.29 0.012      -0.32    -0.29     -0.27 -0.29 9.1e-07
-## x3           0.30 0.011       0.28     0.30      0.32  0.30 9.0e-07</code></pre>
+<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode kld
+## (Intercept)  2.99 0.018       2.95     2.99      3.02  2.99   0
+## x1           0.71 0.014       0.68     0.71      0.74  0.71   0
+## x2          -0.29 0.012      -0.32    -0.29     -0.27 -0.29   0
+## x3           0.30 0.011       0.28     0.30      0.32  0.30   0</code></pre>
 </div>
 </div>
-<div id="model-comparison" class="section level1">
+<div id="model-comparison" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Model comparison</h1>
-<p>Both the model seem to produce reasonable point estimates. This is due to the models being simple, and the data somewhat large. Many different likelihoods would give reasonable estimates, but what separates different likelihoods is mainly the uncertainty estimation. So the question is: Are the intervals reasonable?</p>
-<div id="simulation-study" class="section level2">
+<p>Both the model seem to produce reasonable point estimates. This is
+due to the models being simple, and the data somewhat large. Many
+different likelihoods would give reasonable estimates, but what
+separates different likelihoods is mainly the uncertainty estimation. So
+the question is: Are the intervals reasonable?</p>
+<div id="simulation-study" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Simulation study</h2>
-<p>We want to look at coverage of 80% credible intervals. We choose 80% as these need fewer simulations than e.g. 95% intervals for a rough estimate of the coverage probability.</p>
+<p>We want to look at coverage of 80% credible intervals. We choose 80%
+as these need fewer simulations than e.g. 95% intervals for a rough
+estimate of the coverage probability.</p>
 <pre class="r"><code>one.sim.coverage = function(x) {
   ## sim data
   df$y = rpois(n=N, lambda = exp(eta))
@@ -503,7 +503,8 @@ res3 = inla(formula3, family = &quot;poisson&quot;,
   a2.2 = (beta2 &gt; res2$summary.fixed$`0.1quant`[3] &amp; beta2 &lt; res2$summary.fixed$`0.9quant`[3])
   return(c(a1, a1.2, a2, a2.2))
 }</code></pre>
-<p>Let us now run this simulation study. This is somewhat time consuming (5 min).</p>
+<p>Let us now run this simulation study. This is somewhat time consuming
+(5 min).</p>
 <pre class="r"><code>n.sim = 100
 if (require(parallel)) {
   # - run in parallel if you have this package installed
@@ -512,7 +513,7 @@ if (require(parallel)) {
   res.sim.raw = lapply(as.list(1:n.sim), FUN = one.sim.coverage)
 }</code></pre>
 </div>
-<div id="results" class="section level2">
+<div id="results" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Results</h2>
 <p>We look at the resulting coverage for the two models.</p>
 <pre class="r"><code>res.sim = as.matrix(data.frame(res.sim.raw))
@@ -521,7 +522,7 @@ colnames(res.sim) = NULL
 table(res.sim[1, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##    76    24</code></pre>
+##    78    22</code></pre>
 <pre class="r"><code>## Model 1: beta2
 table(res.sim[2, ])</code></pre>
 <pre><code>## 
@@ -531,19 +532,36 @@ table(res.sim[2, ])</code></pre>
 table(res.sim[3, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##     5    95</code></pre>
+##     3    97</code></pre>
 <pre class="r"><code>## Model 2: beta2
 table(res.sim[4, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##    15    85</code></pre>
-<p>We see that Model 1 has a very bad coverage. This is due to bad estimates of the uncertainty, and hence bad estimates of the credible intervals. The coverage of Model 2 is better, because the <span class="math inline">\(v_1x_3\)</span> term is taken into account by the overdispersion (the iid effect). Curiously enough, with our initial random seed, the coverage of Model 2 is a little too good.</p>
+##    14    86</code></pre>
+<p>We see that Model 1 has a very bad coverage. This is due to bad
+estimates of the uncertainty, and hence bad estimates of the credible
+intervals. The coverage of Model 2 is better, because the <span
+class="math inline">\(v_1x_3\)</span> term is taken into account by the
+overdispersion (the iid effect). Curiously enough, with our initial
+random seed, the coverage of Model 2 is a little too good.</p>
 </div>
 </div>
-<div id="discussion" class="section level1">
+<div id="discussion" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Discussion</h1>
-<p>When it comes to fitting Poisson count data, I always include the iid effect, as in Model 2. This is to cover for any unmeasured covariates, in the same way that the Gaussian likelihood automatically covers for unmeasured covariates. I like to have this “overdispersion effect” as a Gaussian on the linear predictor scale, because that is where/how I would add other linear or non-linear effects (e.g. <span class="math inline">\(v_1x_3\)</span>) if I knew about them. The way I test overdispersion is whether this iid effect is small (in the posterior).</p>
-<p>This topic was created, essentially, so that I can use it to show to collaborators, since adding this iid effect in the likelihood/linear predictor is not standard practice. (More commonly, researchers test for overdispersion and use a Negative Binomial likelihood if that is the case.)</p>
+<p>When it comes to fitting Poisson count data, I always include the iid
+effect, as in Model 2. This is to cover for any unmeasured covariates,
+in the same way that the Gaussian likelihood automatically covers for
+unmeasured covariates. I like to have this “overdispersion effect” as a
+Gaussian on the linear predictor scale, because that is where/how I
+would add other linear or non-linear effects (e.g. <span
+class="math inline">\(v_1x_3\)</span>) if I knew about them. The way I
+test overdispersion is whether this iid effect is small (in the
+posterior).</p>
+<p>This topic was created, essentially, so that I can use it to show to
+collaborators, since adding this iid effect in the likelihood/linear
+predictor is not standard practice. (More commonly, researchers test for
+overdispersion and use a Negative Binomial likelihood if that is the
+case.)</p>
 </div>
 
 
@@ -575,7 +593,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -584,6 +602,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

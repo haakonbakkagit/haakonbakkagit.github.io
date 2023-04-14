@@ -14,20 +14,28 @@
 
 <title>A simple spatial model: Simulation-inference</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,30 +59,28 @@ if (window.hljs) {
 
 
 
+
+
 <style type="text/css">
-h1 {
-  font-size: 34px;
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
 }
-h1.title {
-  font-size: 38px;
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
 }
-h2 {
-  font-size: 30px;
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
 }
-h3 {
-  font-size: 24px;
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
 }
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
+div.csl-indent {
+  margin-left: 2em;
 }
 </style>
 
@@ -92,10 +93,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +109,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +146,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +158,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +168,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +201,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +214,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +319,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +333,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,37 +365,46 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">A simple spatial model: Simulation-inference</h1>
+<h1 class="title toc-ignore">A simple spatial model:
+Simulation-inference</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic122 updated 06. Nov 2018</h4>
 
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>This topic is a simple example of a spatial model, with simulation and then inference. By simulating the data I aim to show the structure of a spatial hierarchical model.</p>
-<div id="initialisation" class="section level2">
+<p>This topic is a simple example of a spatial model, with simulation
+and then inference. By simulating the data I aim to show the structure
+of a spatial hierarchical model.</p>
+<div id="initialisation" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Initialisation</h2>
-<p>We load libraries, including INLA (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
+<p>We load libraries, including INLA (<a
+href="btopic109.html">Installation and general troubleshooting</a>).</p>
 <pre class="r"><code>library(INLA)
 library(fields)
 library(ggplot2)
 library(viridisLite)</code></pre>
-<p>We remove all variables in the workspace (you may want to remove this), and set the random seeds (so you can replicate the results).</p>
+<p>We remove all variables in the workspace (you may want to remove
+this), and set the random seeds (so you can replicate the results).</p>
 <pre class="r"><code>rm(list=ls())
 set.seed(201803)
 inla.seed = sample.int(n=1E6, size=1)
 options(width=70, digits=3)</code></pre>
 </div>
-<div id="dependency-plot-spatial-fields" class="section level2">
-<h2><span class="header-section-number">1.2</span> Dependency: Plot spatial fields</h2>
-<p>The following function shows how to plot a spatial field. This is done by projecting the values at the mesh nodes on to a fine grid. We will skip over the explanation for now, and just consider it a black box function.</p>
+<div id="dependency-plot-spatial-fields" class="section level2"
+number="1.2">
+<h2><span class="header-section-number">1.2</span> Dependency: Plot
+spatial fields</h2>
+<p>The following function shows how to plot a spatial field. This is
+done by projecting the values at the mesh nodes on to a fine grid. We
+will skip over the explanation for now, and just consider it a black box
+function.</p>
 <pre class="r"><code>local.plot.field = function(field, mesh, xlim=c(0,10), ylim=c(0,10), ...){
   stopifnot(length(field) == mesh$n)
   proj = inla.mesh.projector(mesh, xlim = xlim, 
@@ -423,20 +414,48 @@ options(width=70, digits=3)</code></pre>
   image.plot(list(x = proj$x, y=proj$y, z = field.proj), 
              xlim = xlim, ylim = ylim, col = plasma(n.col), nlevel=n.col+1, ...)
 }</code></pre>
-<p>The default values for <code>xlim</code> and <code>ylim</code> shows the spatial region we use in this topic.</p>
+<p>The default values for <code>xlim</code> and <code>ylim</code> shows
+the spatial region we use in this topic.</p>
 </div>
 </div>
-<div id="the-spatial-random-effect-us" class="section level1">
-<h1><span class="header-section-number">2</span> The spatial random effect <span class="math inline">\(u(s)\)</span></h1>
-<p>The original paper introducing the SPDE approach for INLA was written by <span class="citation">Lindgren, Rue, and Lindström (2011)</span>, and a recent review was written by <span class="citation">Bakka et al. (2018)</span>.</p>
-<p>The hierarchical Bayesian model describes the data <span class="math inline">\(y\)</span> by an iid observation likelihood, <span class="math display">\[y_i | \eta_i \sim L(y_i|\eta_i),\]</span> where <span class="math display">\[\eta_i = \beta_0 + X_i\beta + u_i, \]</span> with <span class="math inline">\(u_i = u(s_i)\)</span>.</p>
-<p>The model we want for the spatial effect <span class="math inline">\(u\)</span> is <span class="math display">\[\boldsymbol u | r, \sigma_u \sim \mathcal N(0, \Sigma) \]</span> Here, <span class="math inline">\(\Sigma_{r, \sigma}\)</span> is the Mat' ern covariance with range <span class="math inline">\(r\)</span> and marginal standard deviation <span class="math inline">\(\sigma\)</span> (with smoothness 1).</p>
-<p>To get this, we will create a mesh, construct the Mat' ern model on the mesh, and project it to the data locations with a so-called <span class="math inline">\(A\)</span>-matrix. Let us call the vector of values on the mesh for <code>field</code>, or <span class="math inline">\(f_s\)</span>, and <span class="math inline">\(\boldsymbol u\)</span> is the vector of the fields values at the observation locations, then <span class="math display">\[\boldsymbol u = A f_s, \]</span> In code <code>u = A %*% field</code>.</p>
+<div id="the-spatial-random-effect-us" class="section level1"
+number="2">
+<h1><span class="header-section-number">2</span> The spatial random
+effect <span class="math inline">\(u(s)\)</span></h1>
+<p>The original paper introducing the SPDE approach for INLA was written
+by <span class="citation">Lindgren, Rue, and Lindström (2011)</span>,
+and a recent review was written by <span class="citation">Bakka et al.
+(2018)</span>.</p>
+<p>The hierarchical Bayesian model describes the data <span
+class="math inline">\(y\)</span> by an iid observation likelihood, <span
+class="math display">\[y_i | \eta_i \sim L(y_i|\eta_i),\]</span> where
+<span class="math display">\[\eta_i = \beta_0 + X_i\beta + u_i,
+\]</span> with <span class="math inline">\(u_i = u(s_i)\)</span>.</p>
+<p>The model we want for the spatial effect <span
+class="math inline">\(u\)</span> is <span
+class="math display">\[\boldsymbol u | r, \sigma_u \sim \mathcal N(0,
+\Sigma) \]</span> Here, <span class="math inline">\(\Sigma_{r,
+\sigma}\)</span> is the Mat' ern covariance with range <span
+class="math inline">\(r\)</span> and marginal standard deviation <span
+class="math inline">\(\sigma\)</span> (with smoothness 1).</p>
+<p>To get this, we will create a mesh, construct the Mat' ern model on
+the mesh, and project it to the data locations with a so-called <span
+class="math inline">\(A\)</span>-matrix. Let us call the vector of
+values on the mesh for <code>field</code>, or <span
+class="math inline">\(f_s\)</span>, and <span
+class="math inline">\(\boldsymbol u\)</span> is the vector of the fields
+values at the observation locations, then <span
+class="math display">\[\boldsymbol u = A f_s, \]</span> In code
+<code>u = A %*% field</code>.</p>
 </div>
-<div id="simulate-the-spatial-random-effect" class="section level1">
-<h1><span class="header-section-number">3</span> Simulate the spatial random effect</h1>
-<div id="set-true-parameter-values-for-the-spatial-effect" class="section level2">
-<h2><span class="header-section-number">3.1</span> Set true parameter values for the spatial effect</h2>
+<div id="simulate-the-spatial-random-effect" class="section level1"
+number="3">
+<h1><span class="header-section-number">3</span> Simulate the spatial
+random effect</h1>
+<div id="set-true-parameter-values-for-the-spatial-effect"
+class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Set true parameter
+values for the spatial effect</h2>
 <pre class="r"><code>sigma.u = 1.5
 # - the marginal standard deviation of the spatial field
 range = 2
@@ -445,19 +464,28 @@ range = 2
 # - kappa was the parameter we used in previous years
 # - not used in this code, but you may encounter it</code></pre>
 </div>
-<div id="create-a-mesh" class="section level2">
+<div id="create-a-mesh" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Create a mesh</h2>
 <p>We use a mesh since simulating using a covariance matrix is slow.</p>
 <pre class="r"><code>fake.locations = matrix(c(0,0,10,10, 0, 10, 10, 0), nrow = 4, byrow = T)
 mesh.sim = inla.mesh.2d(loc = fake.locations, max.edge=c(0.4, 1))</code></pre>
-<p>We then look at the mesh to check that it is no unreasonable. My quick rules of thumb is that the outer extension is greater than 2/3 the <code>range</code>, and that the <code>max.edge</code> is smaller than 1/5 of the <code>range</code>. (If the true range is not known, we may need to run INLA more than once.)</p>
+<p>We then look at the mesh to check that it is no unreasonable. My
+quick rules of thumb is that the outer extension is greater than 2/3 the
+<code>range</code>, and that the <code>max.edge</code> is smaller than
+1/5 of the <code>range</code>. (If the true range is not known, we may
+need to run INLA more than once.)</p>
 <pre class="r"><code>plot(mesh.sim)
 axis(1); axis(2)</code></pre>
 <p><img src="btopic122_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
-<div id="simulate-spatial-field" class="section level2">
-<h2><span class="header-section-number">3.3</span> Simulate spatial field</h2>
-<p>We use the term spatial “field” for one continuous field in the entire study area. We use the term spatial “effect” for the entire model component, including hyper-parameters. When setting up the <code>spde</code> object for simulating, the prior is never used. We just plug in 0.5 everywhere as this gives no errors.</p>
+<div id="simulate-spatial-field" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Simulate spatial
+field</h2>
+<p>We use the term spatial “field” for one continuous field in the
+entire study area. We use the term spatial “effect” for the entire model
+component, including hyper-parameters. When setting up the
+<code>spde</code> object for simulating, the prior is never used. We
+just plug in 0.5 everywhere as this gives no errors.</p>
 <pre class="r"><code>spde = inla.spde2.pcmatern(mesh.sim, prior.range = c(.5, .5), prior.sigma = c(.5, .5))
 
 Qu = inla.spde.precision(spde, theta=c(log(range), log(sigma.u)))
@@ -469,9 +497,13 @@ len = range
 arrows(5-0.5*len, 6, 5+0.5*len, 6, length=0.05, angle=90, code=3, lwd=3)</code></pre>
 <p><img src="btopic122_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
-<div id="simulate-at-measurement-locations" class="section level2">
-<h2><span class="header-section-number">3.4</span> Simulate at measurement locations</h2>
-<p>The simulation we have so far is a continuous simulation for the entire study area. Now we want to project this to a set of observation locations.</p>
+<div id="simulate-at-measurement-locations" class="section level2"
+number="3.4">
+<h2><span class="header-section-number">3.4</span> Simulate at
+measurement locations</h2>
+<p>The simulation we have so far is a continuous simulation for the
+entire study area. Now we want to project this to a set of observation
+locations.</p>
 <pre class="r"><code>n = 5*1E3
 # - number of measurement locations
 # - Don&#39;t do more than 5000 if you want the code to be quick to run (1 minute)
@@ -480,26 +512,42 @@ arrows(5-0.5*len, 6, 5+0.5*len, 6, length=0.05, angle=90, code=3, lwd=3)</code><
 loc.data = matrix(runif(2*n), n)*10 # coordinates
 # - We pick the locations uniformly at random.</code></pre>
 </div>
-<div id="project-u-to-loc.data" class="section level2">
-<h2><span class="header-section-number">3.5</span> Project <code>u</code> to <code>loc.data</code></h2>
+<div id="project-u-to-loc.data" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Project
+<code>u</code> to <code>loc.data</code></h2>
 <pre class="r"><code>A = inla.spde.make.A(mesh=mesh.sim, loc=loc.data)
 u = drop(A %*% u)</code></pre>
-<p>We use one of my favourite functions to plot this on an approximated locations grid.</p>
+<p>We use one of my favourite functions to plot this on an approximated
+locations grid.</p>
 <pre class="r"><code>quilt.plot(x=loc.data[, 1],y=loc.data[, 2],z=u,nx=80,ny=80, 
            col = plasma(101), main=&quot;Field projected to data locations&quot;, 
            zlim = range(u))</code></pre>
 <p><img src="btopic122_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 </div>
 </div>
-<div id="simulate-the-predictor-and-the-data" class="section level1">
-<h1><span class="header-section-number">4</span> Simulate the predictor and the data</h1>
-<p>The observation likelihood is <span class="math display">\[y_i \sim \mathcal N(\eta_i, \sigma_\epsilon) \]</span></p>
-<p>The <span class="math inline">\(\sigma_\epsilon\)</span> is also known as: <span class="math inline">\(\sigma_{iid}\)</span>, <code>sigma.iid</code>, and <code>sigma.epsilon</code>.</p>
+<div id="simulate-the-predictor-and-the-data" class="section level1"
+number="4">
+<h1><span class="header-section-number">4</span> Simulate the predictor
+and the data</h1>
+<p>The observation likelihood is <span class="math display">\[y_i \sim
+\mathcal N(\eta_i, \sigma_\epsilon) \]</span></p>
+<p>The <span class="math inline">\(\sigma_\epsilon\)</span> is also
+known as: <span class="math inline">\(\sigma_{iid}\)</span>,
+<code>sigma.iid</code>, and <code>sigma.epsilon</code>.</p>
 <pre class="r"><code>sigma.iid = 0.3
 # - set the true value</code></pre>
-<p>Further, the linear predictor is <span class="math display">\[\eta_i = \beta_1 + \beta_2 x + u(s_i),\]</span> where <span class="math inline">\(u(s_i) = u_i\)</span> is the spatial field projected to the data locations <span class="math inline">\(s_i\)</span>. As code, this linear predictor will be represented by <code>formula = y ~ -1 + intercept + x + f(s, model = spde)</code> when fitting the model</p>
-<div id="the-linear-predictor-level" class="section level2">
-<h2><span class="header-section-number">4.1</span> The linear predictor level</h2>
+<p>Further, the linear predictor is <span class="math display">\[\eta_i
+= \beta_1 + \beta_2 x + u(s_i),\]</span> where <span
+class="math inline">\(u(s_i) = u_i\)</span> is the spatial field
+projected to the data locations <span
+class="math inline">\(s_i\)</span>. As code, this linear predictor will
+be represented by
+<code>formula = y ~ -1 + intercept + x + f(s, model = spde)</code> when
+fitting the model</p>
+<div id="the-linear-predictor-level" class="section level2"
+number="4.1">
+<h2><span class="header-section-number">4.1</span> The linear predictor
+level</h2>
 <p>Set true parameter values</p>
 <pre class="r"><code>x = runif(n)-0.5
 # - mean 0 to not affect intercept
@@ -509,8 +557,9 @@ beta = c(1, 2)
 <pre class="r"><code>lin.pred = beta[1] + beta[2]*x + u
 # the true lin predictor</code></pre>
 </div>
-<div id="the-observation-level" class="section level2">
-<h2><span class="header-section-number">4.2</span> The observation level</h2>
+<div id="the-observation-level" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> The observation
+level</h2>
 <pre class="r"><code>y = lin.pred + sigma.iid*rnorm(n)
 # - the observed data</code></pre>
 <pre class="r"><code>quilt.plot(x=loc.data[, 1],y=loc.data[, 2],z=y,nx=80,ny=80, 
@@ -518,25 +567,31 @@ beta = c(1, 2)
            zlim = range(y))</code></pre>
 <p><img src="btopic122_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 </div>
-<div id="prepare-dataframe" class="section level2">
-<h2><span class="header-section-number">4.3</span> Prepare dataframe</h2>
-<p>This dataframe is the only object our inference is allowed to use.</p>
+<div id="prepare-dataframe" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Prepare
+dataframe</h2>
+<p>This dataframe is the only object our inference is allowed to
+use.</p>
 <pre class="r"><code>df = data.frame(y=y, locx=loc.data[ ,1], locy=loc.data[ ,2], x = x)
 summary(df)</code></pre>
 <pre><code>##        y              locx            locy             x         
-##  Min.   :-3.90   Min.   : 0.00   Min.   : 0.00   Min.   :-0.500  
-##  1st Qu.:-0.07   1st Qu.: 2.55   1st Qu.: 2.53   1st Qu.:-0.255  
-##  Median : 1.04   Median : 4.93   Median : 5.08   Median : 0.003  
-##  Mean   : 1.04   Mean   : 4.98   Mean   : 5.06   Mean   :-0.002  
-##  3rd Qu.: 2.12   3rd Qu.: 7.36   3rd Qu.: 7.58   3rd Qu.: 0.249  
-##  Max.   : 6.00   Max.   :10.00   Max.   :10.00   Max.   : 0.500</code></pre>
+##  Min.   :-4.63   Min.   : 0.00   Min.   : 0.00   Min.   :-0.500  
+##  1st Qu.:-0.70   1st Qu.: 2.55   1st Qu.: 2.53   1st Qu.:-0.255  
+##  Median : 0.57   Median : 4.93   Median : 5.08   Median : 0.003  
+##  Mean   : 0.66   Mean   : 4.98   Mean   : 5.06   Mean   :-0.002  
+##  3rd Qu.: 1.99   3rd Qu.: 7.36   3rd Qu.: 7.58   3rd Qu.: 0.249  
+##  Max.   : 6.11   Max.   :10.00   Max.   :10.00   Max.   : 0.500</code></pre>
 </div>
 </div>
-<div id="coding-the-spatial-effect-for-inference" class="section level1">
-<h1><span class="header-section-number">5</span> Coding the spatial effect for inference</h1>
-<div id="mesh-and-a-matrix" class="section level2">
-<h2><span class="header-section-number">5.1</span> Mesh and A matrix</h2>
-<p>The choice of mesh should not matter too much, and we do not need to use the same mesh for simulation and for inference.</p>
+<div id="coding-the-spatial-effect-for-inference" class="section level1"
+number="5">
+<h1><span class="header-section-number">5</span> Coding the spatial
+effect for inference</h1>
+<div id="mesh-and-a-matrix" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Mesh and A
+matrix</h2>
+<p>The choice of mesh should not matter too much, and we do not need to
+use the same mesh for simulation and for inference.</p>
 <pre class="r"><code>mesh = inla.mesh.2d(loc = fake.locations, max.edge=c(0.4, 1))
 mesh$n</code></pre>
 <pre><code>## [1] 2433</code></pre>
@@ -549,12 +604,14 @@ plot(mesh, asp=1)
 points(df[ , c(&#39;locx&#39;, &#39;locy&#39;)], col=&#39;red&#39;, lwd=.1)</code></pre>
 <p><img src="btopic122_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
-<div id="spatial-effect-prior-model" class="section level2">
-<h2><span class="header-section-number">5.2</span> Spatial effect: Prior model</h2>
+<div id="spatial-effect-prior-model" class="section level2"
+number="5.2">
+<h2><span class="header-section-number">5.2</span> Spatial effect: Prior
+model</h2>
 <pre class="r"><code>prior.median.sd = 1; prior.median.range = 5
 spde = inla.spde2.pcmatern(mesh, prior.range = c(prior.median.range, .5), prior.sigma = c(prior.median.sd, .5))</code></pre>
 </div>
-<div id="stack" class="section level2">
+<div id="stack" class="section level2" number="5.3">
 <h2><span class="header-section-number">5.3</span> Stack</h2>
 <pre class="r"><code>stack = inla.stack(tag=&#39;est&#39;,
                     # - Name (nametag) of the stack
@@ -571,9 +628,16 @@ spde = inla.spde2.pcmatern(mesh, prior.range = c(prior.median.range, .5), prior.
                     # - second is for &#39;fixed effects&#39;
                     )</code></pre>
 </div>
-<div id="observation-likelihood" class="section level2">
-<h2><span class="header-section-number">5.4</span> Observation likelihood</h2>
-<p>We assume, <span class="math display">\[\epsilon_i \sim \mathcal N(0, \sigma_\epsilon^2) \]</span> and use the prior, <span class="math display">\[\sigma_\epsilon \sim \exp(\lambda) \]</span> where <span class="math inline">\(\lambda\)</span> is determined by setting the prior median. In this prior assumption we assume that some of the variability in the data <code>sd(y)=</code> 1.553 has been explained by the covariates (by modeling the “mean”).</p>
+<div id="observation-likelihood" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> Observation
+likelihood</h2>
+<p>We assume, <span class="math display">\[\epsilon_i \sim \mathcal N(0,
+\sigma_\epsilon^2) \]</span> and use the prior, <span
+class="math display">\[\sigma_\epsilon \sim \exp(\lambda) \]</span>
+where <span class="math inline">\(\lambda\)</span> is determined by
+setting the prior median. In this prior assumption we assume that some
+of the variability in the data <code>sd(y)=</code> 1.831 has been
+explained by the covariates (by modeling the “mean”).</p>
 <pre class="r"><code>family = &quot;gaussian&quot;
 prior.median.sd.g = 0.5 # prior median for sigma.epsilon
 control.family = list(hyper = list(prec = list(
@@ -581,7 +645,7 @@ control.family = list(hyper = list(prec = list(
                 c(prior.median.sd.g,0.5))))</code></pre>
 </div>
 </div>
-<div id="model-fitting" class="section level1">
+<div id="model-fitting" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Model fitting</h1>
 <pre class="r"><code>formula = y ~ -1 + intercept + x + f(s, model=spde)
 # - Remove standard intercept (always when using inla.stack)
@@ -609,21 +673,34 @@ res = inla(formula, data=inla.stack.data(stack),
 <pre class="r"><code>summary(res)</code></pre>
 <pre><code>## 
 ## Call:
-##    c(&quot;inla(formula = formula, family = family, data = 
-##    inla.stack.data(stack), &quot;, &quot; quantiles = c(0.5, 0.025, 0.975, 
-##    0.1, 0.9, 0.25, 0.75), control.predictor = list(A = 
-##    inla.stack.A(stack)), &quot;, &quot; control.family = control.family, 
-##    control.mode = list(restart = T, &quot;, &quot; theta = 
-##    initial.theta))&quot;) 
+##    c(&quot;inla.core(formula = formula, family = family, contrasts = 
+##    contrasts, &quot;, &quot; data = data, quantiles = quantiles, E = E, 
+##    offset = offset, &quot;, &quot; scale = scale, weights = weights, 
+##    Ntrials = Ntrials, strata = strata, &quot;, &quot; lp.scale = lp.scale, 
+##    link.covariates = link.covariates, verbose = verbose, &quot;, &quot; 
+##    lincomb = lincomb, selection = selection, control.compute = 
+##    control.compute, &quot;, &quot; control.predictor = control.predictor, 
+##    control.family = control.family, &quot;, &quot; control.inla = 
+##    control.inla, control.fixed = control.fixed, &quot;, &quot; control.mode 
+##    = control.mode, control.expert = control.expert, &quot;, &quot; 
+##    control.hazard = control.hazard, control.lincomb = 
+##    control.lincomb, &quot;, &quot; control.update = control.update, 
+##    control.lp.scale = control.lp.scale, &quot;, &quot; control.pardiso = 
+##    control.pardiso, only.hyperparam = only.hyperparam, &quot;, &quot; 
+##    inla.call = inla.call, inla.arg = inla.arg, num.threads = 
+##    num.threads, &quot;, &quot; blas.num.threads = blas.num.threads, keep = 
+##    keep, working.directory = working.directory, &quot;, &quot; silent = 
+##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
+##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.42, Running = 11.7, Post = 0.22, Total = 15.3 
+##     Pre = 3.34, Running = 5.74, Post = 0.0899, Total = 9.17 
 ## Fixed effects:
 ##            mean    sd 0.5quant 0.025quant 0.975quant 0.1quant
-## intercept 0.916 0.301     0.92      0.306       1.50    0.535
-## x         1.996 0.017     2.00      1.962       2.03    1.974
+## intercept 0.826 0.412    0.828      0.002       1.64    0.309
+## x         1.996 0.017    1.996      1.962       2.03    1.974
 ##           0.9quant 0.25quant 0.75quant  mode kld
-## intercept     1.29     0.722      1.11 0.927   0
-## x             2.02     1.985      2.01 1.996   0
+## intercept     1.34     0.561      1.09 0.831   0
+## x             2.02     1.984      2.01 1.996   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -631,32 +708,34 @@ res = inla(formula, data=inla.stack.data(stack),
 ## 
 ## Model hyperparameters:
 ##                                          mean    sd 0.5quant
-## Precision for the Gaussian observations 10.36 0.247    10.35
-## Range for s                              2.08 0.234     2.07
-## Stdev for s                              1.52 0.148     1.52
+## Precision for the Gaussian observations 10.38 0.248    10.38
+## Range for s                              2.46 0.276     2.44
+## Stdev for s                              1.76 0.174     1.75
 ##                                         0.025quant 0.975quant
-## Precision for the Gaussian observations       9.88      10.85
-## Range for s                                   1.63       2.55
-## Stdev for s                                   1.24       1.82
+## Precision for the Gaussian observations       9.90      10.88
+## Range for s                                   2.00       3.08
+## Stdev for s                                   1.47       2.15
 ##                                         0.1quant 0.9quant 0.25quant
-## Precision for the Gaussian observations    10.04    10.68     10.19
-## Range for s                                 1.77     2.38      1.91
-## Stdev for s                                 1.33     1.71      1.42
+## Precision for the Gaussian observations    10.07    10.71     10.21
+## Range for s                                 2.13     2.83      2.27
+## Stdev for s                                 1.56     2.00      1.64
 ##                                         0.75quant  mode
-## Precision for the Gaussian observations     10.52 10.34
-## Range for s                                  2.23  2.08
-## Stdev for s                                  1.62  1.53
+## Precision for the Gaussian observations     10.55 10.38
+## Range for s                                  2.63  2.37
+## Stdev for s                                  1.87  1.71
 ## 
-## Expected number of effective parameters(stdev): 1086.93(15.99)
-## Number of equivalent replicates : 4.60 
-## 
-## Marginal log-Likelihood:  -2726.63</code></pre>
+## Marginal log-Likelihood:  -2725.60 
+##  is computed 
+## Posterior summaries for the linear predictor and the fitted values are computed
+## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
 </div>
-<div id="plots" class="section level1">
+<div id="plots" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Plots</h1>
 <p>Let us look at my favourite summaries and plots of the result.</p>
-<div id="visualising-posterior-of-hyper-parameters" class="section level2">
-<h2><span class="header-section-number">7.1</span> Visualising posterior of hyper-parameters</h2>
+<div id="visualising-posterior-of-hyper-parameters"
+class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Visualising posterior
+of hyper-parameters</h2>
 <pre class="r"><code>local.plot.quant = function (quantiles, truth = NA) {
   cn = colnames(quantiles)
   ids = setdiff(grep(&quot;quant&quot;, cn), which(cn==&quot;0.5quant&quot;))
@@ -682,56 +761,83 @@ local.plot.quant(res$summary.fixed[2, ], truth = beta[2])</code></pre>
 <p><img src="btopic122_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 </div>
 </div>
-<div id="visualise-random-effect" class="section level1">
-<h1><span class="header-section-number">8</span> Visualise random effect</h1>
-<p>We now visualise what we call “parameters”, namely the <span class="math inline">\(u(s)\)</span> (or <span class="math inline">\(f(s)\)</span>, <span class="math inline">\(f_s\)</span>) for the random effect. The difficulty with visualising these is that there are so many of them:</p>
+<div id="visualise-random-effect" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Visualise random
+effect</h1>
+<p>We now visualise what we call “parameters”, namely the <span
+class="math inline">\(u(s)\)</span> (or <span
+class="math inline">\(f(s)\)</span>, <span
+class="math inline">\(f_s\)</span>) for the random effect. The
+difficulty with visualising these is that there are so many of them:</p>
 <pre class="r"><code>nrow(res$summary.random$s)</code></pre>
 <pre><code>## [1] 2433</code></pre>
-<p>We will not only viusualise these at the data locations, but everywhere in the study area.</p>
+<p>We will not only viusualise these at the data locations, but
+everywhere in the study area.</p>
 <pre class="r"><code>local.plot.field(res$summary.random[[&#39;s&#39;]][[&#39;mean&#39;]], mesh)
 len = res$summary.hyperpar[2, &#39;0.5quant&#39;]
 # - the posterior median range
 arrows(5-0.5*len, 5, 5+0.5*len, 5, length=0.05, angle=90, code=3, lwd=3)</code></pre>
 <p><img src="btopic122_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
-<p>We can visualise the posterior <code>sd</code> or quantiles in a similar way (commented out).</p>
+<p>We can visualise the posterior <code>sd</code> or quantiles in a
+similar way (commented out).</p>
 <pre class="r"><code>#local.plot.field(res$summary.random[[&#39;s&#39;]][[&#39;sd&#39;]], mesh, colors = NULL)
 #points(x = df$locx, y=df$locy, lwd = .1)</code></pre>
 </div>
-<div id="comments" class="section level1">
+<div id="comments" class="section level1" number="9">
 <h1><span class="header-section-number">9</span> Comments</h1>
-<div id="exercises" class="section level2">
+<div id="exercises" class="section level2" number="9.1">
 <h2><span class="header-section-number">9.1</span> Exercises</h2>
 <ol style="list-style-type: decimal">
 <li>Draw more samples from the prior spatial random effect</li>
-<li>Find rules for guessing sigma and range based on a sample of <span class="math inline">\(u\)</span></li>
+<li>Find rules for guessing sigma and range based on a sample of <span
+class="math inline">\(u\)</span></li>
 <li>Change the likelihood to poisson</li>
 <li>Hold out 10% of the data and compare point predictions to truth</li>
 </ol>
 </div>
-<div id="point-estimates" class="section level2">
+<div id="point-estimates" class="section level2" number="9.2">
 <h2><span class="header-section-number">9.2</span> Point estimates</h2>
-<p>I use medians as point estimates for hyper-parameters, but for parameters on the scale of the linear predictor I use the mean, because the mean function is linear (and we want to add up components of the linear predictor).</p>
+<p>I use medians as point estimates for hyper-parameters, but for
+parameters on the scale of the linear predictor I use the mean, because
+the mean function is linear (and we want to add up components of the
+linear predictor).</p>
 </div>
-<div id="signal-to-noise" class="section level2">
+<div id="signal-to-noise" class="section level2" number="9.3">
 <h2><span class="header-section-number">9.3</span> Signal-to-noise</h2>
 <pre class="r"><code>sigma.u/sigma.iid</code></pre>
 <pre><code>## [1] 5</code></pre>
 <pre class="r"><code># - one of the &quot;signal-to-noise&quot; ratios
 # - this value is more important than either of the sigma values
 # - experiment with changing the sigma values to see what I mean</code></pre>
-<div id="visualising-posterior-of-hyper-parameters-1" class="section level3">
-<h3><span class="header-section-number">9.3.1</span> Visualising posterior of hyper-parameters</h3>
-<p>For the hyper-parameters, I used to plot the posterior marginals, but now I only visualise the quantiles. The main reason for this is that marginals are easy to misinterpret, as the probability density depends on the choice of parametrisation. For example, in some parametrisation the posterior is bimodal, and in some other parametrisation some imporatant part of the probability mass is so far into the tail that any plot window is too small.</p>
+<div id="visualising-posterior-of-hyper-parameters-1"
+class="section level3" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> Visualising
+posterior of hyper-parameters</h3>
+<p>For the hyper-parameters, I used to plot the posterior marginals, but
+now I only visualise the quantiles. The main reason for this is that
+marginals are easy to misinterpret, as the probability density depends
+on the choice of parametrisation. For example, in some parametrisation
+the posterior is bimodal, and in some other parametrisation some
+imporatant part of the probability mass is so far into the tail that any
+plot window is too small.</p>
 </div>
 </div>
 <div id="references" class="section level2 unnumbered">
-<h2>References</h2>
-<div id="refs" class="references">
-<div id="ref-bakka2018spatial">
-<p>Bakka, Haakon, Håvard Rue, Geir-Arne Fuglstad, Andrea Riebler, David Bolin, Elias Krainski, Daniel Simpson, and Finn Lindgren. 2018. “Spatial Modelling with R-Inla: A Review.” <em>arXiv Preprint arXiv:1802.06350</em>.</p>
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-bakka2018spatial" class="csl-entry">
+Bakka, Haakon, Håvard Rue, Geir-Arne Fuglstad, Andrea Riebler, David
+Bolin, Elias Krainski, Daniel Simpson, and Finn Lindgren. 2018.
+<span>“Spatial Modelling with r-INLA: A Review.”</span> <em>arXiv
+Preprint arXiv:1802.06350</em>.
 </div>
-<div id="ref-lindgren2011spdeapproach">
-<p>Lindgren, Finn, Håvard Rue, and Johan Lindström. 2011. “An Explicit Link Between Gaussian Fields and Gaussian Markov Random Fields: The Stochastic Partial Differential Equation Approach.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 73 (4): 423–98. <a href="https://doi.org/10.1111/j.1467-9868.2011.00777.x">https://doi.org/10.1111/j.1467-9868.2011.00777.x</a>.</p>
+<div id="ref-lindgren2011spdeapproach" class="csl-entry">
+Lindgren, Finn, Håvard Rue, and Johan Lindström. 2011. <span>“An
+Explicit Link Between Gaussian Fields and Gaussian Markov Random Fields:
+The Stochastic Partial Differential Equation Approach.”</span>
+<em>Journal of the Royal Statistical Society: Series B (Statistical
+Methodology)</em> 73 (4): 423–98. <a
+href="https://doi.org/10.1111/j.1467-9868.2011.00777.x">https://doi.org/10.1111/j.1467-9868.2011.00777.x</a>.
 </div>
 </div>
 </div>
@@ -766,7 +872,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -775,6 +881,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

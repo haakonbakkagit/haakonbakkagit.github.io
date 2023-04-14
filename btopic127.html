@@ -16,20 +16,28 @@
 
 <title>Polygons and Coastlines</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -41,11 +49,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -58,32 +61,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -94,10 +73,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -114,40 +89,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -175,7 +126,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -187,7 +138,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -197,11 +148,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -213,13 +181,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -227,16 +194,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -339,7 +299,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -353,7 +313,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -385,7 +345,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -398,19 +358,44 @@ div.tocify {
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>In this page we explain how to build polygons with the <code>INLA</code> and <code>sp</code> packages. This functionality is very useful in particular when we are dealing with physical barriers, which are important in statistical models on maps (spatial statistics). On this page we show several practical examples of how to deal with polygons. After that we show how to create polygons representing a geographical area of interest, how to build a mesh on this area, and how to get some nice plot from Google Maps.</p>
-<div id="polygons-for-physical-boundaries" class="section level2">
-<h2><span class="header-section-number">1.1</span> Polygons for Physical Boundaries</h2>
-<p>In many real spatial models we have to deal with areas with physical boundaries. Let us think about data coming from sensors placed in the sea recording a signal which doesn’t propagate on the earth. In this situation any island represents a physical boundary that we have to take into account when modeling. On the other hand we could think of the opposite situation: We are interested in what happens on land and do not care about the sea, and the sea acts as a boundary, e.g. in disease mapping. For these boundaries, Haakon developed the Barrier model, see <a href="btopic128.html">Btopic128</a>. This topic is also a guidance on how to make meshes for the Barrier model.</p>
+<p>In this page we explain how to build polygons with the
+<code>INLA</code> and <code>sp</code> packages. This functionality is
+very useful in particular when we are dealing with physical barriers,
+which are important in statistical models on maps (spatial statistics).
+On this page we show several practical examples of how to deal with
+polygons. After that we show how to create polygons representing a
+geographical area of interest, how to build a mesh on this area, and how
+to get some nice plot from Google Maps.</p>
+<div id="polygons-for-physical-boundaries" class="section level2"
+number="1.1">
+<h2><span class="header-section-number">1.1</span> Polygons for Physical
+Boundaries</h2>
+<p>In many real spatial models we have to deal with areas with physical
+boundaries. Let us think about data coming from sensors placed in the
+sea recording a signal which doesn’t propagate on the earth. In this
+situation any island represents a physical boundary that we have to take
+into account when modeling. On the other hand we could think of the
+opposite situation: We are interested in what happens on land and do not
+care about the sea, and the sea acts as a boundary, e.g. in disease
+mapping. For these boundaries, Haakon developed the Barrier model, see
+<a href="btopic128.html">Btopic128</a>. This topic is also a guidance on
+how to make meshes for the Barrier model.</p>
 </div>
-<div id="polygons-in-general-for-mesh-construction" class="section level2">
-<h2><span class="header-section-number">1.2</span> Polygons in general for mesh construction</h2>
-<p>More in general, having a mesh with holes is useful in some situations. Let us think about the following scenario: we have an area in which the data is missing. We can’t simply ignore that part of the total area. One possible solution is to treat it as an hole and then build a mesh with larger triangles on the missing data area. Then we get a continuous process over all of space, but we have less mesh nodes in the holes, and therefore faster computations.</p>
+<div id="polygons-in-general-for-mesh-construction"
+class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Polygons in general
+for mesh construction</h2>
+<p>More in general, having a mesh with holes is useful in some
+situations. Let us think about the following scenario: we have an area
+in which the data is missing. We can’t simply ignore that part of the
+total area. One possible solution is to treat it as an hole and then
+build a mesh with larger triangles on the missing data area. Then we get
+a continuous process over all of space, but we have less mesh nodes in
+the holes, and therefore faster computations.</p>
 </div>
-<div id="libraries" class="section level2">
+<div id="libraries" class="section level2" number="1.3">
 <h2><span class="header-section-number">1.3</span> Libraries</h2>
 <pre class="r"><code>library(INLA)
 library(rgdal)
@@ -419,56 +404,98 @@ library(ggmap)
 set.seed(2018)</code></pre>
 </div>
 </div>
-<div id="simple-constructed-polygons" class="section level1">
-<h1><span class="header-section-number">2</span> Simple constructed polygons</h1>
-<p>First, we show an example of simple polygons that we construct manually. Our real polygon example is not dependent on this simple example. However, if you want to study the R objects, and how they behave, it is better to start with this simple example.</p>
-<div id="basic-polygon" class="section level2">
+<div id="simple-constructed-polygons" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Simple constructed
+polygons</h1>
+<p>First, we show an example of simple polygons that we construct
+manually. Our real polygon example is not dependent on this simple
+example. However, if you want to study the R objects, and how they
+behave, it is better to start with this simple example.</p>
+<div id="basic-polygon" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Basic Polygon</h2>
-<p>Let us create a simple study area composed of two parts. The first one has a hole and the second is non-convex. We can do that using the <span class="math inline">\(\texttt{Polygons()}\)</span> function of the <code>sp</code> package, which creates an object of class Polygons. This function needs just two arguments:</p>
+<p>Let us create a simple study area composed of two parts. The first
+one has a hole and the second is non-convex. We can do that using the
+<span class="math inline">\(\texttt{Polygons()}\)</span> function of the
+<code>sp</code> package, which creates an object of class Polygons. This
+function needs just two arguments:</p>
 <ul>
-<li><p><code>coords</code> : 2 column numeric matrix with the coordinates of the vertices of the polygon.</p></li>
-<li><p><code>hole</code> : logical value for setting polygon as hole or not.</p></li>
+<li><p><code>coords</code> : 2 column numeric matrix with the
+coordinates of the vertices of the polygon.</p></li>
+<li><p><code>hole</code> : logical value for setting polygon as hole or
+not.</p></li>
 </ul>
-<p>Let us define our first polygon. Similar code can be found in the <a href="https://becarioprecario.bitbucket.io/spde-gitbook/">SPDE-book</a>.</p>
+<p>Let us define our first polygon. Similar code can be found in the <a
+href="https://becarioprecario.bitbucket.io/spde-gitbook/">SPDE-book</a>.</p>
 <pre class="r"><code># First polygon
 pl1 &lt;- Polygon(cbind(c(0,15,15,0,0), c(5,0,20,20,5)), hole=FALSE)
 # Hole in the first polygon
 h1 &lt;- Polygon(cbind(c(5,12,10,5,5), c(7,7,15,15,7)), hole=TRUE)
 # Second polygon
 pl2 &lt;- Polygon(cbind(c(15,20,20,30,30,15,15), c(10,10,0,0,20,20,10)), hole=FALSE)</code></pre>
-<p>The function <span class="math inline">\(\texttt{SpatialPolygons()}\)</span> is used to create a single object containing the two above polygons. The function takes as argument a list of lists and gives as output an object of class <code>SpatialPolygons</code>.</p>
+<p>The function <span
+class="math inline">\(\texttt{SpatialPolygons()}\)</span> is used to
+create a single object containing the two above polygons. The function
+takes as argument a list of lists and gives as output an object of class
+<code>SpatialPolygons</code>.</p>
 <pre class="r"><code>sp &lt;- SpatialPolygons(list(Polygons(list(pl1, h1), &#39;0&#39;), 
                            Polygons(list(pl2), &#39;1&#39;))) </code></pre>
 <pre class="r"><code>plot(sp, main = &#39;Polygon&#39;)</code></pre>
 <p><img src="btopic127_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
-<div id="mesh-construction-on-this-polygon" class="section level2">
-<h2><span class="header-section-number">2.2</span> Mesh construction on this polygon</h2>
+<div id="mesh-construction-on-this-polygon" class="section level2"
+number="2.2">
+<h2><span class="header-section-number">2.2</span> Mesh construction on
+this polygon</h2>
 <pre class="r"><code>mesh &lt;- inla.mesh.2d(boundary=sp, max.edge=2)
 plot(mesh, main = &#39;Mesh&#39;)</code></pre>
 <p><img src="btopic127_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>One could be interested in building a finer mesh on the areas of interest and a poorer one in the other regions (the holes) of the study area. It is possible to do that just expanding the study area.</p>
+<p>One could be interested in building a finer mesh on the areas of
+interest and a poorer one in the other regions (the holes) of the study
+area. It is possible to do that just expanding the study area.</p>
 <pre class="r"><code>mesh2 &lt;- inla.mesh.2d(boundary=sp, max.edge=c(1,4))</code></pre>
 <p><img src="btopic127_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 </div>
-<div id="polygons-from-coastlines" class="section level1">
-<h1><span class="header-section-number">3</span> Polygons from coastlines</h1>
-<p>As we said before in many applications in geographical statistics it is necessary to deal with coastlines. In this section we show how to use real world coastlines data in order to create a polygon for our study area.</p>
-<div id="download-coastlines-data" class="section level2">
-<h2><span class="header-section-number">3.1</span> Download Coastlines Data</h2>
-<p>First of all we need to downlad the shape file of the coastlines. The data is available on this webpage:</p>
-<p><a href="http://openstreetmapdata.com/data/coast" class="uri">http://openstreetmapdata.com/data/coast</a></p>
-<p>We will take “Large simplified polygons not split, use for zoom level 0-9” as an example, to show how to get region polygons from this dataset. We import the data using <code>rgdal</code> library:<br />
-Notice that the <code>dsn</code> need to point to the file directory with the downloaded files.</p>
-<p>We try to make all the code in this tutorial with <code>eval=TRUE</code>, so that you can run it. However, the next few code chunks are with <code>eval=FALSE</code>, and you cannot simply run them. This is because we cannot make the world shapefile accessible from this website (you have to go to <a href="http://openstreetmapdata.com/data/coast" class="uri">http://openstreetmapdata.com/data/coast</a>). After you have downloaded the correct data, you can manually run the code chunks (note that they are somewhat time consuming). Further down on this page we go back to <code>eval=TRUE</code>.</p>
+<div id="polygons-from-coastlines" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Polygons from
+coastlines</h1>
+<p>As we said before in many applications in geographical statistics it
+is necessary to deal with coastlines. In this section we show how to use
+real world coastlines data in order to create a polygon for our study
+area.</p>
+<div id="download-coastlines-data" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Download Coastlines
+Data</h2>
+<p>First of all we need to downlad the shape file of the coastlines. The
+data is available on this webpage:</p>
+<p><a href="http://openstreetmapdata.com/data/coast"
+class="uri">http://openstreetmapdata.com/data/coast</a></p>
+<p>We will take “Large simplified polygons not split, use for zoom level
+0-9” as an example, to show how to get region polygons from this
+dataset. We import the data using <code>rgdal</code> library:<br />
+Notice that the <code>dsn</code> need to point to the file directory
+with the downloaded files.</p>
+<p>We try to make all the code in this tutorial with
+<code>eval=TRUE</code>, so that you can run it. However, the next few
+code chunks are with <code>eval=FALSE</code>, and you cannot simply run
+them. This is because we cannot make the world shapefile accessible from
+this website (you have to go to <a
+href="http://openstreetmapdata.com/data/coast"
+class="uri">http://openstreetmapdata.com/data/coast</a>). After you have
+downloaded the correct data, you can manually run the code chunks (note
+that they are somewhat time consuming). Further down on this page we go
+back to <code>eval=TRUE</code>.</p>
 <pre class="r"><code>shape &lt;- readOGR(dsn = &quot;.&quot;, layer = &quot;simplified_land_polygons&quot;)</code></pre>
 <pre><code>## OGR data source with driver: ESRI Shapefile 
 ## Source: &quot;.&quot;, layer: &quot;simplified_land_polygons&quot;
 ## with 63019 features
 ## It has 1 fields
 ## Integer64 fields read as strings:  FID</code></pre>
-<p>We cannot plot <code>shape</code> using directly the <span class="math inline">\(\texttt{ plot()}\)</span> function because it requires a lot of time to render. Have in mind that we are talking about more than sixty thousands polygons! One way to render a nice plot is to save it directly as a png; this little trick almost always works.</p>
+<p>We cannot plot <code>shape</code> using directly the <span
+class="math inline">\(\texttt{ plot()}\)</span> function because it
+requires a lot of time to render. Have in mind that we are talking about
+more than sixty thousands polygons! One way to render a nice plot is to
+save it directly as a png; this little trick almost always works.</p>
 <pre class="r"><code>png(&quot;fig/btopic127/shapeplot1.png&quot;, width = 480*4, height=480*4)
 plot(shape)
 dev.off()
@@ -476,45 +503,87 @@ dev.off()
 # Open the saved file to see the following plot</code></pre>
 <p><img src="fig/btopic127/shapeplot1.png" width = "500" alt="The study area" align=center /></p>
 </div>
-<div id="transform-the-shapefile-and-select-an-area" class="section level2">
-<h2><span class="header-section-number">3.2</span> Transform the shapefile and select an area</h2>
-<p>Once we have the shapefile is useful to perform a latitude longitude projection. In this way we will be able to select the area of interested using the coordinates.</p>
+<div id="transform-the-shapefile-and-select-an-area"
+class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Transform the
+shapefile and select an area</h2>
+<p>Once we have the shapefile is useful to perform a latitude longitude
+projection. In this way we will be able to select the area of interested
+using the coordinates.</p>
 <pre class="r"><code>shape2 &lt;- spTransform(shape, CRS(&quot;+proj=longlat +datum=WGS84&quot;))</code></pre>
 <p>Take a look, just to check whats going on</p>
 <pre class="r"><code>png(&quot;fig/btopic127/shapeplot2.png&quot;, width = 480*4, height=480*4)
 plot(shape2)
 dev.off()</code></pre>
 <p><img src="fig/btopic127/shapeplot2.png" width = "500" alt="The study area" align=center /></p>
-<p>Now we can select the area of interest using the coordinates. Notice that the longitude and latitude can be easily retrivied using Google Maps (by clicking a point on the map and reading off the coordinates).<br />
+<p>Now we can select the area of interest using the coordinates. Notice
+that the longitude and latitude can be easily retrivied using Google
+Maps (by clicking a point on the map and reading off the
+coordinates).<br />
 As an example we select some islands in the south of Greece.</p>
 <pre class="r"><code>png(&quot;fig/btopic127/shapeplot3.png&quot;, width = 480*4, height=480*4)
 plot(shape2, xlim=c(22.80, 26.85), ylim=c(34.88, 38.06))
 dev.off()</code></pre>
 <p><img src="fig/btopic127/shapeplot3.png" width = "500" alt="The study area" align=center /></p>
 </div>
-<div id="creating-polygons" class="section level2">
-<h2><span class="header-section-number">3.3</span> Creating Polygons</h2>
-<p>Now that we have an area of interest we can start building our polygons. The first thing we need is a polygon representing the study area. This will be our starting point (representing the sea) and then we will add holes (islands) to it.</p>
+<div id="creating-polygons" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Creating
+Polygons</h2>
+<p>Now that we have an area of interest we can start building our
+polygons. The first thing we need is a polygon representing the study
+area. This will be our starting point (representing the sea) and then we
+will add holes (islands) to it.</p>
 <pre class="r"><code># You can run this code chunk
 pl1 &lt;- Polygon(cbind(c(22.80, 22.80, 26.85, 26.85, 22.80), 
                      c(38.06, 34.88, 34.88, 38.06, 38.06)), hole=FALSE)
 sp &lt;- SpatialPolygons(list(Polygons(list(pl1), &#39;0&#39;)), 
                       proj4string =CRS(&quot;+proj=longlat +datum=WGS84&quot;))</code></pre>
-<p>The next step is to create polygons representing the islands; in the end we will turn this polygons into holes. In order to create the polygons, we need to intersect our square polygon with the shapefile. Warning: This operation can take roughly half an hour to run. This gets even worse if you are working with large areas. To intersect the polygon with the shape file we used functions from the <code>rgeos</code> library.</p>
+<p>The next step is to create polygons representing the islands; in the
+end we will turn this polygons into holes. In order to create the
+polygons, we need to intersect our square polygon with the shapefile.
+Warning: This operation can take roughly half an hour to run. This gets
+even worse if you are working with large areas. To intersect the polygon
+with the shape file we used functions from the <code>rgeos</code>
+library.</p>
 <pre class="r"><code>shape3 &lt;- gBuffer(shape2, byid=TRUE, width=0) #for gIntersection operation
 shape4 &lt;- gIntersection(shape3, sp) #this is the heavy guy
 shape5 = gSimplify(shape4, tol=0.001) #use tol to control the precision</code></pre>
 <p>Notice that:</p>
 <ul>
-<li><p>For a large area, <code>shape4</code> is Large SpatialPolygonsDataFrame and needs <code>@polyobj</code> to get the Spatial Polygons for the following operation.</p></li>
-<li><p>For a small area, <code>shape4</code> is Formal class SpatialPolygons. So we can just use it.</p></li>
-<li><p>The function <span class="math inline">\(\texttt{gSimplify()}\)</span> gives us a more regular and light shape file. Working with this file makes the mesh more regular and reduces the computational time (recommended for large area).</p></li>
+<li><p>For a large area, <code>shape4</code> is Large
+SpatialPolygonsDataFrame and needs <code>@polyobj</code> to get the
+Spatial Polygons for the following operation.</p></li>
+<li><p>For a small area, <code>shape4</code> is Formal class
+SpatialPolygons. So we can just use it.</p></li>
+<li><p>The function <span
+class="math inline">\(\texttt{gSimplify()}\)</span> gives us a more
+regular and light shape file. Working with this file makes the mesh more
+regular and reduces the computational time (recommended for large
+area).</p></li>
 </ul>
-<p>Now that we have a simplified version of our shapefile of interest we can save it. In this way, in the future we can simply import it and work directly on the area of interest. Note that to be saved the file should be a <code>SpatialPolygonsDataFrame</code>. The following code will create a folder call “temp” with the shape file inside.</p>
+<p>Now that we have a simplified version of our shapefile of interest we
+can save it. In this way, in the future we can simply import it and work
+directly on the area of interest. Note that to be saved the file should
+be a <code>SpatialPolygonsDataFrame</code>. The following code will
+create a folder call “temp” with the shape file inside.</p>
 <pre class="r"><code>shape_df = as(shape5, &#39;SpatialPolygonsDataFrame&#39;)
 writeOGR(shape_df, layer = &#39;shape5&#39;,&#39;temp/&#39; ,driver=&quot;ESRI Shapefile&quot;)</code></pre>
-<p>To import the shape file we can use the same command as before. From now on, until the end of the page, you can run the code (we use ‘eval=TRUE’). [add where to download the shape file TODO: Haakon]</p>
+<p>To import the shape file we can use the same command as before. From
+now on, until the end of the page, you can run the code (we use
+‘eval=TRUE’). [add where to download the shape file TODO: Haakon]</p>
 <pre class="r"><code>shape5 &lt;- readOGR(dsn = &quot;data/btopic127/&quot;, layer = &quot;shape5&quot;)</code></pre>
+<pre><code>## Warning: OGR support is provided by the sf and terra packages among
+## others</code></pre>
+<pre><code>## Warning: OGR support is provided by the sf and terra packages among
+## others</code></pre>
+<pre><code>## Warning: OGR support is provided by the sf and terra packages among
+## others</code></pre>
+<pre><code>## Warning: OGR support is provided by the sf and terra packages among
+## others</code></pre>
+<pre><code>## Warning: OGR support is provided by the sf and terra packages among
+## others</code></pre>
+<pre><code>## Warning: OGR support is provided by the sf and terra packages among
+## others</code></pre>
 <pre><code>## OGR data source with driver: ESRI Shapefile 
 ## Source: &quot;/Users/haakonbakka/Documents/GitHub/hc-private-code-and-web/web/webpage-source/data/btopic127&quot;, layer: &quot;shape5&quot;
 ## with 1 features
@@ -538,30 +607,42 @@ plot(new_sp)</code></pre>
 <p><img src="btopic127_files/figure-html/unnamed-chunk-17-1.png" width="1440" /></p>
 </div>
 </div>
-<div id="build-a-mesh-from-this-polygon" class="section level1">
-<h1><span class="header-section-number">4</span> Build a mesh from this polygon</h1>
-<p>In this section we show how to build a mesh from the polygon we just made. A similar example can be found in <a href="btopic104.html">BTopic104</a>.</p>
+<div id="build-a-mesh-from-this-polygon" class="section level1"
+number="4">
+<h1><span class="header-section-number">4</span> Build a mesh from this
+polygon</h1>
+<p>In this section we show how to build a mesh from the polygon we just
+made. A similar example can be found in <a
+href="btopic104.html">BTopic104</a>.</p>
 <pre class="r"><code>mesh_poly = inla.mesh.2d(boundary = new_sp, max.edge = 0.2)
 plot(mesh_poly, main = &#39;&#39;)</code></pre>
 <p><img src="btopic127_files/figure-html/unnamed-chunk-18-1.png" width="768" /></p>
-<p>Lets extend the study area. See <a href="btopic104.html">BTopic104</a> for how to specify the parameters to build a good mesh.</p>
+<p>Lets extend the study area. See <a
+href="btopic104.html">BTopic104</a> for how to specify the parameters to
+build a good mesh.</p>
 <pre class="r"><code>mesh_poly2 = inla.mesh.2d(boundary = new_sp, max.edge = c(0.1, 0.4),
                           cutoff = c(0.02))
 plot(mesh_poly2, main = &#39;&#39;)</code></pre>
 <p><img src="btopic127_files/figure-html/unnamed-chunk-19-1.png" width="768" /></p>
 </div>
-<div id="plotting-maps" class="section level1">
+<div id="plotting-maps" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Plotting Maps</h1>
-<div id="map-from-google" class="section level2">
+<div id="map-from-google" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Map from Google</h2>
-<p>This last section is dedicated to how to use the shape file to have a nice plot using the <code>ggmap</code> library. Let us import the map from Google.</p>
+<p>This last section is dedicated to how to use the shape file to have a
+nice plot using the <code>ggmap</code> library. Let us import the map
+from Google.</p>
 <pre class="r"><code>try({
   glgmap = get_map(location = shape5@bbox, maptype= &quot;terrain&quot;, zoom = 7)
   p = ggmap(glgmap) #p is the plot of glgmap
   print(p)
 })</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-20-1.png" width="576" /></p>
-<p>In case you have problems compiling this, we insert the plot below for comparison. <img src="fig/btopic127/ggmap1.jpg" width = "250" alt="The study area" align=center /></p>
+<pre><code>## Error in get_googlemap(center = location, zoom = zoom, maptype = maptype,  : 
+##   Google now requires an API key; see
+## `ggmap::register_google()`.</code></pre>
+<p>In case you have problems compiling this, we insert the plot below
+for comparison.
+<img src="fig/btopic127/ggmap1.jpg" width = "250" alt="The study area" align=center /></p>
 <p>We now highlight the area of interest.</p>
 <pre class="r"><code>try({
   p1 = p + xlab(&quot;Longitude&quot;) + ylab(&quot;Latitude&quot;) 
@@ -573,20 +654,39 @@ plot(mesh_poly2, main = &#39;&#39;)</code></pre>
                        fill = NA, colour = &quot;black&quot;, alpha = 1)
   print(p3)
 })</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-21-1.png" width="576" /></p>
+<pre><code>## Error in p + xlab(&quot;Longitude&quot;) : non-numeric argument to binary operator</code></pre>
 <p>Again, we manually insert the plot below.</p>
 <p><img src="fig/btopic127/ggmap2.jpg" width = "250" alt="The study area" align=center /></p>
 </div>
-<div id="transform-the-data-to-utm" class="section level2">
-<h2><span class="header-section-number">5.2</span> Transform the Data to UTM</h2>
-<p>UTM is one of the most common map projections today. The most important attribute of UTM is that it represents the size/dimensions of the area accurately. Let us transform the shape file into this format. Note that longitude and latitude is not a good representation! The procedure is the same as before, and we use the same function used for latitude longitude projection.</p>
-<pre class="r"><code>shape_utm = spTransform(shape5, CRS(&quot;+proj=utm +zone=35S ellps=WGS84&quot;)) </code></pre>
-<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;,
-## prefer_proj = prefer_proj): Discarded datum Unknown based on WGS84
-## ellipsoid in CRS definition</code></pre>
-<pre class="r"><code>plot(shape_utm)</code></pre>
-<p><img src="btopic127_files/figure-html/unnamed-chunk-22-1.png" width="768" /></p>
-<p>We see that the obtained map is a little bit crooked. It depends on the UTM/WGS84 projection. Looking at the code we had to specify a zone in the <span class="math inline">\(\texttt{CRS()}\)</span> function. The specification of the zone influences the relation between longitude and latitude. Unfortunately, the area that we have chosen is between two different UTM zones, 34S and 35S. To find UTM zones anywhere in the world check <a href="http://www.dmap.co.uk/utmworld.htm" class="uri">http://www.dmap.co.uk/utmworld.htm</a>. In the above example we can use either of 34S and 35S, because they both contain a large part of the study area.</p>
+<div id="transform-the-data-to-utm" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Transform the Data to
+UTM</h2>
+<p>UTM is one of the most common map projections today. The most
+important attribute of UTM is that it represents the size/dimensions of
+the area accurately. Let us transform the shape file into this format.
+Note that longitude and latitude is not a good representation! The
+procedure is the same as before, and we use the same function used for
+latitude longitude projection.</p>
+<pre class="r"><code>#```{r, message = F, fig.width=8, fig.height=8}
+## 13th april 2023:
+## This code no longer runs! Bummer!
+## If anyone knows how to fix, please let me know!
+try({
+  shape_utm = spTransform(shape5, CRS(&quot;+proj=utm +zone=35S ellps=WGS84&quot;)) 
+  plot(shape_utm)
+})</code></pre>
+<pre><code>## Error in h(simpleError(msg, call)) : 
+##   error in evaluating the argument &#39;CRSobj&#39; in selecting a method for function &#39;spTransform&#39;: NA</code></pre>
+<p>We see that the obtained map is a little bit crooked. It depends on
+the UTM/WGS84 projection. Looking at the code we had to specify a zone
+in the <span class="math inline">\(\texttt{CRS()}\)</span> function. The
+specification of the zone influences the relation between longitude and
+latitude. Unfortunately, the area that we have chosen is between two
+different UTM zones, 34S and 35S. To find UTM zones anywhere in the
+world check <a href="http://www.dmap.co.uk/utmworld.htm"
+class="uri">http://www.dmap.co.uk/utmworld.htm</a>. In the above example
+we can use either of 34S and 35S, because they both contain a large part
+of the study area.</p>
 </div>
 </div>
 
@@ -619,7 +719,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -628,6 +728,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

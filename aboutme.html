@@ -13,17 +13,25 @@
 
 <title>Haakon Bakka</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -35,11 +43,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -52,32 +55,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -87,10 +66,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -107,40 +82,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -168,7 +119,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -180,7 +131,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -190,11 +141,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -206,13 +174,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -220,16 +187,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -273,7 +233,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -305,12 +265,13 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
 <h1 class="title toc-ignore">Haakon Bakka</h1>
-<h4 class="date">Updated 4th December 2017, partially updated March 2021</h4>
+<h4 class="date">Updated 4th December 2017, partially updated March
+2021</h4>
 
 </div>
 
@@ -318,42 +279,100 @@ $(document).ready(function () {
 <p>I am the author of this website.</p>
 <div id="contact-details" class="section level3">
 <h3>Contact details</h3>
-<p>My permanent work email is <a href="mailto:bakka@r-inla.org" class="email">bakka@r-inla.org</a>, and my current work email is <a href="mailto:haakoncb@math.uio.no" class="email">haakoncb@math.uio.no</a>.</p>
+<p>My permanent work email is <a href="mailto:bakka@r-inla.org"
+class="email">bakka@r-inla.org</a>, and my current work email is <a
+href="mailto:haakoncb@math.uio.no"
+class="email">haakoncb@math.uio.no</a>.</p>
 </div>
 <div id="current-employment" class="section level3">
 <h3>Current employment</h3>
-<p>I work in the Sensor and Fraud groups as a PostDoc in statistics at the math department of the University of Oslo. My guides are Ingrid Glad and Ingrid Haff, the project is <a href="https://www.biginsight.no/">BigInsight</a>. Collaborators include the Norwegian Computing Centre.</p>
+<p>I work in the Sensor and Fraud groups as a PostDoc in statistics at
+the math department of the University of Oslo. My guides are Ingrid Glad
+and Ingrid Haff, the project is <a
+href="https://www.biginsight.no/">BigInsight</a>. Collaborators include
+the Norwegian Computing Centre.</p>
 </div>
 <div id="previous-employment" class="section level3">
 <h3>Previous employment</h3>
-<p>I worked in H<span class="math inline">\(\mathring{\text{a}}\)</span>vard Rue’s group in the statistics group in CEMSE in KAUST (King Abdullah University of Science and Technology) in Saudi Arabia. See <a href="https://bayescomp.kaust.edu.sa/Pages/Home.aspx">bayescomp.kaust.edu.sa</a>.</p>
+<p>I worked in H<span
+class="math inline">\(\mathring{\text{a}}\)</span>vard Rue’s group in
+the statistics group in CEMSE in KAUST (King Abdullah University of
+Science and Technology) in Saudi Arabia. See <a
+href="https://bayescomp.kaust.edu.sa/Pages/Home.aspx">bayescomp.kaust.edu.sa</a>.</p>
 </div>
 <div id="research-in-space-time-statistics" class="section level3">
 <h3>Research in space-time statistics</h3>
-<p>I spent several years designing spatial (and space-time) random effects to incorporate valid scientific assumptions. This research is based on the SPDE paper by Lindgren et. al. (2011) I also focus on avoiding overfitting through sensible multi-level priors (or penalties) (based on Penalising Complexity priors).</p>
-<p>Spatial statistics: You have data distributed in space, which, after all the fixed effects are modelled, still has a spatial structure.</p>
+<p>I spent several years designing spatial (and space-time) random
+effects to incorporate valid scientific assumptions. This research is
+based on the SPDE paper by Lindgren et. al. (2011) I also focus on
+avoiding overfitting through sensible multi-level priors (or penalties)
+(based on Penalising Complexity priors).</p>
+<p>Spatial statistics: You have data distributed in space, which, after
+all the fixed effects are modelled, still has a spatial structure.</p>
 </div>
 <div id="summary-of-phd" class="section level3">
 <h3>Summary of phd</h3>
-<p><strong>Title:</strong> Modeling Spatial Dependencies using Barriers and Different Terrains</p>
-<p>An important part of the discipline of statistics is being a service to other scientific disciplines, providing methods and procedures to analyse data that incorporate scientific knowledge in the analysis. We contributed to this effort, by improving upon previous work, to create useful models with a focus on ease-of-use, computational efficiency, and, most of all, ensuring that the assumptions of the model are realistic and aligned with scientific understanding.</p>
-<p>The Barrier model allows the user to impose barriers in the spatial model. For example, when modeling fish near the shore, the values on either side of land should not be strongly dependent. The classical stationary models smooth over land, while the Barrier model forces the fish to swim around.</p>
-<p>The Different Terrains model allows the user to model differences in the spatial behaviour in different areas. What is usually modelled as a factor (different means in each area) can now also be modelled as a change in the second order structure (the covariance).</p>
+<p><strong>Title:</strong> Modeling Spatial Dependencies using Barriers
+and Different Terrains</p>
+<p>An important part of the discipline of statistics is being a service
+to other scientific disciplines, providing methods and procedures to
+analyse data that incorporate scientific knowledge in the analysis. We
+contributed to this effort, by improving upon previous work, to create
+useful models with a focus on ease-of-use, computational efficiency,
+and, most of all, ensuring that the assumptions of the model are
+realistic and aligned with scientific understanding.</p>
+<p>The Barrier model allows the user to impose barriers in the spatial
+model. For example, when modeling fish near the shore, the values on
+either side of land should not be strongly dependent. The classical
+stationary models smooth over land, while the Barrier model forces the
+fish to swim around.</p>
+<p>The Different Terrains model allows the user to model differences in
+the spatial behaviour in different areas. What is usually modelled as a
+factor (different means in each area) can now also be modelled as a
+change in the second order structure (the covariance).</p>
 </div>
-<div id="generic-statistical-presentation---for-use-in-talks---not-up-to-date" class="section level3">
-<h3>Generic statistical presentation - for use in talks - not up to date</h3>
-<p>Haakon Bakka did a PhD in spatial statistics at NTNU in Norway, where his main supervisor was Håvard Rue. Haakon’s research is on fast spatial inference, where the spatial structure is designed to be consistent with scientific understanding of the underlying process. He uses stochastic partial differential equations to design the appropriate spatial correlation structure, in a computationally efficient manner. Shrinkage priors (for flexibility parameters) are also important for defining the underlying assumptions appropriately. He uses the integrated nested laplace approximations (through R-INLA) to make the models able to incorporate a diverse range of model components and likelihoods; e.g. misalignment and point patterns. His applications are focused on species distribution modeling, where the goal is to predict where the animals/plants are (usage maps), and describe the habitats (the factors that drive the population).</p>
+<div
+id="generic-statistical-presentation---for-use-in-talks---not-up-to-date"
+class="section level3">
+<h3>Generic statistical presentation - for use in talks - not up to
+date</h3>
+<p>Haakon Bakka did a PhD in spatial statistics at NTNU in Norway, where
+his main supervisor was Håvard Rue. Haakon’s research is on fast spatial
+inference, where the spatial structure is designed to be consistent with
+scientific understanding of the underlying process. He uses stochastic
+partial differential equations to design the appropriate spatial
+correlation structure, in a computationally efficient manner. Shrinkage
+priors (for flexibility parameters) are also important for defining the
+underlying assumptions appropriately. He uses the integrated nested
+laplace approximations (through R-INLA) to make the models able to
+incorporate a diverse range of model components and likelihoods;
+e.g. misalignment and point patterns. His applications are focused on
+species distribution modeling, where the goal is to predict where the
+animals/plants are (usage maps), and describe the habitats (the factors
+that drive the population).</p>
 </div>
-<div id="generic-presentation---for-use-in-inla-course-descriptions" class="section level3">
+<div id="generic-presentation---for-use-in-inla-course-descriptions"
+class="section level3">
 <h3>Generic presentation - for use in INLA course descriptions</h3>
-<p>Haakon Bakka did a PhD in spatial statistics at NTNU in Norway, where his main supervisor was Håvard Rue. His research is on fast spatial inference using R-INLA, where the spatial structure is designed to be consistent with scientific understanding of the underlying process. His applications are focused on species distribution modeling, especially on habitats and abundance of animals. He has given INLA/SPDE courses in Pamplona (Spain), Zurich (Switzerland), Valencia (Spain), Reykjavik (Iceland), Moncton (Canada) and Kaust (Saudi Arabia).</p>
+<p>Haakon Bakka did a PhD in spatial statistics at NTNU in Norway, where
+his main supervisor was Håvard Rue. His research is on fast spatial
+inference using R-INLA, where the spatial structure is designed to be
+consistent with scientific understanding of the underlying process. His
+applications are focused on species distribution modeling, especially on
+habitats and abundance of animals. He has given INLA/SPDE courses in
+Pamplona (Spain), Zurich (Switzerland), Valencia (Spain), Reykjavik
+(Iceland), Moncton (Canada) and Kaust (Saudi Arabia).</p>
 </div>
 <div id="phd-supervisors" class="section level3">
 <h3>PhD Supervisors</h3>
 <ul>
-<li>Håvard Rue (<a href="http://www.math.ntnu.no/~hrue/" class="uri">http://www.math.ntnu.no/~hrue/</a>)</li>
-<li>Daniel Simpson (<a href="http://people.bath.ac.uk/ds921/" class="uri">http://people.bath.ac.uk/ds921/</a>)</li>
-<li>Janine Illian (<a href="http://biology.st-andrews.ac.uk/contact/staffProfile.aspx?sunID=jbi" class="uri">http://biology.st-andrews.ac.uk/contact/staffProfile.aspx?sunID=jbi</a>)</li>
+<li>Håvard Rue (<a href="http://www.math.ntnu.no/~hrue/"
+class="uri">http://www.math.ntnu.no/~hrue/</a>)</li>
+<li>Daniel Simpson (<a href="http://people.bath.ac.uk/ds921/"
+class="uri">http://people.bath.ac.uk/ds921/</a>)</li>
+<li>Janine Illian (<a
+href="http://biology.st-andrews.ac.uk/contact/staffProfile.aspx?sunID=jbi"
+class="uri">http://biology.st-andrews.ac.uk/contact/staffProfile.aspx?sunID=jbi</a>)</li>
 </ul>
 </div>
 <div id="teaching" class="section level3">
@@ -361,8 +380,10 @@ $(document).ready(function () {
 <ul>
 <li>2013 Autumn: Lecturer Calculus 1 (TMA4100)</li>
 <li>2014 Autumn: Teaching Assistant Statistics 1 (TMA 4240)</li>
-<li>2015: Stand-in for several lecturers. Creating electronic learning materials.</li>
-<li>2016: Giving INLA and SPDE courses (Pamplona, Zurich, Valencia, Reykjavik)</li>
+<li>2015: Stand-in for several lecturers. Creating electronic learning
+materials.</li>
+<li>2016: Giving INLA and SPDE courses (Pamplona, Zurich, Valencia,
+Reykjavik)</li>
 <li>2017: INLAcourse Moncton (Canada), Kaust (Saudi Arabia)</li>
 </ul>
 </div>
@@ -370,12 +391,26 @@ $(document).ready(function () {
 <h3>A picture</h3>
 <p><img src="fig/bakka.jpg" alt="Drawing" style="width: 200px;"/></p>
 </div>
-<div id="example-course-abstract-for-an-inlacourse" class="section level3">
+<div id="example-course-abstract-for-an-inlacourse"
+class="section level3">
 <h3>Example course abstract for an INLAcourse</h3>
-<p>The INLAcourse starts with a general overview of the possibilities in INLA, for applied research and for model development. We will proceed to examples of generalised linear models with several random effects. We discuss the cool ideas making INLA fast; why most likelihoods are near-Gaussian in their contribution to the posterior, how to represent random effects with sparse matrices, and more.</p>
-<p>The last part of the course is looking at spatial random effects and how they fit into the INLA framework; using the brilliant SPDE approach. In the SPDE approach we approximate the spatial random effect itself, representing it in the entire study area, without needing to know the observation locations.</p>
-<p>At the end of the course we will fit the hurdle model, a spatial joint model of bernoulli and binomial data (<a href="https://stats.stackexchange.com/questions/81457/what-is-the-difference-between-zero-inflated-and-hurdle-models" class="uri">https://stats.stackexchange.com/questions/81457/what-is-the-difference-between-zero-inflated-and-hurdle-models</a>).</p>
-<p>Inference in INLA is so fast that we can run all examples live in class!</p>
+<p>The INLAcourse starts with a general overview of the possibilities in
+INLA, for applied research and for model development. We will proceed to
+examples of generalised linear models with several random effects. We
+discuss the cool ideas making INLA fast; why most likelihoods are
+near-Gaussian in their contribution to the posterior, how to represent
+random effects with sparse matrices, and more.</p>
+<p>The last part of the course is looking at spatial random effects and
+how they fit into the INLA framework; using the brilliant SPDE approach.
+In the SPDE approach we approximate the spatial random effect itself,
+representing it in the entire study area, without needing to know the
+observation locations.</p>
+<p>At the end of the course we will fit the hurdle model, a spatial
+joint model of bernoulli and binomial data (<a
+href="https://stats.stackexchange.com/questions/81457/what-is-the-difference-between-zero-inflated-and-hurdle-models"
+class="uri">https://stats.stackexchange.com/questions/81457/what-is-the-difference-between-zero-inflated-and-hurdle-models</a>).</p>
+<p>Inference in INLA is so fast that we can run all examples live in
+class!</p>
 </div>
 
 
@@ -405,7 +440,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>

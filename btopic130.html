@@ -14,20 +14,28 @@
 
 <title>Spatial modeling without spatial field (Calcium data)</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,25 +343,32 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">Spatial modeling without spatial field (Calcium data)</h1>
+<h1 class="title toc-ignore">Spatial modeling without spatial field
+(Calcium data)</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic130 updated 09 Sept. 2018</h4>
 
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>I am not sure if this topic should be included.</p>
-<p>This topic is a simple example of a spatial model for a real dataset. This example uses the same data as <a href="btopic108.html">BTopic108</a>, and explores spatial models without a spatial effect. (If that sentence sounds strange, don’t blame me.)</p>
-<div id="initialisation-and-dependency" class="section level2">
-<h2><span class="header-section-number">1.1</span> Initialisation and dependency</h2>
-<p>We load the libraries and functions we need. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
+<p>This topic is a simple example of a spatial model for a real dataset.
+This example uses the same data as <a
+href="btopic108.html">BTopic108</a>, and explores spatial models without
+a spatial effect. (If that sentence sounds strange, don’t blame me.)</p>
+<div id="initialisation-and-dependency" class="section level2"
+number="1.1">
+<h2><span class="header-section-number">1.1</span> Initialisation and
+dependency</h2>
+<p>We load the libraries and functions we need. You may need to install
+these libraries (<a href="btopic109.html">Installation and general
+troubleshooting</a>).</p>
 <pre class="r"><code>library(INLA); library(sp); library(fields)
 library(geoR)
 library(viridisLite)
@@ -409,7 +376,7 @@ library(viridisLite)
 rm(list=ls())
 options(width=70, digits=2)</code></pre>
 </div>
-<div id="data" class="section level2">
+<div id="data" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Data</h2>
 <pre class="r"><code>data(&#39;ca20&#39;)
 class(ca20)</code></pre>
@@ -447,16 +414,20 @@ class(ca20)</code></pre>
 ## Other elements in the geodata object
 ## [1] &quot;reg1&quot; &quot;reg2&quot; &quot;reg3&quot;</code></pre>
 </div>
-<div id="data-citations" class="section level2">
+<div id="data-citations" class="section level2" number="1.3">
 <h2><span class="header-section-number">1.3</span> Data citations</h2>
-<p>For a description of the data see <code>?ca20</code> and references therein.</p>
+<p>For a description of the data see <code>?ca20</code> and references
+therein.</p>
 </div>
 </div>
-<div id="data-1" class="section level1">
+<div id="data-1" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Data</h1>
-<div id="re-scaling-and-re-naming-as-in-108" class="section level2">
-<h2><span class="header-section-number">2.1</span> Re-scaling and re-naming (as in 108)</h2>
-<p>First we scale and re-name the data, so that we are consistent with the conventions used in the other topics.</p>
+<div id="re-scaling-and-re-naming-as-in-108" class="section level2"
+number="2.1">
+<h2><span class="header-section-number">2.1</span> Re-scaling and
+re-naming (as in 108)</h2>
+<p>First we scale and re-name the data, so that we are consistent with
+the conventions used in the other topics.</p>
 <pre class="r"><code>df = data.frame(y = ca20$data, locx = ca20[[1]][ , 1], locy = ca20[[1]][ , 2], ca20[[3]])
 spatial.scaling = 100
 df$locx = (df$locx - min(df$locx))/spatial.scaling
@@ -467,8 +438,9 @@ df$y = df$y-50</code></pre>
 <pre class="r"><code>df$area1 = (df$area==1)*1
 df$area2 = (df$area==2)*1</code></pre>
 </div>
-<div id="exploring-the-data" class="section level2">
-<h2><span class="header-section-number">2.2</span> Exploring the data</h2>
+<div id="exploring-the-data" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Exploring the
+data</h2>
 <p>First we do simple summary and compute the correlations.</p>
 <pre class="r"><code>summary(df)</code></pre>
 <pre><code>##        y              locx           locy        altitude     area   
@@ -500,28 +472,38 @@ df$area2 = (df$area==2)*1</code></pre>
 ## locy                -0.520  0.249  1.00    -0.75               -0.83
 ## altitude             0.297 -0.418 -0.75     1.00                0.63
 ## as.numeric(df[, 5])  0.485 -0.280 -0.83     0.63                1.00</code></pre>
-<p>Next we plot the relationship between <code>altitude</code> and the response.</p>
+<p>Next we plot the relationship between <code>altitude</code> and the
+response.</p>
 <pre class="r"><code>plot(df$altitude, df$y)
 abline(lm(df$y~df$altitude), col=&quot;red&quot;)</code></pre>
 <p><img src="btopic130_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 </div>
-<div id="linear-models" class="section level1">
+<div id="linear-models" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Linear models</h1>
 <p>We define several predictors</p>
 <pre class="r"><code>formula = list()
 formula[[1]] = y ~ altitude
 formula[[2]] = y ~ f(altitude, model=&quot;rw1&quot;, scale.model = T, hyper = list(prec = list(prior=&quot;pc.prec&quot;, param=c(1,0.01))))</code></pre>
-<p>Next we define the observation likelihood (also known as <a href="words.html">Stage 1</a>). You will often see this in the INLA call, but, for increased clarity/readability, I prefer to do it separately.</p>
+<p>Next we define the observation likelihood (also known as <a
+href="words.html">Stage 1</a>). You will often see this in the INLA
+call, but, for increased clarity/readability, I prefer to do it
+separately.</p>
 <pre class="r"><code>prior.median.gaus.sd = 1
 # - Think about this value
 # - Remember sd(df$y)
 family = &#39;gaussian&#39;
 control.family = list(hyper = list(prec = list(
   prior = &quot;pc.prec&quot;, fixed = FALSE, param = c(prior.median.gaus.sd,0.5))))</code></pre>
-<p>In total, this says that the observation likelihood is Gaussian, with a parameter <span class="math inline">\(\sigma\)</span>, and that the prior is exponential <span class="math display">\[\pi(\sigma) = \lambda e^{-\lambda x}, \]</span> where <span class="math inline">\(\lambda\)</span> is determined by setting the median <span class="math inline">\(\log(2)/\lambda\)</span> at <code>prior.median.gaus.sd</code>.</p>
+<p>In total, this says that the observation likelihood is Gaussian, with
+a parameter <span class="math inline">\(\sigma\)</span>, and that the
+prior is exponential <span class="math display">\[\pi(\sigma) = \lambda
+e^{-\lambda x}, \]</span> where <span
+class="math inline">\(\lambda\)</span> is determined by setting the
+median <span class="math inline">\(\log(2)/\lambda\)</span> at
+<code>prior.median.gaus.sd</code>.</p>
 </div>
-<div id="running-inla" class="section level1">
+<div id="running-inla" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Running INLA</h1>
 <pre class="r"><code>res = list()
 for (i in 1:2){
@@ -532,22 +514,40 @@ res[[i]] &lt;- inla(formula[[i]], data=df,
             control.inla = list(int.strategy=&#39;eb&#39;),
             control.fixed = list(expand.factor.strategy=&#39;inla&#39;))
 }</code></pre>
-<p>To see detailed output while the inla call is running, please set <code>verbose=TRUE</code>. The <code>control.xxx</code> comments illustrate a few optional statements to the inla call. There are many other options available.</p>
-<div id="first-results" class="section level2">
+<p>To see detailed output while the inla call is running, please set
+<code>verbose=TRUE</code>. The <code>control.xxx</code> comments
+illustrate a few optional statements to the inla call. There are many
+other options available.</p>
+<div id="first-results" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> First results</h2>
 <pre class="r"><code>summary(res[[1]])</code></pre>
 <pre><code>## 
 ## Call:
-##    c(&quot;inla(formula = formula[[i]], family = family, data = df, 
-##    control.predictor = list(compute = T), &quot;, &quot; control.family = 
-##    control.family, control.inla = list(int.strategy = \&quot;eb\&quot;), &quot;, 
-##    &quot; control.fixed = list(expand.factor.strategy = \&quot;inla\&quot;))&quot; ) 
+##    c(&quot;inla.core(formula = formula, family = family, contrasts = 
+##    contrasts, &quot;, &quot; data = data, quantiles = quantiles, E = E, 
+##    offset = offset, &quot;, &quot; scale = scale, weights = weights, 
+##    Ntrials = Ntrials, strata = strata, &quot;, &quot; lp.scale = lp.scale, 
+##    link.covariates = link.covariates, verbose = verbose, &quot;, &quot; 
+##    lincomb = lincomb, selection = selection, control.compute = 
+##    control.compute, &quot;, &quot; control.predictor = control.predictor, 
+##    control.family = control.family, &quot;, &quot; control.inla = 
+##    control.inla, control.fixed = control.fixed, &quot;, &quot; control.mode 
+##    = control.mode, control.expert = control.expert, &quot;, &quot; 
+##    control.hazard = control.hazard, control.lincomb = 
+##    control.lincomb, &quot;, &quot; control.update = control.update, 
+##    control.lp.scale = control.lp.scale, &quot;, &quot; control.pardiso = 
+##    control.pardiso, only.hyperparam = only.hyperparam, &quot;, &quot; 
+##    inla.call = inla.call, inla.arg = inla.arg, num.threads = 
+##    num.threads, &quot;, &quot; blas.num.threads = blas.num.threads, keep = 
+##    keep, working.directory = working.directory, &quot;, &quot; silent = 
+##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
+##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.42, Running = 0.16, Post = 0.165, Total = 2.75 
+##     Pre = 2.67, Running = 0.45, Post = 0.0162, Total = 3.14 
 ## Fixed effects:
 ##             mean   sd 0.025quant 0.5quant 0.97quant mode kld
-## (Intercept) 0.68 0.78      -0.85     0.68       2.2 0.68   0
-## altitude    4.92 1.17       2.62     4.92       7.1 4.92   0
+## (Intercept) 0.68 0.78      -0.85     0.68       2.1 0.68   0
+## altitude    4.92 1.18       2.62     4.92       7.1 4.92   0
 ## 
 ## Model hyperparameters:
 ##                                          mean    sd 0.025quant
@@ -555,24 +555,23 @@ res[[i]] &lt;- inla(formula[[i]], data=df,
 ##                                         0.5quant 0.97quant  mode
 ## Precision for the Gaussian observations    0.009     0.011 0.009
 ## 
-## Expected number of effective parameters(stdev): 2.00(0.00)
-## Number of equivalent replicates : 89.06 
-## 
 ## Marginal log-Likelihood:  -681.93 
-## Posterior marginals for the linear predictor and
-##  the fitted values are computed</code></pre>
+##  is computed 
+## Posterior summaries for the linear predictor and the fitted values are computed
+## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
 </div>
-<div id="comparing-fixed-effects" class="section level2">
-<h2><span class="header-section-number">4.2</span> Comparing fixed effects</h2>
+<div id="comparing-fixed-effects" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Comparing fixed
+effects</h2>
 <pre class="r"><code>res[[1]]$summary.fixed[, 1:5]</code></pre>
 <pre><code>##             mean   sd 0.025quant 0.5quant 0.97quant
-## (Intercept) 0.68 0.78      -0.85     0.68       2.2
+## (Intercept) 0.68 0.78      -0.85     0.68       2.1
 ## altitude    4.92 1.17       2.62     4.92       7.1</code></pre>
 <pre class="r"><code>res[[2]]$summary.fixed[, 1:5]</code></pre>
 <pre><code>##             mean   sd 0.025quant 0.5quant 0.97quant
-## (Intercept) 0.17 0.82       -1.4     0.17       1.7</code></pre>
+## (Intercept) 0.18 0.82       -1.4     0.18       1.7</code></pre>
 </div>
-<div id="random-effect" class="section level2">
+<div id="random-effect" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Random effect</h2>
 <pre class="r"><code>plot(df$altitude, df$y)
 effect = df$altitude*res[[1]]$summary.fixed$mean[2]
@@ -584,8 +583,9 @@ lines(sort(unique(df$altitude)), res[[2]]$summary.random$altitude$`0.025quant`, 
 lines(sort(unique(df$altitude)), res[[2]]$summary.random$altitude$`0.97quant`, col=&quot;blue&quot;)</code></pre>
 <p><img src="btopic130_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
-<div id="plotting-predictors" class="section level2">
-<h2><span class="header-section-number">4.4</span> Plotting predictors</h2>
+<div id="plotting-predictors" class="section level2" number="4.4">
+<h2><span class="header-section-number">4.4</span> Plotting
+predictors</h2>
 <p>Now we include intercept and any other terms.</p>
 <pre class="r"><code>plot(df$altitude, df$y)
 effect = res[[1]]$summary.linear.predictor$mean
@@ -598,9 +598,9 @@ points(df$altitude, res[[2]]$summary.linear.predictor$`0.97quant`, col=&quot;blu
 <p><img src="btopic130_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 </div>
 </div>
-<div id="comments" class="section level1">
+<div id="comments" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Comments</h1>
-<div id="references" class="section level2">
+<div id="references" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> References</h2>
 </div>
 </div>
@@ -634,7 +634,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -643,6 +643,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

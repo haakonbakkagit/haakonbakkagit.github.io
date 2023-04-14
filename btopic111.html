@@ -14,20 +14,28 @@
 
 <title>Bulge in Ramsay’s horseshoe and the Barrier model</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,26 +343,34 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">Bulge in Ramsay’s horseshoe and the Barrier model</h1>
+<h1 class="title toc-ignore">Bulge in Ramsay’s horseshoe and the Barrier
+model</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic111 updated 6. April 2017</h4>
 
 </div>
 
 
-
-<div id="about" class="section level2">
+<div id="about" class="section level2" number="0.1">
 <h2><span class="header-section-number">0.1</span> About</h2>
-<p>Plan: Do not use this topic, ever. Reason: This adds more “stuff” than it increases our understanding! Tradeoff not worth it.</p>
-<p>In this topic we use Ramsay’s horseshoe to compare the Barrier model to other solutions of the barrier problem. The previous topic is very similar to this one!</p>
+<p>Plan: Do not use this topic, ever. Reason: This adds more “stuff”
+than it increases our understanding! Tradeoff not worth it.</p>
+<p>In this topic we use Ramsay’s horseshoe to compare the Barrier model
+to other solutions of the barrier problem. The previous topic is very
+similar to this one!</p>
 </div>
-<div id="initialisation" class="section level2">
-<h2><span class="header-section-number">0.2</span> 0. Initialisation</h2>
-<p>We load the libraries and functions we need. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>). Feel free to save the web location where the functions are defined as an R-file on your computer. We also set random seeds to be used later.</p>
+<div id="initialisation" class="section level2" number="0.2">
+<h2><span class="header-section-number">0.2</span> 0.
+Initialisation</h2>
+<p>We load the libraries and functions we need. You may need to install
+these libraries (<a href="btopic109.html">Installation and general
+troubleshooting</a>). Feel free to save the web location where the
+functions are defined as an R-file on your computer. We also set random
+seeds to be used later.</p>
 <pre class="r"><code>library(INLA)
 library(mgcv)
 
@@ -414,7 +382,7 @@ source(&#39;functions-barriers-dt-models-march2017.R&#39;)
 set.seed(2016)
 set.inla.seed = 2016</code></pre>
 </div>
-<div id="input" class="section level2">
+<div id="input" class="section level2" number="0.3">
 <h2><span class="header-section-number">0.3</span> Input</h2>
 <pre class="r"><code>N.loc = 100
 # - number of locations
@@ -424,9 +392,13 @@ sigma.eps = 0.05
 # - Wood uses 0.05 (when do.increase = F)
 global.zlim = c(-0.3, 1.1)</code></pre>
 </div>
-<div id="code-from-the-mgcv-library-fs.test" class="section level2">
-<h2><span class="header-section-number">0.4</span> 1. Code from the <code>mgcv</code> library <code>?fs.test</code></h2>
-<p>The code has been edited to include <code>b = 0</code>, to rescale the values, and to make the plot of the same type as the inference results.</p>
+<div id="code-from-the-mgcv-library-fs.test" class="section level2"
+number="0.4">
+<h2><span class="header-section-number">0.4</span> 1. Code from the
+<code>mgcv</code> library <code>?fs.test</code></h2>
+<p>The code has been edited to include <code>b = 0</code>, to rescale
+the values, and to make the plot of the same type as the inference
+results.</p>
 <pre class="r"><code>## plot the function, and its boundary...
 fsb &lt;- fs.boundary()
 m&lt;-300;n&lt;-150 
@@ -443,7 +415,7 @@ contour(xm,yn,tru.matrix,levels=seq(global.zlim[1], global.zlim[2],len=10),add=T
 <pre class="r"><code>range(tru, na.rm = T)</code></pre>
 <pre><code>## [1] 1.7e-08 9.6e-01</code></pre>
 </div>
-<div id="data" class="section level2">
+<div id="data" class="section level2" number="0.5">
 <h2><span class="header-section-number">0.5</span> 2. Data</h2>
 <pre class="r"><code>dat = data.frame(y = tru, locx = xx, locy=yy)
 dat = dat[!is.na(dat$y), ]
@@ -463,8 +435,9 @@ str(df)</code></pre>
 ##  3rd Qu.: 0.48   3rd Qu.: 2.5   3rd Qu.: 0.53  
 ##  Max.   : 1.05   Max.   : 3.4   Max.   : 0.88</code></pre>
 </div>
-<div id="polygons-and-the-mesh" class="section level2">
-<h2><span class="header-section-number">0.6</span> 3. Polygons and the Mesh</h2>
+<div id="polygons-and-the-mesh" class="section level2" number="0.6">
+<h2><span class="header-section-number">0.6</span> 3. Polygons and the
+Mesh</h2>
 <pre class="r"><code>p = Polygon(cbind(fsb$x, fsb$y))
 p = Polygons(list(p), ID = &quot;none&quot;)
 poly = SpatialPolygons(list(p))
@@ -487,8 +460,9 @@ plot(mesh, main=&quot;Our mesh&quot;, lwd=0.5)</code></pre>
 <pre class="r"><code>mesh$n</code></pre>
 <pre><code>## [1] 2116</code></pre>
 </div>
-<div id="stack-and-a-matrix" class="section level2">
-<h2><span class="header-section-number">0.7</span> 4. Stack and A matrix</h2>
+<div id="stack-and-a-matrix" class="section level2" number="0.7">
+<h2><span class="header-section-number">0.7</span> 4. Stack and A
+matrix</h2>
 <pre class="r"><code>A.i.s = inla.spde.make.A(mesh, loc=cbind(df$locx, df$locy))
 stk = inla.stack(data=list(y=df$y), 
                     effects=list(s=1:mesh$n,
@@ -496,9 +470,11 @@ stk = inla.stack(data=list(y=df$y),
                    A=list(A.i.s, 1),
                     remove.unused = FALSE, tag=&#39;est&#39;) </code></pre>
 </div>
-<div id="stationary-model" class="section level2">
-<h2><span class="header-section-number">0.8</span> 5. Stationary model</h2>
-<p>To set up the stationary spatial model, we first define the spatial Model Component.</p>
+<div id="stationary-model" class="section level2" number="0.8">
+<h2><span class="header-section-number">0.8</span> 5. Stationary
+model</h2>
+<p>To set up the stationary spatial model, we first define the spatial
+Model Component.</p>
 <pre class="r"><code>prior.range = c(1, .5)
 prior.sigma = c(3, 0.01)
 spde = inla.spde2.pcmatern(mesh, prior.range=prior.range, prior.sigma=prior.sigma)
@@ -510,8 +486,9 @@ spde = inla.spde2.pcmatern(mesh, prior.range=prior.range, prior.sigma=prior.sigm
 M[[1]] = list(shortname=&quot;stationary-model&quot;)
 M[[1]]$formula = y~ -1+m + f(s, model=spde)</code></pre>
 </div>
-<div id="barrier-models" class="section level2">
-<h2><span class="header-section-number">0.9</span> 6. Barrier models</h2>
+<div id="barrier-models" class="section level2" number="0.9">
+<h2><span class="header-section-number">0.9</span> 6. Barrier
+models</h2>
 <p>First we divide up the mesh accoring to our study area polygon.</p>
 <pre class="r"><code>mesh = dt.mesh.addon.posTri(mesh)
 # - compute the triangle positions
@@ -520,21 +497,31 @@ normal = over(poly, SpatialPoints(mesh$posTri), returnList=T)
 normal = unlist(normal)
 Omega = dt.Omega(list(normal, 1:mesh$t), mesh)
 Omega.SP = dt.polygon.omega(mesh, Omega)</code></pre>
-<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
-## intersection at or near point -0.90000000000000002 0</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;):
+## Self-intersection at or near point 2.2781786199999998
+## -0.59843862000000003</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
 <pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider
 ## using set_RGEOS_CheckValidity(2L)</code></pre>
-<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
-## intersection at or near point -2.3999999999999999 -0.47688736999999998</code></pre>
+<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;):
+## Self-intersection at or near point 0.18499507000000001
+## -1.9259744700000001</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
 <pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider
 ## using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre class="r"><code>plot(Omega.SP[[2]], col=&quot;grey&quot;, main=&quot;The barrier region (in grey)&quot;)</code></pre>
 <p><img src="btopic111_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre class="r"><code>Q.barrier = dt.create.Q(mesh, Omega, 
-                        fixed.ranges = c(NA, 0.5))
-# - We fix the barrier range to a different value than we 
+                        fixed.ranges = c(NA, 0.5))</code></pre>
+<pre><code>## Warning in sparseMatrix(i = index.i, j = index.j, x = Aij, dims =
+## c(mesh$n, : &#39;giveCsparse&#39; is deprecated; setting repr=&quot;T&quot; for you
+
+## Warning in sparseMatrix(i = index.i, j = index.j, x = Aij, dims =
+## c(mesh$n, : &#39;giveCsparse&#39; is deprecated; setting repr=&quot;T&quot; for you
+
+## Warning in sparseMatrix(i = index.i, j = index.j, x = Aij, dims =
+## c(mesh$n, : &#39;giveCsparse&#39; is deprecated; setting repr=&quot;T&quot; for you</code></pre>
+<pre class="r"><code># - We fix the barrier range to a different value than we 
 #   used for simulations
 # - - Why? It does not matter, as long as it is &#39;small&#39; 
 #     the models are very
@@ -553,12 +540,25 @@ log.prior = dt.create.prior.log.exp(
 
 barrier.model = dt.inla.model(
   Q = Q.barrier, log.prior=log.prior)</code></pre>
+<pre><code>## Warning in sparseMatrix(i = 1:N, j = 1:N, x = 1/Cdiag, dims = c(N,
+## N), giveCsparse = FALSE): &#39;giveCsparse&#39; is deprecated; setting
+## repr=&quot;T&quot; for you</code></pre>
+<pre><code>## Warning in sparseMatrix(i = 1:N, j = 1:N, x = 1/Cdiag, dims = c(N,
+## N), giveCsparse = FALSE): &#39;giveCsparse&#39; is deprecated; setting
+## repr=&quot;T&quot; for you
+
+## Warning in sparseMatrix(i = 1:N, j = 1:N, x = 1/Cdiag, dims = c(N,
+## N), giveCsparse = FALSE): &#39;giveCsparse&#39; is deprecated; setting
+## repr=&quot;T&quot; for you</code></pre>
 <pre class="r"><code>M[[2]] = list(shortname=&quot;barrier-model&quot;)
 M[[2]]$formula = y~ -1+m + f(s, model=barrier.model)</code></pre>
 </div>
-<div id="stationary-model-where-the-mesh-stops-at-the-boundary" class="section level2">
-<h2><span class="header-section-number">0.10</span> 7. Stationary model where the mesh stops at the boundary</h2>
-<p>This is similar to FELSPLINE, as it uses the Neumann boundary condition!</p>
+<div id="stationary-model-where-the-mesh-stops-at-the-boundary"
+class="section level2" number="0.10">
+<h2><span class="header-section-number">0.10</span> 7. Stationary model
+where the mesh stops at the boundary</h2>
+<p>This is similar to FELSPLINE, as it uses the Neumann boundary
+condition!</p>
 <pre class="r"><code>mesh2 = inla.mesh.2d(boundary=poly,
                     max.edge = max.edge,
                     #cutoff = 0.1,
@@ -568,8 +568,10 @@ plot(mesh2, main=&quot;The second mesh&quot;, lwd=0.5)</code></pre>
 <p><img src="btopic111_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <pre class="r"><code>mesh2$n</code></pre>
 <pre><code>## [1] 1697</code></pre>
-<div id="this-stack-and-a-matrix" class="section level3">
-<h3><span class="header-section-number">0.10.1</span> This Stack and A matrix</h3>
+<div id="this-stack-and-a-matrix" class="section level3"
+number="0.10.1">
+<h3><span class="header-section-number">0.10.1</span> This Stack and A
+matrix</h3>
 <pre class="r"><code>A.i.s2 = inla.spde.make.A(mesh2, loc=cbind(df$locx, df$locy))
 stk2 = inla.stack(data=list(y=df$y), 
                     effects=list(s=1:mesh2$n,
@@ -577,9 +579,10 @@ stk2 = inla.stack(data=list(y=df$y),
                    A=list(A.i.s2, 1),
                     remove.unused = FALSE, tag=&#39;est&#39;) </code></pre>
 </div>
-<div id="this-model" class="section level3">
+<div id="this-model" class="section level3" number="0.10.2">
 <h3><span class="header-section-number">0.10.2</span> This model</h3>
-<p>To set up the stationary spatial model, we first define the spatial Model Component.</p>
+<p>To set up the stationary spatial model, we first define the spatial
+Model Component.</p>
 <pre class="r"><code>spde2 = inla.spde2.pcmatern(mesh2, prior.range=prior.range, prior.sigma=prior.sigma)</code></pre>
 <p>Then we define the formula.</p>
 <pre class="r"><code>M[[3]] = list(shortname=&quot;neumann-model&quot;)
@@ -587,8 +590,9 @@ M[[3]]$formula = y~ -1+m + f(s, model=spde2)
 M[[3]]$stack = stk2</code></pre>
 </div>
 </div>
-<div id="running-all-the-models" class="section level2">
-<h2><span class="header-section-number">0.11</span> 8. Running all the models</h2>
+<div id="running-all-the-models" class="section level2" number="0.11">
+<h2><span class="header-section-number">0.11</span> 8. Running all the
+models</h2>
 <p>Set up the initial values.</p>
 <pre class="r"><code>## Initial values
 # - speeds up computations
@@ -597,7 +601,8 @@ M[[3]]$stack = stk2</code></pre>
 M[[1]]$init = c(7.142,0.314,-0.648)
 M[[2]]$init = c(6.986,-1.135,-0.603)
 M[[3]]$init = c(7.221,-0.953,-1.383)</code></pre>
-<p>Next, we run the inference for the our models. Note that this can take up to 30 minutes!</p>
+<p>Next, we run the inference for the our models. Note that this can
+take up to 30 minutes!</p>
 <pre class="r"><code>hyper.iid = list(prec = list(prior = &#39;pc.prec&#39;, param = prior.sigma)) 
 # - have the same prior for noise sigma and spatial field sigma
 
@@ -626,27 +631,41 @@ time.taken &lt;- end.time - start.time
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
 }</code></pre>
-<pre><code>## [1] &quot;6.389,0.351,-0.588&quot;
-## [1] &quot;6.316,-1.121,-0.669&quot;
-## [1] &quot;6.124,-1.028,-1.363&quot;</code></pre>
+<pre><code>## [1] &quot;6.398,0.504,-0.464&quot;
+## [1] &quot;6.369,-1.113,-0.661&quot;
+## [1] &quot;6.154,-1.032,-1.359&quot;</code></pre>
 </div>
-<div id="summaries" class="section level2">
+<div id="summaries" class="section level2" number="0.12">
 <h2><span class="header-section-number">0.12</span> 9. Summaries</h2>
 <pre class="r"><code>print(M[[1]]$shortname)</code></pre>
 <pre><code>## [1] &quot;stationary-model&quot;</code></pre>
 <pre class="r"><code>summary(M[[1]]$res)</code></pre>
 <pre><code>## 
 ## Call:
-##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data 
-##    = inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
-##    inla.stack.A(stack)), control.family = list(hyper = 
-##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
-##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
+##    c(&quot;inla.core(formula = formula, family = family, contrasts = 
+##    contrasts, &quot;, &quot; data = data, quantiles = quantiles, E = E, 
+##    offset = offset, &quot;, &quot; scale = scale, weights = weights, 
+##    Ntrials = Ntrials, strata = strata, &quot;, &quot; lp.scale = lp.scale, 
+##    link.covariates = link.covariates, verbose = verbose, &quot;, &quot; 
+##    lincomb = lincomb, selection = selection, control.compute = 
+##    control.compute, &quot;, &quot; control.predictor = control.predictor, 
+##    control.family = control.family, &quot;, &quot; control.inla = 
+##    control.inla, control.fixed = control.fixed, &quot;, &quot; control.mode 
+##    = control.mode, control.expert = control.expert, &quot;, &quot; 
+##    control.hazard = control.hazard, control.lincomb = 
+##    control.lincomb, &quot;, &quot; control.update = control.update, 
+##    control.lp.scale = control.lp.scale, &quot;, &quot; control.pardiso = 
+##    control.pardiso, only.hyperparam = only.hyperparam, &quot;, &quot; 
+##    inla.call = inla.call, inla.arg = inla.arg, num.threads = 
+##    num.threads, &quot;, &quot; blas.num.threads = blas.num.threads, keep = 
+##    keep, working.directory = working.directory, &quot;, &quot; silent = 
+##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
+##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.4, Running = 5.69, Post = 0.285, Total = 9.37 
+##     Pre = 3.29, Running = 2.31, Post = 0.0656, Total = 5.66 
 ## Fixed effects:
 ##   mean   sd 0.025quant 0.5quant 0.97quant mode kld
-## m 0.69 0.22       0.25     0.69       1.1 0.69   0
+## m 0.75 0.27       0.21     0.75       1.3 0.75   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -654,60 +673,77 @@ time.taken &lt;- end.time - start.time
 ## 
 ## Model hyperparameters:
 ##                                           mean      sd 0.025quant
-## Precision for the Gaussian observations 755.11 468.319    229.537
-## Range for s                               1.76   0.635      0.972
-## Stdev for s                               0.65   0.177      0.414
+## Precision for the Gaussian observations 756.27 487.822    216.953
+## Range for s                               1.94   0.821      0.896
+## Stdev for s                               0.71   0.241      0.380
 ##                                         0.5quant 0.97quant    mode
-## Precision for the Gaussian observations  635.367   1884.79 466.055
-## Range for s                                1.608      3.30   1.344
-## Stdev for s                                0.612      1.07   0.536
+## Precision for the Gaussian observations  631.027   1944.92 452.350
+## Range for s                                1.765      3.92   1.454
+## Stdev for s                                0.664      1.28   0.574
 ## 
-## Expected number of effective parameters(stdev): 89.90(0.00)
-## Number of equivalent replicates : 1.11 
-## 
-## Marginal log-Likelihood:  -1.81</code></pre>
+## Marginal log-Likelihood:  -2.06 
+##  is computed 
+## Posterior summaries for the linear predictor and the fitted values are computed
+## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
 <pre class="r"><code>print(M[[2]]$shortname)</code></pre>
 <pre><code>## [1] &quot;barrier-model&quot;</code></pre>
 <pre class="r"><code>summary(M[[2]]$res)</code></pre>
 <pre><code>## 
 ## Call:
-##    c(&quot;inla(formula = M[[i]]$formula, family = \&quot;gaussian\&quot;, data 
-##    = inla.stack.data(stack), &quot;, &quot; control.predictor = list(A = 
-##    inla.stack.A(stack)), control.family = list(hyper = 
-##    hyper.iid), &quot;, &quot; control.inla = list(int.strategy = \&quot;eb\&quot;), 
-##    control.mode = list(restart = T, &quot;, &quot; theta = M[[i]]$init))&quot;) 
+##    c(&quot;inla.core(formula = formula, family = family, contrasts = 
+##    contrasts, &quot;, &quot; data = data, quantiles = quantiles, E = E, 
+##    offset = offset, &quot;, &quot; scale = scale, weights = weights, 
+##    Ntrials = Ntrials, strata = strata, &quot;, &quot; lp.scale = lp.scale, 
+##    link.covariates = link.covariates, verbose = verbose, &quot;, &quot; 
+##    lincomb = lincomb, selection = selection, control.compute = 
+##    control.compute, &quot;, &quot; control.predictor = control.predictor, 
+##    control.family = control.family, &quot;, &quot; control.inla = 
+##    control.inla, control.fixed = control.fixed, &quot;, &quot; control.mode 
+##    = control.mode, control.expert = control.expert, &quot;, &quot; 
+##    control.hazard = control.hazard, control.lincomb = 
+##    control.lincomb, &quot;, &quot; control.update = control.update, 
+##    control.lp.scale = control.lp.scale, &quot;, &quot; control.pardiso = 
+##    control.pardiso, only.hyperparam = only.hyperparam, &quot;, &quot; 
+##    inla.call = inla.call, inla.arg = inla.arg, num.threads = 
+##    num.threads, &quot;, &quot; blas.num.threads = blas.num.threads, keep = 
+##    keep, working.directory = working.directory, &quot;, &quot; silent = 
+##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
+##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.95, Running = 15.9, Post = 0.263, Total = 19.1 
+##     Pre = 2.87, Running = 5.93, Post = 0.0472, Total = 8.84 
 ## Fixed effects:
 ##   mean    sd 0.025quant 0.5quant 0.97quant mode kld
-## m 0.42 0.071       0.28     0.42      0.56 0.42   0
+## m 0.43 0.072       0.28     0.43      0.56 0.43   0
 ## 
 ## Random effects:
 ##   Name     Model
 ##     s RGeneric2
 ## 
 ## Model hyperparameters:
-##                                            mean     sd 0.025quant
-## Precision for the Gaussian observations 873.249 839.69     159.05
-## Theta1 for s                             -1.110   0.12      -1.34
-## Theta2 for s                             -0.651   0.20      -1.03
+##                                            mean      sd 0.025quant
+## Precision for the Gaussian observations 883.625 841.785     158.48
+## Theta1 for s                             -1.105   0.123      -1.34
+## Theta2 for s                             -0.648   0.199      -1.03
 ##                                         0.5quant 0.97quant    mode
-## Precision for the Gaussian observations  625.140  2873.196 360.915
-## Theta1 for s                              -1.113    -0.878  -1.121
-## Theta2 for s                              -0.655    -0.266  -0.669
+## Precision for the Gaussian observations  637.446  2911.297 364.869
+## Theta1 for s                              -1.107    -0.869  -1.113
+## Theta2 for s                              -0.651    -0.264  -0.662
 ## 
-## Expected number of effective parameters(stdev): 92.20(0.00)
-## Number of equivalent replicates : 1.08 
-## 
-## Marginal log-Likelihood:  -6.35</code></pre>
-<div id="logfiles" class="section level3">
+## Marginal log-Likelihood:  -6.29 
+##  is computed 
+## Posterior summaries for the linear predictor and the fitted values are computed
+## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
+<div id="logfiles" class="section level3" number="0.12.1">
 <h3><span class="header-section-number">0.12.1</span> Logfiles</h3>
-<p>To understand how well the computations of the posterior worked, we can look at the logfiles.</p>
+<p>To understand how well the computations of the posterior worked, we
+can look at the logfiles.</p>
 <pre class="r"><code>#M[[i]]$res$logfile</code></pre>
 </div>
 </div>
-<div id="plot-posterior-spatial-fields" class="section level2">
-<h2><span class="header-section-number">0.13</span> 10. Plot posterior spatial fields</h2>
+<div id="plot-posterior-spatial-fields" class="section level2"
+number="0.13">
+<h2><span class="header-section-number">0.13</span> 10. Plot posterior
+spatial fields</h2>
 <pre class="r"><code>local.plot.field = function(field, mesh, xlim, ylim, zlim, n.contours=10, ...){
   stopifnot(length(field) == mesh$n)
   # - error when using the wrong mesh
@@ -739,8 +775,9 @@ time.taken &lt;- end.time - start.time
 }</code></pre>
 <p><img src="btopic111_files/figure-html/unnamed-chunk-24-1.png" width="672" /><img src="btopic111_files/figure-html/unnamed-chunk-24-2.png" width="672" /><img src="btopic111_files/figure-html/unnamed-chunk-24-3.png" width="672" /></p>
 </div>
-<div id="rmse-comparison" class="section level2">
-<h2><span class="header-section-number">0.14</span> 11. RMSE comparison</h2>
+<div id="rmse-comparison" class="section level2" number="0.14">
+<h2><span class="header-section-number">0.14</span> 11. RMSE
+comparison</h2>
 <pre class="r"><code>## Truth on the grid
 summary(dat)</code></pre>
 <pre><code>##        y             locx           locy      
@@ -771,20 +808,24 @@ data.frame(name=unlist(lapply(M, function(x) c(x$shortname))),
            rmse=unlist(lapply(M, function(x) c(x$rmse))),
            mae=unlist(lapply(M, function(x) c(x$mae))),
            mae.sd=unlist(lapply(M, function(x) c(x$mae.sd))))</code></pre>
-<pre><code>##               name rmse  mae  mae.sd
-## 1 stationary-model 0.14 0.10 0.00058
-## 2    barrier-model 0.17 0.13 0.00068
-## 3    neumann-model 0.21 0.15 0.00087</code></pre>
+<pre><code>##               name rmse   mae  mae.sd
+## 1 stationary-model 0.14 0.099 0.00057
+## 2    barrier-model 0.17 0.126 0.00068
+## 3    neumann-model 0.21 0.146 0.00087</code></pre>
 </div>
-<div id="comments-and-additional" class="section level2">
-<h2><span class="header-section-number">0.15</span> Comments and additional</h2>
-<div id="related-topics" class="section level3">
-<h3><span class="header-section-number">0.15.1</span> Related topics</h3>
-<p><a href="btopic107.html">BTopic107</a> is relevant to the current topic.</p>
-<p><a href="btopic110.html">BTopic110</a> is a very similar example, just with a different “true” function.</p>
+<div id="comments-and-additional" class="section level2" number="0.15">
+<h2><span class="header-section-number">0.15</span> Comments and
+additional</h2>
+<div id="related-topics" class="section level3" number="0.15.1">
+<h3><span class="header-section-number">0.15.1</span> Related
+topics</h3>
+<p><a href="btopic107.html">BTopic107</a> is relevant to the current
+topic.</p>
+<p><a href="btopic110.html">BTopic110</a> is a very similar example,
+just with a different “true” function.</p>
 </div>
 </div>
-<div id="references" class="section level1">
+<div id="references" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> References</h1>
 </div>
 
@@ -817,7 +858,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -826,6 +867,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

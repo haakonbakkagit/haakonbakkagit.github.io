@@ -14,20 +14,28 @@
 
 <title>The Barrier model applied to the Archipelago data</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,30 +59,28 @@ if (window.hljs) {
 
 
 
+
+
 <style type="text/css">
-h1 {
-  font-size: 34px;
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
 }
-h1.title {
-  font-size: 38px;
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
 }
-h2 {
-  font-size: 30px;
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
 }
-h3 {
-  font-size: 24px;
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
 }
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
+div.csl-indent {
+  margin-left: 2em;
 }
 </style>
 
@@ -92,10 +93,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +109,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +146,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +158,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +168,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +201,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +214,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +319,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +333,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,25 +365,36 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">The Barrier model applied to the Archipelago data</h1>
+<h1 class="title toc-ignore">The Barrier model applied to the
+Archipelago data</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic107 updated 01. February 2018</h4>
 
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>Warning: This topic is no longer maintained, please see <a href="./btopic128.html">Barrier Model applied to the Archipelago Data</a> instead.</p>
-<p>This topic covers how to visualize spatial models near a coast. The method for visualizing spatial models can be used for other models. The knowledge we gain on the spatial models we are looking at is useful when using these models.</p>
-<div id="initialisation-and-dependency" class="section level2">
-<h2><span class="header-section-number">1.1</span> Initialisation and dependency</h2>
-<p>We load the libraries and functions we need. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>). Feel free to save the web location where the data is as an R-file on your computer. We also set random seeds to be used later.</p>
+<p>Warning: This topic is no longer maintained, please see <a
+href="./btopic128.html">Barrier Model applied to the Archipelago
+Data</a> instead.</p>
+<p>This topic covers how to visualize spatial models near a coast. The
+method for visualizing spatial models can be used for other models. The
+knowledge we gain on the spatial models we are looking at is useful when
+using these models.</p>
+<div id="initialisation-and-dependency" class="section level2"
+number="1.1">
+<h2><span class="header-section-number">1.1</span> Initialisation and
+dependency</h2>
+<p>We load the libraries and functions we need. You may need to install
+these libraries (<a href="btopic109.html">Installation and general
+troubleshooting</a>). Feel free to save the web location where the data
+is as an R-file on your computer. We also set random seeds to be used
+later.</p>
 <pre class="r"><code>library(INLA); library(fields)
 library(rgeos)
 library(viridisLite)
@@ -409,15 +402,16 @@ library(viridisLite)
 set.seed(2016)
 set.inla.seed = 2016</code></pre>
 </div>
-<div id="data" class="section level2">
+<div id="data" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Data</h2>
-<div id="download-data" class="section level3">
+<div id="download-data" class="section level3" number="1.2.1">
 <h3><span class="header-section-number">1.2.1</span> Download data</h3>
-<p>An internet connection is required, unless you have already downloaded the repository.</p>
+<p>An internet connection is required, unless you have already
+downloaded the repository.</p>
 <pre><code>dir.create(&quot;data/&quot;)
 download.file(url = &quot;https://haakonbakkagit.github.io/data/WebSiteData-Archipelago.RData&quot;, destfile = &quot;data/WebSiteData-Archipelago.RData&quot;)</code></pre>
 </div>
-<div id="load-data" class="section level3">
+<div id="load-data" class="section level3" number="1.2.2">
 <h3><span class="header-section-number">1.2.2</span> Load data</h3>
 <pre class="r"><code>## Load data
 load(file = &quot;data/WebSiteData-Archipelago.RData&quot;)
@@ -430,17 +424,21 @@ load(file = &quot;data/WebSiteData-Archipelago.RData&quot;)
 str(poly.water, 1)</code></pre>
 <pre><code>## Formal class &#39;SpatialPolygons&#39; [package &quot;sp&quot;] with 4 slots</code></pre>
 </div>
-<div id="data-citations" class="section level3">
+<div id="data-citations" class="section level3" number="1.2.3">
 <h3><span class="header-section-number">1.2.3</span> Data citations</h3>
-<p>For a description of the data see <span class="citation">(Kallasvuo, Vanhatalo, and Veneranta 2016)</span>. Data collection was funded by VELMU and Natural Resources Institute Finland (Luke).</p>
+<p>For a description of the data see <span class="citation">(Kallasvuo,
+Vanhatalo, and Veneranta 2016)</span>. Data collection was funded by
+VELMU and Natural Resources Institute Finland (Luke).</p>
 </div>
 </div>
 </div>
-<div id="generic-model-setup" class="section level1">
-<h1><span class="header-section-number">2</span> Generic model setup</h1>
+<div id="generic-model-setup" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Generic model
+setup</h1>
 <p>We choose one of the four fish species to model, the smelt</p>
 <pre class="r"><code>df$y = df$y.smelt</code></pre>
-<p>To keep track of our models, we define a list containing all the models.</p>
+<p>To keep track of our models, we define a list containing all the
+models.</p>
 <pre class="r"><code>M = list()
 # - the list of all models
 M[[1]] = list()
@@ -453,10 +451,16 @@ M[[3]] = list()
 M[[3]]$shortname = &quot;barrier-no-cov&quot;
 M[[4]] = list()
 M[[4]]$shortname = &quot;barrier-all-cov&quot;</code></pre>
-<div id="the-mesh-dependency-btopic104" class="section level2">
-<h2><span class="header-section-number">2.1</span> The mesh: Dependency <a href="btopic104.html">BTopic104</a></h2>
-<p>The following code is from the dependency. The <code>mesh</code> we are using was called <code>mesh4</code> in BTopic104. You probably want to read this dependency topic.</p>
-<p>We had to adjust max.edge. When running with <code>max.edge=0.95</code> we got ranges near 3. As we mentioned in BTopic104, the max.edge must be at most ca range/5.</p>
+<div id="the-mesh-dependency-btopic104" class="section level2"
+number="2.1">
+<h2><span class="header-section-number">2.1</span> The mesh: Dependency
+<a href="btopic104.html">BTopic104</a></h2>
+<p>The following code is from the dependency. The <code>mesh</code> we
+are using was called <code>mesh4</code> in BTopic104. You probably want
+to read this dependency topic.</p>
+<p>We had to adjust max.edge. When running with
+<code>max.edge=0.95</code> we got ranges near 3. As we mentioned in
+BTopic104, the max.edge must be at most ca range/5.</p>
 <pre class="r"><code>max.edge = 0.6
 bound.outer = 4.6
 mesh = inla.mesh.2d(boundary = poly.water,
@@ -469,9 +473,11 @@ plot(mesh, main=&quot;Our mesh&quot;, lwd=0.5); points(df$locx, df$locy, col=&qu
 <pre class="r"><code>mesh$n</code></pre>
 <pre><code>## [1] 6539</code></pre>
 </div>
-<div id="the-stack" class="section level2">
+<div id="the-stack" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> The stack</h2>
-<p>To connect the observations <span class="math inline">\(y_i\)</span> (at locations <span class="math inline">\(s_i\)</span>) to the mesh nodes <code>s</code>, we have the so-called A-matrix.</p>
+<p>To connect the observations <span class="math inline">\(y_i\)</span>
+(at locations <span class="math inline">\(s_i\)</span>) to the mesh
+nodes <code>s</code>, we have the so-called A-matrix.</p>
 <pre class="r"><code>A.i.s = inla.spde.make.A(mesh, loc=cbind(df$locx, df$locy))</code></pre>
 <p>Next we set up the stack, needed for all spatial models in INLA.</p>
 <pre class="r"><code> stk &lt;- inla.stack(data=list(y=df$y, e=df$exposure), 
@@ -483,9 +489,10 @@ plot(mesh, main=&quot;Our mesh&quot;, lwd=0.5); points(df$locx, df$locy, col=&qu
                     remove.unused = FALSE, tag=&#39;est&#39;)  </code></pre>
 </div>
 </div>
-<div id="stationary-models" class="section level1">
+<div id="stationary-models" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Stationary models</h1>
-<p>To set up the stationary spatial model, we first define the spatial Model Component.</p>
+<p>To set up the stationary spatial model, we first define the spatial
+Model Component.</p>
 <pre class="r"><code>spde = inla.spde2.pcmatern(mesh, prior.range = c(6, .5), prior.sigma = c(3, 0.01))
 # - We put the prior median at approximately 0.5*diff(range(df$locy))
 # - - this is roughly the extent of our study area
@@ -512,9 +519,10 @@ M[[2]]$formula = update(M[[2]]$formula, .~. +m + f(s, model=spde) + f(iidx, mode
 ## y ~ dptLUKE + dptavg15km + dist30m + joetdsumsq + lined15km + 
 ##     swmlog10 + temjul15 + m + f(s, model = spde) + f(iidx, model = &quot;iid&quot;, 
 ##     hyper = hyper.iid) - 1</code></pre>
-<p>We will not run the INLA calls until we have set up all the models.</p>
+<p>We will not run the INLA calls until we have set up all the
+models.</p>
 </div>
-<div id="barrier-models" class="section level1">
+<div id="barrier-models" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Barrier models</h1>
 <p>First we divide up the mesh accoring to our study area polygon.</p>
 <pre class="r"><code>tl = length(mesh$graph$tv[,1])
@@ -533,16 +541,6 @@ normal = unlist(normal)
 barrier.triangles = setdiff(1:tl, normal)
 
 poly.barrier = inla.barrier.polygon(mesh, barrier.triangles)</code></pre>
-<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
-## intersection at or near point 0 0</code></pre>
-<pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
-## consider using set_RGEOS_CheckValidity(2L)</code></pre>
-<pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;): Self-
-## intersection at or near point -4.5999999999999996 -0.91499688999999995</code></pre>
-<pre><code>## mesh.polys is invalid</code></pre>
-<pre><code>## Warning in rgeos::gUnaryUnion(mesh.polys): Invalid objects found;
-## consider using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre class="r"><code>barrier.model = inla.barrier.pcmatern(mesh, barrier.triangles = barrier.triangles, prior.range = c(6, .5), prior.sigma = c(3, 0.01))
 # - this creates the INLA object for the model</code></pre>
 <pre class="r"><code>M[[3]]$formula = y~ -1+m + f(s, model=barrier.model) + f(iidx, model=&quot;iid&quot;, hyper=hyper.iid)
@@ -565,17 +563,19 @@ M[[4]]$formula = update(M[[4]]$formula, .~. +m + f(s, model=barrier.model) + f(i
 ## y ~ dptLUKE + dptavg15km + dist30m + joetdsumsq + lined15km + 
 ##     swmlog10 + temjul15 + m + f(s, model = barrier.model) + f(iidx, 
 ##     model = &quot;iid&quot;, hyper = hyper.iid) - 1</code></pre>
-<div id="plot-data" class="section level2">
+<div id="plot-data" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Plot data</h2>
-<p>Now that we have a polygon for representing the land area (physical barrier), we plot the data locations.</p>
+<p>Now that we have a polygon for representing the land area (physical
+barrier), we plot the data locations.</p>
 <pre class="r"><code>par(mar=rep(.1, 4))
 plot(df$locx, y=df$locy, pch=20, asp=1)
 plot(poly.barrier, add=T, border=&quot;black&quot;, col=&quot;grey&quot;)</code></pre>
 <p><img src="btopic107_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 </div>
-<div id="running-all-the-models" class="section level1">
-<h1><span class="header-section-number">5</span> Running all the models</h1>
+<div id="running-all-the-models" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Running all the
+models</h1>
 <p>Set up the initial values.</p>
 <pre class="r"><code>## Initial values
 # - speeds up computations
@@ -585,7 +585,8 @@ M[[1]]$init = c(2.509,1.199,-0.574)
 M[[2]]$init = c(1.162,0.313,-0.627)
 M[[3]]$init = c(0.833,2.244,-0.471)
 M[[4]]$init = c(0.044,1.274,-0.596)</code></pre>
-<p>Next, we run the inference for the our models, which can take some time.</p>
+<p>Next, we run the inference for the our models, which can take some
+time.</p>
 <pre class="r"><code>for (i in 1:length(M)){
     print(paste(&quot;Running:  &quot;, M[[i]]$shortname))
     M[[i]]$res = inla(M[[i]]$formula,
@@ -604,11 +605,11 @@ M[[4]]$init = c(0.044,1.274,-0.596)</code></pre>
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
 }</code></pre>
-<pre><code>## [1] &quot;2.509,1.199,-0.575&quot;
-## [1] &quot;1.154,0.311,-0.627&quot;
-## [1] &quot;0.793,2.349,-0.47&quot;
-## [1] &quot;-0.004,1.325,-0.584&quot;</code></pre>
-<div id="summaries" class="section level2">
+<pre><code>## [1] &quot;2.505,1.199,-0.574&quot;
+## [1] &quot;1.144,0.303,-0.629&quot;
+## [1] &quot;0.794,2.362,-0.455&quot;
+## [1] &quot;0.006,1.347,-0.562&quot;</code></pre>
+<div id="summaries" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Summaries</h2>
 <p>You can run these to see the model output.</p>
 <pre class="r"><code>#summary(M[[1]]$res)
@@ -616,17 +617,26 @@ M[[4]]$init = c(0.044,1.274,-0.596)</code></pre>
 #summary(M[[3]]$res)
 #summary(M[[4]]$res)</code></pre>
 </div>
-<div id="logfiles" class="section level2">
+<div id="logfiles" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Logfiles</h2>
-<p>To understand how well the computations of the posterior worked, we look at the logfiles.</p>
+<p>To understand how well the computations of the posterior worked, we
+look at the logfiles.</p>
 <pre class="r"><code>#M[[i]]$res$logfile</code></pre>
-<p>Discussing INLA inference in detail is out of scope of this topic. What we conclude from this is that the posteriors for the models without covariates are nicely behaved, and INLA is very successful. For the models with covariates, the posterior is a bit flat, and INLA is having a bit of difficulty. However, it is still sufficiently good.</p>
+<p>Discussing INLA inference in detail is out of scope of this topic.
+What we conclude from this is that the posteriors for the models without
+covariates are nicely behaved, and INLA is very successful. For the
+models with covariates, the posterior is a bit flat, and INLA is having
+a bit of difficulty. However, it is still sufficiently good.</p>
 </div>
 </div>
-<div id="plot-posterior-spatial-fields" class="section level1">
-<h1><span class="header-section-number">6</span> Plot posterior spatial fields</h1>
-<div id="define-the-plotting-function-btopic103" class="section level2">
-<h2><span class="header-section-number">6.1</span> Define the plotting function <a href="btopic103.html">BTopic103</a></h2>
+<div id="plot-posterior-spatial-fields" class="section level1"
+number="6">
+<h1><span class="header-section-number">6</span> Plot posterior spatial
+fields</h1>
+<div id="define-the-plotting-function-btopic103" class="section level2"
+number="6.1">
+<h2><span class="header-section-number">6.1</span> Define the plotting
+function <a href="btopic103.html">BTopic103</a></h2>
 <pre class="r"><code>local.plot.field = function(field, mesh, xlim, ylim, ...){
   stopifnot(length(field) == mesh$n)
   # - error when using the wrong mesh
@@ -643,8 +653,10 @@ M[[4]]$init = c(0.044,1.274,-0.596)</code></pre>
              xlim = xlim, ylim = ylim, col = plasma(17), ...)  
 }</code></pre>
 </div>
-<div id="plot-the-models-without-covariates" class="section level2">
-<h2><span class="header-section-number">6.2</span> Plot the models without covariates</h2>
+<div id="plot-the-models-without-covariates" class="section level2"
+number="6.2">
+<h2><span class="header-section-number">6.2</span> Plot the models
+without covariates</h2>
 <pre class="r"><code>for (i in c(1,3)) {
   field = M[[i]]$res$summary.random$s$mean + M[[i]]$res$summary.fixed[&#39;m&#39;, &#39;mean&#39;]
   local.plot.field(field, mesh, main=paste(M[[i]]$shortname), zlim=c(-10.5, 1))
@@ -653,8 +665,10 @@ M[[4]]$init = c(0.044,1.274,-0.596)</code></pre>
 }</code></pre>
 <p><img src="btopic107_files/figure-html/unnamed-chunk-22-1.png" width="672" /><img src="btopic107_files/figure-html/unnamed-chunk-22-2.png" width="672" /></p>
 </div>
-<div id="plot-the-models-with-covariates" class="section level2">
-<h2><span class="header-section-number">6.3</span> Plot the models with covariates</h2>
+<div id="plot-the-models-with-covariates" class="section level2"
+number="6.3">
+<h2><span class="header-section-number">6.3</span> Plot the models with
+covariates</h2>
 <pre class="r"><code>for (i in c(2,4)) {
   field = M[[i]]$res$summary.random$s$mean + M[[i]]$res$summary.fixed[&#39;m&#39;, &#39;mean&#39;]
   local.plot.field(field, mesh, main=paste(M[[i]]$shortname), zlim=c(-9, -4.5))
@@ -664,9 +678,11 @@ M[[4]]$init = c(0.044,1.274,-0.596)</code></pre>
 <p><img src="btopic107_files/figure-html/unnamed-chunk-23-1.png" width="672" /><img src="btopic107_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
 </div>
 </div>
-<div id="compare-fixed-effects" class="section level1">
-<h1><span class="header-section-number">7</span> Compare fixed effects</h1>
-<p>Do a nice <code>ggplot</code> of the fixed effects between the spatial models with covariates.</p>
+<div id="compare-fixed-effects" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Compare fixed
+effects</h1>
+<p>Do a nice <code>ggplot</code> of the fixed effects between the
+spatial models with covariates.</p>
 <pre class="r"><code>## Set up dataframe with relevant results
 res = M[[2]]$res$summary.fixed[ ,c(4,3,5)]
 # - all covar, some quantiles
@@ -688,21 +704,31 @@ if(require(ggplot2)) {
 }</code></pre>
 <p><img src="btopic107_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 </div>
-<div id="comments" class="section level1">
+<div id="comments" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> Comments</h1>
-<p>This analysis is done in more detail in the paper <span class="citation">(Bakka et al. 2016)</span>.</p>
-<div id="related-topics" class="section level2">
+<p>This analysis is done in more detail in the paper <span
+class="citation">(Bakka et al. 2016)</span>.</p>
+<div id="related-topics" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> Related topics</h2>
-<p><a href="btopic105.html">BTopic105</a> and <a href="btopic103.html">BTopic103</a> are relevant to the current topic.</p>
+<p><a href="btopic105.html">BTopic105</a> and <a
+href="btopic103.html">BTopic103</a> are relevant to the current
+topic.</p>
 </div>
 <div id="references" class="section level2 unnumbered">
-<h2>References</h2>
-<div id="refs" class="references">
-<div id="ref-tech125">
-<p>Bakka, H., J. Vanhatalo, J. Illian, D. Simpson, and H. Rue. 2016. “Accounting for Physical Barriers in Species Distribution Modeling with Non-Stationary Spatial Random Effects.” ArXiv preprint arXiv:1608.03787. Norwegian University of Science; Technology, Trondheim, Norway.</p>
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-tech125" class="csl-entry">
+Bakka, H., J. Vanhatalo, J. Illian, D. Simpson, and H. Rue. 2016.
+<span>“Accounting for Physical Barriers in Species Distribution Modeling
+with Non-Stationary Spatial Random Effects.”</span> arXiv preprint
+arXiv:1608.03787. <span>N</span>orwegian University of Science;
+Technology, <span>T</span>rondheim, <span>N</span>orway.
 </div>
-<div id="ref-kallasvuo2016modeling">
-<p>Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016. “Modeling the Spatial Distribution of Larval Fish Abundance Provides Essential Information for Management.” <em>Canadian Journal of Fisheries and Aquatic Sciences</em>, no. ja.</p>
+<div id="ref-kallasvuo2016modeling" class="csl-entry">
+Kallasvuo, Meri, Jarno Vanhatalo, and Lari Veneranta. 2016.
+<span>“Modeling the Spatial Distribution of Larval Fish Abundance
+Provides Essential Information for Management.”</span> <em>Canadian
+Journal of Fisheries and Aquatic Sciences</em>, no. ja.
 </div>
 </div>
 </div>
@@ -737,7 +763,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -746,6 +772,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

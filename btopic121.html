@@ -14,20 +14,28 @@
 
 <title>How INLA deals with hyper-parameters: 1D Reconstruction example</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,27 +343,32 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">How INLA deals with hyper-parameters: 1D Reconstruction example</h1>
+<h1 class="title toc-ignore">How INLA deals with hyper-parameters: 1D
+Reconstruction example</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic121 updated 8. December 2017</h4>
 
 </div>
 
 
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>In this topic we perform inference on a series of increasingly complex models, to show the theory behind INLA.</p>
-<div id="packages" class="section level2">
+<p>In this topic we perform inference on a series of increasingly
+complex models, to show the theory behind INLA.</p>
+<div id="packages" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Packages</h2>
 <pre class="r"><code>library(INLA)</code></pre>
 </div>
-<div id="practical-problem" class="section level2">
-<h2><span class="header-section-number">1.2</span> Practical problem</h2>
-<p>There is some smooth function that we observe at integer values, and with noise. The goal is to reconstruct this function, with uncertainty estimates.</p>
+<div id="practical-problem" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Practical
+problem</h2>
+<p>There is some smooth function that we observe at integer values, and
+with noise. The goal is to reconstruct this function, with uncertainty
+estimates.</p>
 <pre class="r"><code>set.seed(2017)
 n = 50
 idx = 1:n
@@ -415,33 +380,56 @@ lines(fun, col=&quot;darkgreen&quot;)</code></pre>
 <p><img src="btopic121_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>df = data.frame(y=y, idx=idx)</code></pre>
 </div>
-<div id="assumed-hierarchical-model" class="section level2">
-<h2><span class="header-section-number">1.3</span> Assumed hierarchical model</h2>
+<div id="assumed-hierarchical-model" class="section level2"
+number="1.3">
+<h2><span class="header-section-number">1.3</span> Assumed hierarchical
+model</h2>
 <ol style="list-style-type: decimal">
-<li><p><strong>Data</strong>: Gaussian observations (iid) with precision <span class="math inline">\(\tau\)</span> <span class="math display">\[ y_{i} \mid x_{i}, \theta \;\sim\; {\mathcal N}(x_{i}, \tau^ {-1}) \]</span></p></li>
-<li><p><strong>Latent model</strong>: A random walk of second order <code>model="rw2"</code></p></li>
+<li><p><strong>Data</strong>: Gaussian observations (iid) with precision
+<span class="math inline">\(\tau\)</span> <span class="math display">\[
+y_{i} \mid x_{i}, \theta \;\sim\; {\mathcal N}(x_{i}, \tau^ {-1})
+\]</span></p></li>
+<li><p><strong>Latent model</strong>: A random walk of second order
+<code>model="rw2"</code></p></li>
 </ol>
-<p><span class="math display">\[\pi(\mathbf{x} \mid \theta) \propto \theta^{(n-2)/2}
+<p><span class="math display">\[\pi(\mathbf{x} \mid \theta) \propto
+\theta^{(n-2)/2}
 \exp\left(
 -\frac{\theta}{2} \sum_{i=3}^{n} (x_{i} - 2x_{i-1}+x_{i-2})^{2}
 \right)
 \]</span></p>
 <ol start="3" style="list-style-type: decimal">
-<li><strong>Hyperparameter</strong>: The smoothing parameter <span class="math inline">\(\theta\)</span> and the precision <span class="math inline">\(\tau\)</span> have the inla code default priors (<code>inla.doc("gaussian")</code>, and <code>inladoc("rw2")</code>).</li>
+<li><strong>Hyperparameter</strong>: The smoothing parameter <span
+class="math inline">\(\theta\)</span> and the precision <span
+class="math inline">\(\tau\)</span> have the inla code default priors
+(<code>inla.doc("gaussian")</code>, and
+<code>inladoc("rw2")</code>).</li>
 </ol>
-<p>This means that <span class="math inline">\(\theta\)</span> has a <span class="math inline">\(\Gamma(a,b)\)</span> prior <span class="math display">\[
+<p>This means that <span class="math inline">\(\theta\)</span> has a
+<span class="math inline">\(\Gamma(a,b)\)</span> prior <span
+class="math display">\[
 \pi(\theta) \propto \theta^{a-1}\exp\left(-b\theta\right),
 \quad \theta &gt; 0
-\]</span> with <span class="math inline">\(a = 1\)</span> and <span class="math inline">\(b=5e-05\)</span>.</p>
-<p>Note that this model does is not a good model! It is not written with good interpretable parameters, the Gamma prior is not a good choice for modeling. The RW2 model is not a proper model. But, this topic is not about good modeling, but at computing inference, so we will ignore such concerns.</p>
+\]</span> with <span class="math inline">\(a = 1\)</span> and <span
+class="math inline">\(b=5e-05\)</span>.</p>
+<p>Note that this model does is not a good model! It is not written with
+good interpretable parameters, the Gamma prior is not a good choice for
+modeling. The RW2 model is not a proper model. But, this topic is not
+about good modeling, but at computing inference, so we will ignore such
+concerns.</p>
 </div>
 </div>
-<div id="model-1-gaussian-fixed-hyper-posterior" class="section level1">
-<h1><span class="header-section-number">2</span> Model 1: Gaussian fixed-hyper posterior</h1>
-<p>Assume first that <span class="math inline">\(\theta=1\)</span> and <span class="math inline">\(\tau=1\)</span>, fixed and known (so no hyper-priors). Then <span class="math display">\[\begin{align*}
+<div id="model-1-gaussian-fixed-hyper-posterior" class="section level1"
+number="2">
+<h1><span class="header-section-number">2</span> Model 1: Gaussian
+fixed-hyper posterior</h1>
+<p>Assume first that <span class="math inline">\(\theta=1\)</span> and
+<span class="math inline">\(\tau=1\)</span>, fixed and known (so no
+hyper-priors). Then <span class="math display">\[\begin{align*}
 \pi(x | y=\text{data}) &amp;\propto \pi(x , y=\text{data}) \\
 &amp;\propto \pi(y=\text{data}|x) \pi(x)
-\end{align*}\]</span> where everything is Gaussian. To renormalise, we need to compute a determinant.</p>
+\end{align*}\]</span> where everything is Gaussian. To renormalise, we
+need to compute a determinant.</p>
 <p>We fit this model:</p>
 <pre class="r"><code>hyper1 = list(prec=list(initial=0, fixed=T))
 formula1 = y ~ -1 + f(idx, model=&quot;rw2&quot;, hyper=hyper1)
@@ -457,42 +445,61 @@ res1 = inla(formula1, family=&quot;gaussian&quot;, data=df,
 }
 local.plot.result(res1)</code></pre>
 <p><img src="btopic121_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>We will not discuss these results, or how surprisingly good they are for such a simple model. Think about the computations needed to get this plot. What are the different lines computed from? (Feel free to write down the equations.)</p>
+<p>We will not discuss these results, or how surprisingly good they are
+for such a simple model. Think about the computations needed to get this
+plot. What are the different lines computed from? (Feel free to write
+down the equations.)</p>
 </div>
-<div id="model-2-single-hyper-parameter" class="section level1">
-<h1><span class="header-section-number">3</span> Model 2: Single hyper-parameter</h1>
-<p>We keep <span class="math inline">\(\tau=1\)</span> fixed and do inference on <span class="math inline">\(\theta\)</span>.</p>
-<div id="posterior-for-theta" class="section level2">
-<h2><span class="header-section-number">3.1</span> Posterior for <span class="math inline">\(\theta\)</span></h2>
+<div id="model-2-single-hyper-parameter" class="section level1"
+number="3">
+<h1><span class="header-section-number">3</span> Model 2: Single
+hyper-parameter</h1>
+<p>We keep <span class="math inline">\(\tau=1\)</span> fixed and do
+inference on <span class="math inline">\(\theta\)</span>.</p>
+<div id="posterior-for-theta" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Posterior for <span
+class="math inline">\(\theta\)</span></h2>
 <p>Since <span class="math display">\[
 \mathbf{x}, \mathbf{y} \mid \theta \;\sim\; {\mathcal N}(\cdot,\cdot)
-\]</span> (derived using <span class="math inline">\(\pi(\mathbf{x}, \mathbf{y} \mid \theta) \propto \pi(\mathbf{y} \mid \mathbf{x}, \theta) \: \pi(\mathbf{x} \mid \theta)\)</span>),</p>
+\]</span> (derived using <span class="math inline">\(\pi(\mathbf{x},
+\mathbf{y} \mid \theta) \propto \pi(\mathbf{y} \mid \mathbf{x}, \theta)
+\: \pi(\mathbf{x} \mid \theta)\)</span>),</p>
 <p>we can compute (numerically) all marginals, using that</p>
 <p><span class="math display">\[\begin{align*}
 \pi(\theta\mid\mathbf{y}) &amp;= \frac{\pi(\mathbf{x}, \theta \mid
 \mathbf{y})}{\pi(\mathbf{x} \mid \mathbf{y}, \theta)}\\
 &amp;\propto \frac{%%
 \overbrace{\pi(\mathbf{x}, \mathbf{y}\mid\theta)}^{\text{Gaussian}}
-\; \pi(\theta)}{\underbrace{\pi(\mathbf{x} \mid \mathbf{y}, \theta)}_{\text{Gaussian}}}
+\; \pi(\theta)}{\underbrace{\pi(\mathbf{x} \mid \mathbf{y},
+\theta)}_{\text{Gaussian}}}
 \end{align*}\]</span></p>
 </div>
-<div id="computational-inla-code" class="section level2">
-<h2><span class="header-section-number">3.2</span> Computational INLA code</h2>
+<div id="computational-inla-code" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Computational INLA
+code</h2>
 <p>We fit this model:</p>
 <pre class="r"><code>formula2 = y ~ -1 + f(idx, model=&quot;rw2&quot;)
 res2 = inla(formula2, family=&quot;gaussian&quot;, data=df,
             control.family = list(hyper = hyper1),
             control.compute = list(config=TRUE))</code></pre>
-<p>We plot the posterior of <span class="math inline">\(\theta\)</span></p>
+<p>We plot the posterior of <span
+class="math inline">\(\theta\)</span></p>
 <pre class="r"><code>plot(res2$marginals.hyperpar$`Precision for idx`, type=&quot;l&quot;, xlim=c(0, 120))</code></pre>
 <p><img src="btopic121_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>Exploring this posterior is <strong>not nice</strong>, so the parametrisation used internally in INLA is <span class="math inline">\(\log(\theta)\)</span>, meaning that the following posterior is the one we explore:</p>
+<p>Exploring this posterior is <strong>not nice</strong>, so the
+parametrisation used internally in INLA is <span
+class="math inline">\(\log(\theta)\)</span>, meaning that the following
+posterior is the one we explore:</p>
 <pre class="r"><code>plot(res2$internal.marginals.hyperpar$`Log precision for idx`, type=&quot;l&quot;)</code></pre>
 <p><img src="btopic121_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>This posterior is nice.</p>
-<div id="optimization-and-exploration-of-hyper-parameters" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> Optimization and exploration of hyper-parameters</h3>
-<p>To figure out how INLA found the psoterior mode, we can look into <code>res2$logfile</code>, where we find the fopllowing (slightly edited) (may vary a bit what lines they are).</p>
+<div id="optimization-and-exploration-of-hyper-parameters"
+class="section level3" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Optimization and
+exploration of hyper-parameters</h3>
+<p>To figure out how INLA found the psoterior mode, we can look into
+<code>res2$logfile</code>, where we find the fopllowing (slightly
+edited) (may vary a bit what lines they are).</p>
 <pre><code>[272] &quot;max.logdens= -91.300695 fn= 1 theta= 4.010000  range=[-10.706 11.878]&quot;
 [273] &quot;max.logdens= -91.300093 fn= 2 theta= 3.990000  range=[-10.709 11.883]&quot;
 [274] &quot;max.logdens= -91.300081 fn= 5 theta= 3.989484  range=[-10.709 11.883]&quot;
@@ -518,8 +525,10 @@ res2 = inla(formula2, family=&quot;gaussian&quot;, data=df,
 [299] &quot;        config 10=[ -3.00] log(rel.dens)=-3.31, [0] accept, 
 [300] &quot;        config 11=[ -3.75] log(rel.dens)=-4.86, [3] accept, </code></pre>
 </div>
-<div id="representing-the-posterior" class="section level3">
-<h3><span class="header-section-number">3.2.2</span> Representing the posterior</h3>
+<div id="representing-the-posterior" class="section level3"
+number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Representing the
+posterior</h3>
 <p>Continuing reading the logfile above:</p>
 <pre><code>[302] &quot;Combine the densities with relative weights:&quot;
 [303] &quot;        config  0/ 9=[  0.00] weight = 1.000 adjusted weight = 0.975  neff = 6.61&quot;
@@ -532,51 +541,70 @@ res2 = inla(formula2, family=&quot;gaussian&quot;, data=df,
 [310] &quot;        config  7/ 9=[ -3.00] weight = 0.037 adjusted weight = 0.044  neff = 10.10&quot;
 [311] &quot;        config  8/ 9=[ -3.75] weight = 0.008 adjusted weight = 0.010  neff = 11.25&quot;
 [312] &quot;Done.&quot; </code></pre>
-<p>Here we see the <code>config</code>, the configurations, the values of <span class="math inline">\(\theta^* = \log(\theta)\)</span> chosen to represent the posterior.</p>
-<p>To figure out where INLA actually computed the posterior, we can look at:</p>
+<p>Here we see the <code>config</code>, the configurations, the values
+of <span class="math inline">\(\theta^* = \log(\theta)\)</span> chosen
+to represent the posterior.</p>
+<p>To figure out where INLA actually computed the posterior, we can look
+at:</p>
 <pre class="r"><code>str(res2$misc$configs$config[[1]], 1)</code></pre>
-<pre><code>## List of 9
-##  $ theta             : Named num 3.19
+<pre><code>## List of 15
+##  $ theta             : Named num 1.3
 ##   ..- attr(*, &quot;names&quot;)= chr &quot;Log precision for idx&quot;
-##  $ log.posterior     : num -0.265
-##  $ log.posterior.orig: num -0.265
-##  $ mean              : num [1:100] -10.43 -9.64 -8.82 -7.99 -7.11 ...
-##  $ improved.mean     : num [1:100] -10.43 -9.64 -8.82 -7.99 -7.11 ...
-##  $ skewness          : num [1:100] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
+##  $ log.posterior     : num -5.62
+##  $ log.posterior.orig: num -6.77
+##  $ mean              : num [1:50] -10.25 -9.63 -8.93 -8.21 -7.29 ...
+##  $ improved.mean     : num [1:50] -10.25 -9.63 -8.93 -8.21 -7.29 ...
+##  $ skewness          : logi [1:50] NA NA NA NA NA NA ...
 ##  $ Q                 :Formal class &#39;dgCMatrix&#39; [package &quot;Matrix&quot;] with 6 slots
 ##  $ Qinv              :Formal class &#39;dgCMatrix&#39; [package &quot;Matrix&quot;] with 6 slots
-##  $ Qprior.diag       : num [1:100] 162755 162755 162755 162755 162755 ...</code></pre>
+##  $ Qprior            :Formal class &#39;dgCMatrix&#39; [package &quot;Matrix&quot;] with 6 slots
+##  $ cpodens.moments   : num[0 , 1:3] 
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##  $ gcpodens.moments  : num[0 , 1:3] 
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##  $ arg.str           : NULL
+##  $ ll.info           : num [1:50, 1:3] 0.628 -0.179 1.151 -0.961 0.824 ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##  $ APredictor        : num[0 , 1:2] 
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##  $ Predictor         : num [1:50, 1:2] -10.25 -9.63 -8.93 -8.21 -7.29 ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2</code></pre>
 <pre class="r"><code>data.frame( theta = unlist(lapply(res2$misc$configs$config, function(x) x$theta)),
        log.post = unlist(lapply(res2$misc$configs$config, function(x) x$log.posterior)))</code></pre>
 <pre><code>##    theta log.post
-## 1    3.2    -0.27
-## 2    2.8    -1.02
-## 3    2.3    -2.21
-## 4    1.9    -3.80
-## 5    1.5    -5.76
-## 6    4.0    -0.30
-## 7    4.5    -1.27
-## 8    4.9    -3.07
-## 9    5.3    -5.86
-## 10   3.6     0.00</code></pre>
+## 1    1.3   -5.615
+## 2    2.0   -3.027
+## 3    2.5   -1.187
+## 4    3.0   -0.274
+## 5    3.3    0.089
+## 6    3.6    0.000
+## 7    3.9    0.121
+## 8    4.2   -0.195
+## 9    4.6   -1.153
+## 10   5.0   -3.387
+## 11   5.6   -7.482</code></pre>
 </div>
 </div>
-<div id="inference-results" class="section level2">
-<h2><span class="header-section-number">3.3</span> Inference results</h2>
+<div id="inference-results" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Inference
+results</h2>
 <p>We plot the result:</p>
 <pre class="r"><code>local.plot.result(res2)</code></pre>
 <p><img src="btopic121_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>What are the quantiles supposed to cover? The data, or …? Is this result better or worse than the previous?</p>
+<p>What are the quantiles supposed to cover? The data, or …? Is this
+result better or worse than the previous?</p>
 </div>
 </div>
-<div id="model-3-2-hyperparameters" class="section level1">
-<h1><span class="header-section-number">4</span> Model 3: 2 hyperparameters</h1>
+<div id="model-3-2-hyperparameters" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Model 3: 2
+hyperparameters</h1>
 <p>Using both hyper-parameters, we get.</p>
 <pre class="r"><code>res3 = inla(formula2, family=&quot;gaussian&quot;, data=df)</code></pre>
 <p>We plot the result:</p>
 <pre class="r"><code>local.plot.result(res2)</code></pre>
 <p><img src="btopic121_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<p>Please look into the <code>res3$logfile</code> and see what changes in 2 dimensions. [Todo: create followup presentation.]</p>
+<p>Please look into the <code>res3$logfile</code> and see what changes
+in 2 dimensions. [Todo: create followup presentation.]</p>
 </div>
 
 
@@ -608,7 +636,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -617,6 +645,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

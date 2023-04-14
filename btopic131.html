@@ -14,20 +14,28 @@
 
 <title>Some of my ‘good practices’ and solutions to code-issues</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,38 +343,61 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">Some of my ‘good practices’ and solutions to code-issues</h1>
+<h1 class="title toc-ignore">Some of my ‘good practices’ and solutions
+to code-issues</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic131 updated 22. June 2020</h4>
 
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>In this topic I plan to collect some of my (good?) practices. Learning these cost time, in the form of inefficient working hours when coding.</p>
+<p>In this topic I plan to collect some of my (good?) practices.
+Learning these cost time, in the form of inefficient working hours when
+coding.</p>
 </div>
-<div id="readme-files-and-similar" class="section level1">
-<h1><span class="header-section-number">2</span> Readme files and similar</h1>
-<p>Organising files on the coputer and on servers can be hard. To help this, most folders should contain a file called README.txt where the contents of the folder is described. Additional detail in the README could be: Where figures are from, what their licenses are, links to sources, and related folders, etc.</p>
-<p>In addition, some folders should have a file called Make or something similar, where we find code or a description of how to run the code / compile the documents in the folder.</p>
+<div id="readme-files-and-similar" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Readme files and
+similar</h1>
+<p>Organising files on the coputer and on servers can be hard. To help
+this, most folders should contain a file called README.txt where the
+contents of the folder is described. Additional detail in the README
+could be: Where figures are from, what their licenses are, links to
+sources, and related folders, etc.</p>
+<p>In addition, some folders should have a file called Make or something
+similar, where we find code or a description of how to run the code /
+compile the documents in the folder.</p>
 </div>
-<div id="clean-and-half-clean-scripts" class="section level1">
-<h1><span class="header-section-number">3</span> Clean and half-clean scripts</h1>
-<p>Delete all variables in the beginning of your script, with <code>rm(list=ls())</code>. This is controversial.</p>
-<p>When you end your work for the day (or more regularly): Restart R and run your scripts. This check will NOT help if your Rstudio is loading the last used workspace: Make sure nothing is saved on exit and nothing is loaded on start of RStudio.</p>
-<p>Additionally, if you are tempted to create startup scripts for R, e.g. for loading packages you use a lot. Please do not: Your code cannot be run by anyone else!</p>
-<p>Be liberal with <code>save</code> and <code>save.image</code>. But be careful with loading variables.</p>
+<div id="clean-and-half-clean-scripts" class="section level1"
+number="3">
+<h1><span class="header-section-number">3</span> Clean and half-clean
+scripts</h1>
+<p>Delete all variables in the beginning of your script, with
+<code>rm(list=ls())</code>. This is controversial.</p>
+<p>When you end your work for the day (or more regularly): Restart R and
+run your scripts. This check will NOT help if your Rstudio is loading
+the last used workspace: Make sure nothing is saved on exit and nothing
+is loaded on start of RStudio.</p>
+<p>Additionally, if you are tempted to create startup scripts for R,
+e.g. for loading packages you use a lot. Please do not: Your code cannot
+be run by anyone else!</p>
+<p>Be liberal with <code>save</code> and <code>save.image</code>. But be
+careful with loading variables.</p>
 </div>
-<div id="working-folder" class="section level1">
+<div id="working-folder" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Working folder</h1>
-<p>Run the current script with working directory where the script is located. Have a (different) specified folder (directory) for the data (and/or other input). Have a (different) specified folder for output. People may want to redirect the data and output folders.</p>
-<p>The following is my recommended code for how to set these folders. Note that each person who runs the code have different folder locations:</p>
+<p>Run the current script with working directory where the script is
+located. Have a (different) specified folder (directory) for the data
+(and/or other input). Have a (different) specified folder for output.
+People may want to redirect the data and output folders.</p>
+<p>The following is my recommended code for how to set these folders.
+Note that each person who runs the code have different folder
+locations:</p>
 <pre class="r"><code>## Chunk not ran
 ## Example is real, but folder names were changed
 if (Sys.info()[&quot;user&quot;]==&quot;haakon&quot;) {
@@ -427,7 +410,8 @@ if (Sys.info()[&quot;user&quot;]==&quot;haakon&quot;) {
   stop(&quot;Add your folders as above.&quot;)
 }
 dir.create(folder.out, recursive = T, showWarnings = F)</code></pre>
-<p>With these folders defined: If you want to write a file, or load something, never change working directory, but run something like…</p>
+<p>With these folders defined: If you want to write a file, or load
+something, never change working directory, but run something like…</p>
 <pre class="r"><code>## Chunk not run
 ## Loading data
 filename = &quot;data1&quot;
@@ -437,17 +421,22 @@ filename = &quot;figt1&quot;
 png(file=paste0(folder.out, filename))
 # ...</code></pre>
 </div>
-<div id="variable-names" class="section level1">
+<div id="variable-names" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Variable names</h1>
-<div id="first-time-explanation" class="section level2">
-<h2><span class="header-section-number">5.1</span> First time explanation</h2>
-<p>When a variable is defined for the first time, write a short explanation of the name</p>
+<div id="first-time-explanation" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> First time
+explanation</h2>
+<p>When a variable is defined for the first time, write a short
+explanation of the name</p>
 <pre class="r"><code>## Velocity of the ship
 v.ship = 10</code></pre>
 </div>
-<div id="replace-ijk" class="section level2">
+<div id="replace-ijk" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Replace i,j,k</h2>
-<p>In math, we like <span class="math inline">\(i,j,k\)</span> for indices, in coding, we should only use <code>i</code>, but follow it with an explanation. Try it and see how much more self-explanatory your code becomes.</p>
+<p>In math, we like <span class="math inline">\(i,j,k\)</span> for
+indices, in coding, we should only use <code>i</code>, but follow it
+with an explanation. Try it and see how much more self-explanatory your
+code becomes.</p>
 <pre class="r"><code>n.row = 14
 n.column = 19
 for (i.row in 1:n.row) {
@@ -456,9 +445,14 @@ for (i.row in 1:n.row) {
   }
 }</code></pre>
 </div>
-<div id="no-general-short-names" class="section level2">
-<h2><span class="header-section-number">5.3</span> No general short names</h2>
-<p>Which of <code>df</code>, <code>dat</code>, <code>DT</code>, is the best name for a dataframe? None of them. Because of R’s interesting autocomplete feature, and in general (for all coding languages), because of search-and-replace, no variable name should be a subset of another.</p>
+<div id="no-general-short-names" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> No general short
+names</h2>
+<p>Which of <code>df</code>, <code>dat</code>, <code>DT</code>, is the
+best name for a dataframe? None of them. Because of R’s interesting
+autocomplete feature, and in general (for all coding languages), because
+of search-and-replace, no variable name should be a subset of
+another.</p>
 <pre class="r"><code>## Chunk not run
 ## Not:
 df
@@ -473,8 +467,10 @@ df2.raw
 df2.scaled</code></pre>
 </div>
 </div>
-<div id="linear-covariates-more-than-2" class="section level1">
-<h1><span class="header-section-number">6</span> Linear covariates (more than 2)</h1>
+<div id="linear-covariates-more-than-2" class="section level1"
+number="6">
+<h1><span class="header-section-number">6</span> Linear covariates (more
+than 2)</h1>
 <p>If there are many covariates, we often write</p>
 <pre class="r"><code>y ~ elevation + aspect + dryness + vegetation + class + slope + ...</code></pre>
 <pre><code>## y ~ elevation + aspect + dryness + vegetation + class + slope + 
@@ -485,11 +481,16 @@ df2.scaled</code></pre>
 covar1.names = c(&quot;elevation&quot;, &quot;aspect&quot;, &quot;dryness&quot;, &quot;vegetation&quot;, &quot;class&quot;, &quot;slope&quot;)
 Xcov1 = as.matrix(df1[, c(&quot;covar1.names&quot;)])
 y ~ Xcov1</code></pre>
-<p>This is to ensure that we study the same linear covariates as those we include in the model, and that our many different formulas use the same covariates when they are meant to.</p>
+<p>This is to ensure that we study the same linear covariates as those
+we include in the model, and that our many different formulas use the
+same covariates when they are meant to.</p>
 </div>
-<div id="asking-questions" class="section level1">
+<div id="asking-questions" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Asking questions</h1>
-<p>Asking for help with code: Make the question as precise as you can (better chance of helpful answer). Attach a minimal reproducible example, and comment it clearly, in r-markdown. Use simulated data, if possible.</p>
+<p>Asking for help with code: Make the question as precise as you can
+(better chance of helpful answer). Attach a minimal reproducible
+example, and comment it clearly, in r-markdown. Use simulated data, if
+possible.</p>
 </div>
 
 
@@ -521,7 +522,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -530,6 +531,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

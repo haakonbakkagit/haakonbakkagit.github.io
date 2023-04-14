@@ -14,20 +14,28 @@
 
 <title>Unknown covariates are included in the Gaussian noise</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,42 +343,63 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">Unknown covariates are included in the Gaussian noise</h1>
+<h1 class="title toc-ignore">Unknown covariates are included in the
+Gaussian noise</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic124 updated 07. March 2018</h4>
 
 </div>
 
 
-
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>This topic is about model misspecification, with unknown covariates and a Gaussian likelihood.</p>
-<div id="initialisation" class="section level2">
+<p>This topic is about model misspecification, with unknown covariates
+and a Gaussian likelihood.</p>
+<div id="initialisation" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Initialisation</h2>
-<p>We load libraries, including INLA (<a href="btopic109.html">Installation and general troubleshooting</a>), and set random seed.</p>
+<p>We load libraries, including INLA (<a
+href="btopic109.html">Installation and general troubleshooting</a>), and
+set random seed.</p>
 <pre class="r"><code>library(INLA)
 library(fields)
 library(ggplot2)
 set.seed(201803)</code></pre>
 </div>
 </div>
-<div id="the-true-model" class="section level1">
+<div id="the-true-model" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> The true model</h1>
-<p>The data is generated by <span class="math display">\[y_i \sim \mathcal N(\eta_i, \sigma_\epsilon) \]</span> The linear predictor is <span class="math display">\[\eta_i = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + v_1 x_3,\]</span> The three <span class="math inline">\(\beta\)</span>s we want to infer from the data, and we know the two covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. However, we do not know the covariate <span class="math inline">\(x_3\)</span>, and so, we cannot infer <span class="math inline">\(v1\)</span>!</p>
-<div id="why-we-consider-this-problem" class="section level2">
-<h2><span class="header-section-number">2.1</span> Why we consider this problem</h2>
-<p>Does this happen in practice? (An unmeasured covariate?) Yes, nearly in all applications!</p>
-<p>What people do in most cases is ignore the unknown covariate(s), and fit a model to the data you have. From a statistical point of view, this is treating the <span class="math inline">\(v_1 x_3\)</span> as noise, and inferring the rest of the model. Next, we explore what happens when you do this.</p>
+<p>The data is generated by <span class="math display">\[y_i \sim
+\mathcal N(\eta_i, \sigma_\epsilon) \]</span> The linear predictor is
+<span class="math display">\[\eta_i = \beta_0 + \beta_1 x_1 + \beta_2
+x_2 + v_1 x_3,\]</span> The three <span
+class="math inline">\(\beta\)</span>s we want to infer from the data,
+and we know the two covariates <span class="math inline">\(x_1\)</span>
+and <span class="math inline">\(x_2\)</span>. However, we do not know
+the covariate <span class="math inline">\(x_3\)</span>, and so, we
+cannot infer <span class="math inline">\(v1\)</span>!</p>
+<div id="why-we-consider-this-problem" class="section level2"
+number="2.1">
+<h2><span class="header-section-number">2.1</span> Why we consider this
+problem</h2>
+<p>Does this happen in practice? (An unmeasured covariate?) Yes, nearly
+in all applications!</p>
+<p>What people do in most cases is ignore the unknown covariate(s), and
+fit a model to the data you have. From a statistical point of view, this
+is treating the <span class="math inline">\(v_1 x_3\)</span> as noise,
+and inferring the rest of the model. Next, we explore what happens when
+you do this.</p>
 </div>
 </div>
-<div id="simulating-a-dataset" class="section level1">
-<h1><span class="header-section-number">3</span> Simulating a dataset</h1>
-<p>Set the parameters and covariates. Assuming the covariates are scaled, we create covariates with a mean of 0 and a standard deviation near 1.</p>
+<div id="simulating-a-dataset" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Simulating a
+dataset</h1>
+<p>Set the parameters and covariates. Assuming the covariates are
+scaled, we create covariates with a mean of 0 and a standard deviation
+near 1.</p>
 <pre class="r"><code>N = 500
 x1 = runif(N, min=-2, max=2)
 x2 = runif(N, min=-2, max=2)
@@ -431,25 +412,30 @@ sig.eps = 0.4</code></pre>
 <p>Simulate the truth.</p>
 <pre class="r"><code>eta = beta0 + beta1*x1 + beta2*x2 + v1*x3
 y = eta + sig.eps*rnorm(N)</code></pre>
-<p>Create the dataframe representing the data collected in the field. Note that we do not add <span class="math inline">\(x_3\)</span> as this is not measured (it was too expensive or it was never considered).</p>
+<p>Create the dataframe representing the data collected in the field.
+Note that we do not add <span class="math inline">\(x_3\)</span> as this
+is not measured (it was too expensive or it was never considered).</p>
 <pre class="r"><code>df = data.frame(y = y, x1=x1, x2=x2)</code></pre>
 </div>
-<div id="inference" class="section level1">
+<div id="inference" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Inference</h1>
-<div id="model-1-the-model-we-use" class="section level2">
-<h2><span class="header-section-number">4.1</span> Model 1: The model we use</h2>
+<div id="model-1-the-model-we-use" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Model 1: The model we
+use</h2>
 <pre class="r"><code>formula = y ~ x1 + x2
 res1 = inla(formula, family = &quot;gaussian&quot;, data = df,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res1$summary.fixed</code></pre>
 <pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  3.02 0.024       2.97     3.02      3.06  3.02 1.1e-07
-## x1           0.70 0.022       0.65     0.70      0.74  0.70 1.1e-07
-## x2          -0.31 0.021      -0.35    -0.31     -0.27 -0.31 1.1e-07</code></pre>
+## (Intercept)  3.02 0.024       2.97     3.02      3.06  3.02 2.7e-11
+## x1           0.70 0.022       0.65     0.70      0.74  0.70 2.7e-11
+## x2          -0.31 0.021      -0.35    -0.31     -0.27 -0.31 2.7e-11</code></pre>
 </div>
-<div id="results" class="section level2">
+<div id="results" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Results</h2>
-<p>We see that the model recovers the true parameters! We do not expect to recover the true noise, as the term <span class="math inline">\(v_1x_3\)</span> has been added to it.</p>
+<p>We see that the model recovers the true parameters! We do not expect
+to recover the true noise, as the term <span
+class="math inline">\(v_1x_3\)</span> has been added to it.</p>
 <pre class="r"><code>(sd.model.noise = sd(y-res1$summary.linear.predictor$mean))</code></pre>
 <pre><code>## [1] 0.53</code></pre>
 <pre class="r"><code>(sd.true.noise = sd(y-eta))</code></pre>
@@ -459,26 +445,33 @@ res1 = inla(formula, family = &quot;gaussian&quot;, data = df,
 <pre><code>## [1] 0.34</code></pre>
 <pre class="r"><code>(sqrt(sd.true.noise^2 + sd.v1x3^2))</code></pre>
 <pre><code>## [1] 0.54</code></pre>
-<p>As expected, the two first numbers are not the same, but the first and the last is similar.</p>
+<p>As expected, the two first numbers are not the same, but the first
+and the last is similar.</p>
 </div>
-<div id="model-2-the-true-model" class="section level2">
-<h2><span class="header-section-number">4.3</span> Model 2: The true model</h2>
+<div id="model-2-the-true-model" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Model 2: The true
+model</h2>
 <pre class="r"><code>formula = y ~ x1 + x2 + x3
 res2 = inla(formula, family = &quot;gaussian&quot;, data = df,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res2$summary.fixed</code></pre>
-<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode   kld
-## (Intercept)  3.01 0.019       2.98     3.01      3.05  3.01 1e-07
-## x1           0.71 0.017       0.67     0.71      0.74  0.71 1e-07
-## x2          -0.30 0.017      -0.33    -0.30     -0.27 -0.30 1e-07
-## x3           0.28 0.017       0.25     0.28      0.32  0.28 1e-07</code></pre>
-<p>With this model, the estimates are better, and the uncertainties smaller than with model 1.</p>
+<pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
+## (Intercept)  3.01 0.019       2.98     3.01      3.05  3.01 2.6e-11
+## x1           0.71 0.017       0.67     0.71      0.74  0.71 2.7e-11
+## x2          -0.30 0.017      -0.33    -0.30     -0.27 -0.30 2.7e-11
+## x3           0.28 0.017       0.25     0.28      0.32  0.28 2.7e-11</code></pre>
+<p>With this model, the estimates are better, and the uncertainties
+smaller than with model 1.</p>
 </div>
 </div>
-<div id="discussion" class="section level1">
+<div id="discussion" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Discussion</h1>
-<p>The example in this topic hints to the generally applicable approach of ignoring some unknown covariates and fitting a model to what data you have.</p>
-<p>In general, whether the estimates are unbiased and what variance you have depends on the dependency between the known and unknown covariates, and the size of the unknown covariates.</p>
+<p>The example in this topic hints to the generally applicable approach
+of ignoring some unknown covariates and fitting a model to what data you
+have.</p>
+<p>In general, whether the estimates are unbiased and what variance you
+have depends on the dependency between the known and unknown covariates,
+and the size of the unknown covariates.</p>
 <p>[Please tip me about a few good citations that I can add here.]</p>
 </div>
 
@@ -511,7 +504,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -520,6 +513,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

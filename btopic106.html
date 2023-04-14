@@ -14,20 +14,28 @@
 
 <title>Using a pure-iid model for the Seeds data</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -39,11 +47,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -56,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="hcstyle.css" type="text/css" />
 
@@ -92,10 +71,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -112,40 +87,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -173,7 +124,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -185,7 +136,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -195,11 +146,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -211,13 +179,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -225,16 +192,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -337,7 +297,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -351,7 +311,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -383,41 +343,49 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">Using a pure-iid model for the Seeds data</h1>
+<h1 class="title toc-ignore">Using a pure-iid model for the Seeds
+data</h1>
 <h4 class="author">Haakon Bakka</h4>
 <h4 class="date">BTopic106 updated February 1, 2017</h4>
 
 </div>
 
 
-<div id="about" class="section level1">
+<div id="about" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>This is an alternative model for the seeds dataset.</p>
-<div id="initialise-r-session" class="section level2">
-<h2><span class="header-section-number">1.1</span> Initialise R session</h2>
-<p>We load any packages and set global options. You may need to install these libraries (<a href="btopic109.html">Installation and general troubleshooting</a>).</p>
+<div id="initialise-r-session" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Initialise R
+session</h2>
+<p>We load any packages and set global options. You may need to install
+these libraries (<a href="btopic109.html">Installation and general
+troubleshooting</a>).</p>
 <pre class="r"><code>library(INLA); rm(list=ls())
 options(width=70, digits=2)</code></pre>
 </div>
-<div id="dependencies" class="section level2">
+<div id="dependencies" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Dependencies</h2>
-<p>See <a href="btopic102.html">BTopic 102</a> for a description of the dataset and a different model. The following code is re-used from that example.</p>
+<p>See <a href="btopic102.html">BTopic 102</a> for a description of the
+dataset and a different model. The following code is re-used from that
+example.</p>
 <pre class="r"><code>data(Seeds); dat = Seeds
 df = data.frame(y = dat$r, Ntrials = dat$n, dat[, 3:5])</code></pre>
 <pre class="r"><code>family1 = &quot;binomial&quot;
 control.family1 = list(control.link=list(model=&quot;logit&quot;))</code></pre>
 </div>
 </div>
-<div id="this-model-the-iid-model" class="section level1">
-<h1><span class="header-section-number">2</span> This model: The iid model</h1>
-<p>Here, we create a similar formula as in BTopic102, except there is no covariates/factors!</p>
+<div id="this-model-the-iid-model" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> This model: The iid
+model</h1>
+<p>Here, we create a similar formula as in BTopic102, except there is no
+covariates/factors!</p>
 <pre class="r"><code>hyper1 = list(theta = list(prior=&quot;pc.prec&quot;, param=c(1,0.01)))
 formula1 = y ~ f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
-<div id="call-inla" class="section level2">
+<div id="call-inla" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Call INLA</h2>
 <pre class="r"><code>res1 = inla(formula=formula1, data=df, 
             family=family1, Ntrials=Ntrials, 
@@ -425,16 +393,32 @@ formula1 = y ~ f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
             control.compute=list(config=T))
 # - use control.compute so that we get to sample from the posterior</code></pre>
 </div>
-<div id="look-at-results" class="section level2">
+<div id="look-at-results" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Look at results</h2>
 <pre class="r"><code>summary(res1)</code></pre>
 <pre><code>## 
 ## Call:
-##    c(&quot;inla(formula = formula1, family = family1, data = df, 
-##    Ntrials = Ntrials, &quot;, &quot; control.compute = list(config = T), 
-##    control.family = control.family1)&quot; ) 
+##    c(&quot;inla.core(formula = formula, family = family, contrasts = 
+##    contrasts, &quot;, &quot; data = data, quantiles = quantiles, E = E, 
+##    offset = offset, &quot;, &quot; scale = scale, weights = weights, 
+##    Ntrials = Ntrials, strata = strata, &quot;, &quot; lp.scale = lp.scale, 
+##    link.covariates = link.covariates, verbose = verbose, &quot;, &quot; 
+##    lincomb = lincomb, selection = selection, control.compute = 
+##    control.compute, &quot;, &quot; control.predictor = control.predictor, 
+##    control.family = control.family, &quot;, &quot; control.inla = 
+##    control.inla, control.fixed = control.fixed, &quot;, &quot; control.mode 
+##    = control.mode, control.expert = control.expert, &quot;, &quot; 
+##    control.hazard = control.hazard, control.lincomb = 
+##    control.lincomb, &quot;, &quot; control.update = control.update, 
+##    control.lp.scale = control.lp.scale, &quot;, &quot; control.pardiso = 
+##    control.pardiso, only.hyperparam = only.hyperparam, &quot;, &quot; 
+##    inla.call = inla.call, inla.arg = inla.arg, num.threads = 
+##    num.threads, &quot;, &quot; blas.num.threads = blas.num.threads, keep = 
+##    keep, working.directory = working.directory, &quot;, &quot; silent = 
+##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
+##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.9, Running = 0.147, Post = 0.17, Total = 3.21 
+##     Pre = 2.87, Running = 0.467, Post = 0.0471, Total = 3.38 
 ## Fixed effects:
 ##               mean   sd 0.025quant 0.5quant 0.97quant   mode kld
 ## (Intercept) -0.026 0.16      -0.35   -0.025      0.27 -0.022   0
@@ -445,56 +429,100 @@ formula1 = y ~ f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></pre>
 ## 
 ## Model hyperparameters:
 ##                     mean   sd 0.025quant 0.5quant 0.97quant mode
-## Precision for plate 3.15 1.41       1.24     2.88      6.45 2.41
+## Precision for plate 3.16 1.43       1.24     2.88      6.45 2.41
 ## 
-## Expected number of effective parameters(stdev): 14.59(1.54)
-## Number of equivalent replicates : 1.44 
-## 
-## Marginal log-Likelihood:  -67.85</code></pre>
+## Marginal log-Likelihood:  -67.85 
+##  is computed 
+## Posterior summaries for the linear predictor and the fitted values are computed
+## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
 </div>
 </div>
-<div id="different-averages" class="section level1">
+<div id="different-averages" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Different averages</h1>
-<div id="the-average-as-a-function-of-x1" class="section level2">
-<h2><span class="header-section-number">3.1</span> The average as a function of <code>x1</code></h2>
-<p>We compute the average (on linear predictor scale) for <span class="math inline">\(x_1=0\)</span> and <span class="math inline">\(x_1=1\)</span>. We ignore the intercept, as that is the same for all observations.</p>
+<div id="the-average-as-a-function-of-x1" class="section level2"
+number="3.1">
+<h2><span class="header-section-number">3.1</span> The average as a
+function of <code>x1</code></h2>
+<p>We compute the average (on linear predictor scale) for <span
+class="math inline">\(x_1=0\)</span> and <span
+class="math inline">\(x_1=1\)</span>. We ignore the intercept, as that
+is the same for all observations.</p>
 <pre class="r"><code>(avg.all = mean(res1$summary.random$plate$mean))</code></pre>
-<pre><code>## [1] 0.00074</code></pre>
+<pre><code>## [1] -6.4e-07</code></pre>
 <pre class="r"><code>(avg.x1.0 = mean(res1$summary.random$plate$mean[df$x1==0]))</code></pre>
 <pre><code>## [1] 0.14</code></pre>
 <pre class="r"><code>(avg.x1.1 = mean(res1$summary.random$plate$mean[df$x1==1]))</code></pre>
-<pre><code>## [1] -0.15</code></pre>
+<pre><code>## [1] -0.16</code></pre>
 <pre class="r"><code>(avg.diff = avg.x1.0 - avg.x1.1)</code></pre>
-<pre><code>## [1] 0.29</code></pre>
-<p>From this we see that the plates using seed type 0 had a much lower probability of success, on average, than those using seed type 1. Let us investigate the posterior distribution of <code>avg.diff</code>.</p>
+<pre><code>## [1] 0.3</code></pre>
+<p>From this we see that the plates using seed type 0 had a much lower
+probability of success, on average, than those using seed type 1. Let us
+investigate the posterior distribution of <code>avg.diff</code>.</p>
 <pre class="r"><code>n.samples = 10000
 samples = inla.posterior.sample(n.samples, result = res1)
 (mean(samples[[1]]$latent[(1:nrow(df))][df$x1==0]) - mean(samples[[1]]$latent[(1:nrow(df))][df$x1==1]))</code></pre>
-<pre><code>## [1] 0.42</code></pre>
+<pre><code>## [1] 0.72</code></pre>
 <pre class="r"><code># - this gives the average difference between the linear predictor values for plates with the two different seed types
 samples.avg.diff = unlist(lapply(samples, FUN = function(x) mean(x$latent[(1:nrow(df))][df$x1==0]) - mean(x$latent[(1:nrow(df))][df$x1==1])))
 # - this uses the line above in lapply, to get all the samples
 summary(samples.avg.diff)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   -0.20    0.19    0.29    0.30    0.40    0.95</code></pre>
+##   -0.29    0.19    0.30    0.30    0.41    0.97</code></pre>
 <pre class="r"><code># - Note that the mean equals avg.diff</code></pre>
 <p>We plot the result to see the distribution.</p>
 <pre class="r"><code>plot(density(samples.avg.diff))</code></pre>
 <p><img src="btopic106_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 </div>
-<div id="interpretation" class="section level1">
+<div id="interpretation" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Interpretation</h1>
-<p>Let us ask the vague question “Is seed sample 0 better than seed sample 1?”. We want to operationalise this question, ie. make it into a statistical formulation that is precise. One common way to do that is to include a coefficient for <span class="math inline">\(x_1\)</span> in the model and ask “is the posterior of this coefficient significantly different from zero?” One can make a decision theoretic approach and assign a loss function and then draw an optimal conclusion.</p>
-<p>But this all depends on the model being the true data generating mechanism.</p>
-<p>The model we used here did not have <span class="math inline">\(x_1\)</span> as a covariate, but we are still answering the same question “Is seed sample 0 better than seed sample 1?”. In this case, we operationalise the question into, “On average, is the difference between the logit probabilities, when using the two seed types, significantly different from zero?”.</p>
-<p>The main point I want to make is that <strong>You do not need to have the hypothesis as part of the model (to be able to test it)!</strong> Even without using <span class="math inline">\(x_1\)</span> in the model, we can still conclude that seed type 0 is better than seed type 1 on average, in our dataset.</p>
-<p>Since both operationalisations, and both models, are somewhat sensible, we expect to get similar results. And we do! In BTopic102 we see that the estimated coefficient is 0.35, and here it is 0.3.</p>
-<p>In the end, a model only defines how we believe the data are generated, it does not tell us how to answer questions. So, what is the difference between the two models? The model in BTopic102 claims that there is an unknown difference between the two seeds (that may be zero (but this has a low prior probability)). The model on this page assumes that the data were generated without the two seeds giving different success probabilities.</p>
-<div id="in-the-end-is-this-model-wrong" class="section level2">
-<h2><span class="header-section-number">4.1</span> In the end, is this model wrong?</h2>
-<p>The result we get in this example (that the average difference is not zero) can be interpreted as “either something very strange happened accidentally, or your model is wrong”.</p>
-<p>One very useful way to think about model validity is “how would this model predict new data?” If we do a new experiment, with one of the same plates (and assume that <span class="math inline">\(x_1\)</span> cannot change when using the same plate), we would predict using the intercept and the posterior of the random effect <em>at that plate</em>. This is sensible. If we do another experiment, this time with a new plate, with seed type 0, what would we predict? With the current model, we would not use the knowledge that we have seed type 0. We would predict with the intercept and a new draw from the iid effect. This is clearly not what we want!</p>
+<p>Let us ask the vague question “Is seed sample 0 better than seed
+sample 1?”. We want to operationalise this question, ie. make it into a
+statistical formulation that is precise. One common way to do that is to
+include a coefficient for <span class="math inline">\(x_1\)</span> in
+the model and ask “is the posterior of this coefficient significantly
+different from zero?” One can make a decision theoretic approach and
+assign a loss function and then draw an optimal conclusion.</p>
+<p>But this all depends on the model being the true data generating
+mechanism.</p>
+<p>The model we used here did not have <span
+class="math inline">\(x_1\)</span> as a covariate, but we are still
+answering the same question “Is seed sample 0 better than seed sample
+1?”. In this case, we operationalise the question into, “On average, is
+the difference between the logit probabilities, when using the two seed
+types, significantly different from zero?”.</p>
+<p>The main point I want to make is that <strong>You do not need to have
+the hypothesis as part of the model (to be able to test it)!</strong>
+Even without using <span class="math inline">\(x_1\)</span> in the
+model, we can still conclude that seed type 0 is better than seed type 1
+on average, in our dataset.</p>
+<p>Since both operationalisations, and both models, are somewhat
+sensible, we expect to get similar results. And we do! In BTopic102 we
+see that the estimated coefficient is 0.35, and here it is 0.3.</p>
+<p>In the end, a model only defines how we believe the data are
+generated, it does not tell us how to answer questions. So, what is the
+difference between the two models? The model in BTopic102 claims that
+there is an unknown difference between the two seeds (that may be zero
+(but this has a low prior probability)). The model on this page assumes
+that the data were generated without the two seeds giving different
+success probabilities.</p>
+<div id="in-the-end-is-this-model-wrong" class="section level2"
+number="4.1">
+<h2><span class="header-section-number">4.1</span> In the end, is this
+model wrong?</h2>
+<p>The result we get in this example (that the average difference is not
+zero) can be interpreted as “either something very strange happened
+accidentally, or your model is wrong”.</p>
+<p>One very useful way to think about model validity is “how would this
+model predict new data?” If we do a new experiment, with one of the same
+plates (and assume that <span class="math inline">\(x_1\)</span> cannot
+change when using the same plate), we would predict using the intercept
+and the posterior of the random effect <em>at that plate</em>. This is
+sensible. If we do another experiment, this time with a new plate, with
+seed type 0, what would we predict? With the current model, we would not
+use the knowledge that we have seed type 0. We would predict with the
+intercept and a new draw from the iid effect. This is clearly not what
+we want!</p>
 </div>
 </div>
 
@@ -527,7 +555,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -536,6 +564,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

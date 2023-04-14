@@ -13,17 +13,25 @@
 
 <title>This is a listing of all the topics</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -35,11 +43,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -52,32 +55,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -87,10 +66,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -107,40 +82,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -168,7 +119,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -180,7 +131,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -190,11 +141,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -206,13 +174,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -220,16 +187,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -273,7 +233,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -305,7 +265,7 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -316,49 +276,102 @@ $(document).ready(function () {
 
 <div id="general" class="section level2">
 <h2>General</h2>
-<p>Topics include INLA, Bayesian modeling, the SPDE approach, and spatial/temporal modeling.</p>
-<p>The identifier for a topic is BTopicXYZ, where the XYZ comes in chronological order. The goal is that each webpage is product tested by more than one reviewer, it is then noted as “Finished”.</p>
+<p>Topics include INLA, Bayesian modeling, the SPDE approach, and
+spatial/temporal modeling.</p>
+<p>The identifier for a topic is BTopicXYZ, where the XYZ comes in
+chronological order. The goal is that each webpage is product tested by
+more than one reviewer, it is then noted as “Finished”.</p>
 </div>
 <div id="the-topics" class="section level2">
 <h2>The topics</h2>
 <p>BTopic101: No topic.</p>
-<p>BTopic102: <a href="./btopic102.html">Seeds example</a> <span style="color:grey">Quality:Final</span></p>
-<p>BTopic103: <a href="./btopic103.html">Simulation and inference with the Barrier model</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic104: <a href="./btopic104.html">Mesh Creation including Coastlines</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic106: <a href="./btopic106.html">Using a pure-iid model for the Seeds data</a> <span style="color:grey">Quality:Draft</span></p>
-<p>BTopic107: <a href="./btopic107.html">The Barrier model applied to the Archipelago data</a> <span style="color:grey">Quality:OK webpage</span> (Please see BTopic128 instead, that is an extended version, with more explanation. This link might be removed in the future.)</p>
-<p>BTopic108: <a href="./btopic108.html">A first example of spatial data modeling (Calcium data)</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic109: <a href="./btopic109.html">Installation and general troubleshooting</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic110: <a href="./btopic110.html">Ramsay’s horseshoe and the Barrier model</a> <span style="color:grey">Quality:OK webpage</span></p>
-<p>BTopic112: <a href="./btopic112.html">Predictions with iid effects - overdispersed poisson example</a> <span style="color:grey">Quality:OK Webpage </span></p>
-<p>BTopic113: <a href="./btopic113.html">Multivariate predictions on held-out data - binomial example</a> <span style="color:grey">Quality:OK Webpage </span></p>
-<p>BTopic114: <a href="./btopic114.html">How to make a bad mesh</a> <span style="color:grey">Quality:OK Webpage </span></p>
-<p>BTopic115: <a href="./btopic115.html">Analysing unemployment data with the AR1 Model</a> <span style="color:grey">Quality:OK Webpage </span></p>
-<p>BTopic117: <a href="./btopic117.html">Time series and nonlinear effects: Simulation-Inference</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic119: <a href="./btopic119.html">A set of exercises</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic120: <a href="./btopic120.html">Basic computations with precision matrix: AR1 example</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic121: <a href="./btopic121.html">How INLA deals with hyper-parameters: 1D Reconstruction example</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic122: <a href="./btopic122.html">A simple spatial model: Simulation-inference</a> <span style="color:grey">Quality:Ok webpage </span></p>
-<p>BTopic123: <a href="./btopic123.html">Parametrisations matter for interpretation: Seeds example</a> <span style="color:grey">Quality:Draft </span></p>
-<p>BTopic124: <a href="./btopic124.html">Unknown covariates are included in the Gaussian noise</a> <span style="color:grey">Quality:OK webpage </span></p>
-<p>BTopic125: <a href="./btopic125.html">What I think about overdispersed Poisson</a> <span style="color:grey">Quality:OK webpage </span></p>
-<p>BTopic127: <a href="./btopic127.html">Polygons and Coastlines</a> <span style="color:grey">Quality:OK webpage </span></p>
-<p>BTopic128: <a href="./btopic128.html">Barrier Model applied to the Archipelago Data</a> <span style="color:grey">Quality:OK webpage </span> (This is an extended version of btopic107.)</p>
-<p>BTopic132: <a href="./btopic132.html">Comparing forecasts from separable and non-separable models</a> <span style="color:grey">Quality:OK webpage </span></p>
-<p>BTopic133: <a href="./btopic133.html">Non-separable space-time model of temperature</a> <span style="color:grey">Quality:OK webpage </span></p>
+<p>BTopic102: <a href="./btopic102.html">Seeds example</a> <span
+style="color:grey">Quality:Final</span></p>
+<p>BTopic103: <a href="./btopic103.html">Simulation and inference with
+the Barrier model</a> <span style="color:grey">Quality:OK
+webpage</span></p>
+<p>BTopic104: <a href="./btopic104.html">Mesh Creation including
+Coastlines</a> <span style="color:grey">Quality:OK webpage</span></p>
+<p>BTopic106: <a href="./btopic106.html">Using a pure-iid model for the
+Seeds data</a> <span style="color:grey">Quality:Draft</span></p>
+<p>BTopic107: <a href="./btopic107.html">The Barrier model applied to
+the Archipelago data</a> <span style="color:grey">Quality:OK
+webpage</span> (Please see BTopic128 instead, that is an extended
+version, with more explanation. This link might be removed in the
+future.)</p>
+<p>BTopic108: <a href="./btopic108.html">A first example of spatial data
+modeling (Calcium data)</a> <span style="color:grey">Quality:OK
+webpage</span></p>
+<p>BTopic109: <a href="./btopic109.html">Installation and general
+troubleshooting</a> <span style="color:grey">Quality:OK
+webpage</span></p>
+<p>BTopic110: <a href="./btopic110.html">Ramsay’s horseshoe and the
+Barrier model</a> <span style="color:grey">Quality:OK webpage</span></p>
+<p>BTopic112: <a href="./btopic112.html">Predictions with iid effects -
+overdispersed poisson example</a> <span style="color:grey">Quality:OK
+Webpage </span></p>
+<p>BTopic113: <a href="./btopic113.html">Multivariate predictions on
+held-out data - binomial example</a> <span style="color:grey">Quality:OK
+Webpage </span></p>
+<p>BTopic114: <a href="./btopic114.html">How to make a bad mesh</a>
+<span style="color:grey">Quality:OK Webpage </span></p>
+<p>BTopic115: <a href="./btopic115.html">Analysing unemployment data
+with the AR1 Model</a> <span style="color:grey">Quality:OK Webpage
+</span></p>
+<p>BTopic117: <a href="./btopic117.html">Time series and nonlinear
+effects: Simulation-Inference</a> <span style="color:grey">Quality:Draft
+</span></p>
+<p>BTopic119: <a href="./btopic119.html">A set of exercises</a> <span
+style="color:grey">Quality:Draft </span></p>
+<p>BTopic120: <a href="./btopic120.html">Basic computations with
+precision matrix: AR1 example</a> <span style="color:grey">Quality:Draft
+</span></p>
+<p>BTopic121: <a href="./btopic121.html">How INLA deals with
+hyper-parameters: 1D Reconstruction example</a> <span
+style="color:grey">Quality:Draft </span></p>
+<p>BTopic122: <a href="./btopic122.html">A simple spatial model:
+Simulation-inference</a> <span style="color:grey">Quality:Ok webpage
+</span></p>
+<p>BTopic123: <a href="./btopic123.html">Parametrisations matter for
+interpretation: Seeds example</a> <span style="color:grey">Quality:Draft
+</span></p>
+<p>BTopic124: <a href="./btopic124.html">Unknown covariates are included
+in the Gaussian noise</a> <span style="color:grey">Quality:OK webpage
+</span></p>
+<p>BTopic125: <a href="./btopic125.html">What I think about
+overdispersed Poisson</a> <span style="color:grey">Quality:OK webpage
+</span></p>
+<p>BTopic127: <a href="./btopic127.html">Polygons and Coastlines</a>
+<span style="color:grey">Quality:OK webpage </span></p>
+<p>BTopic128: <a href="./btopic128.html">Barrier Model applied to the
+Archipelago Data</a> <span style="color:grey">Quality:OK webpage </span>
+(This is an extended version of btopic107.)</p>
+<p>BTopic132: <a href="./btopic132.html">Comparing forecasts from
+separable and non-separable models</a> <span
+style="color:grey">Quality:OK webpage </span></p>
+<p>BTopic133: <a href="./btopic133.html">Non-separable space-time model
+of temperature</a> <span style="color:grey">Quality:OK webpage
+</span></p>
 <div id="quality-levels" class="section level3">
 <h3>Quality levels</h3>
-<p>Draft: Not recommended for reading. The idea is there but the execution is poor, or not checked.</p>
+<p>Draft: Not recommended for reading. The idea is there but the
+execution is poor, or not checked.</p>
 <p>OK webpage: A suitable version 1. Checked for errors.</p>
-<p>Good webpage: Carefully checked for coding or mathematical errors and spell-checked.</p>
-<p>Product tested: Tested and checked by at least one person (other than me).</p>
-<p>Final: Tested on several people, statisticians and applied practitioners. (Can still be updated with minor changes.)</p>
-<p>Missing: Some webpages are removed from this list. They still exist (through direct links), but they are not of sufficient quality, or no longer needed.</p>
+<p>Good webpage: Carefully checked for coding or mathematical errors and
+spell-checked.</p>
+<p>Product tested: Tested and checked by at least one person (other than
+me).</p>
+<p>Final: Tested on several people, statisticians and applied
+practitioners. (Can still be updated with minor changes.)</p>
+<p>Missing: Some webpages are removed from this list. They still exist
+(through direct links), but they are not of sufficient quality, or no
+longer needed.</p>
 </div>
 </div>
 <div id="other-pages" class="section level2">
 <h2>Other pages</h2>
-<p><a href="words.html#the-detailed-list">A list of words, as used in these topics</a></p>
+<p><a href="words.html#the-detailed-list">A list of words, as used in
+these topics</a></p>
 </div>
 
 
@@ -388,7 +401,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
