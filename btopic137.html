@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Haakon Bakka" />
+
+
+<title>How to use the NBPclassify package on the fishscales data</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="hcstyle.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="organisedtopics.html">Organised Topics</a>
+</li>
+<li>
+  <a href="alltopics.html">All Topics</a>
+</li>
+<li>
+  <a href="aboutme.html">About me</a>
+</li>
+<li>
+  <a href="feedback.html">Feedback</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">How to use the NBPclassify package on the
+fishscales data</h1>
+<h4 class="author">Haakon Bakka</h4>
+<h4 class="date">Btopic 137 updated 25 April 2023</h4>
+
+</div>
+
+
+<div id="about" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> About</h1>
+<div id="the-r-package-nbpclassify" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> The R package
+NBPclassify</h2>
+<p>See <a href="Btopic136.html">Btopic136</a> for a short description,
+and how to install the package.</p>
+</div>
+<div id="the-fishscaled-data-from-nbpclassify" class="section level2"
+number="1.2">
+<h2><span class="header-section-number">1.2</span> The fishscaled data
+from NBPclassify</h2>
+<p>See documentation in the package:</p>
+<pre><code>library(NBPclassify)
+?Fish_scale_elements_fvf</code></pre>
+</div>
+<div id="this-tutorial" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> This tutorial</h2>
+<p>See ?Fish_scale_elements_fvf for a description of the dataset.</p>
+<p>This is a classification problem, where we want to classify escaped
+fish to a location, where the fish was farmed before it escaped.</p>
+<p>We show how to use the NBPclassify package.</p>
+<div id="dependencies" class="section level3" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> Dependencies</h3>
+<pre class="r"><code>library(NBPclassify)
+library(ggplot2)
+theme_set(theme_bw())
+library(randomForest)
+set.seed(20230401)</code></pre>
+</div>
+</div>
+</div>
+<div id="data" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Data</h1>
+<pre class="r"><code>dfa = Fish_scale_elements_svf
+# or 
+# dfa = Fish_scale_elements_fvf</code></pre>
+<pre class="r"><code>dfa[1:2, ]</code></pre>
+<pre><code>##   Location Id_fish Id_scale Is_escape     Li7 B11 Ba137 U238 Mg24 S32
+## 1        D       1        1     FALSE -0.0014 3.3   1.1 -1.8  8.9   9
+## 2        D       1        2     FALSE -0.2336  NA   2.1 -1.9  8.7  NA
+##   Mn55 Zn66 Sr88
+## 1  5.3  5.2  7.4
+## 2  5.2  5.6   NA</code></pre>
+<div id="example-covariate" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Example
+covariate</h2>
+<pre class="r"><code>hist(dfa$Ba137, breaks=200)
+abline(v=log(1.1/2), col=&quot;blue&quot;)</code></pre>
+<p><img src="btopic137_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+The data looks Gaussian, except for a spike at the left and a heavy tail
+at the right. The spike at the left is becasue of the minimum detection
+value, see ?Fish_scale_elements_fvf, and we drew a blue line to
+highlight this.</p>
+<p>We will ignore both issues for the rest of this tutorial.</p>
+</div>
+</div>
+<div id="predictions-for-the-escaped" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Predictions for the
+escaped</h1>
+<div id="run-model" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Run model</h2>
+<pre class="r"><code>train_cov = dfa[!dfa$Is_escape, -c(1:4)]
+train_class = dfa[!dfa$Is_escape, &quot;Location&quot;]
+predict_cov = dfa[dfa$Is_escape, -c(1:4)]
+pred_ident = dfa[dfa$Is_escape, c(&quot;Id_fish&quot;, &quot;Id_scale&quot;)]
+
+nbp = NBP_classify(train_cov = train_cov,
+                   train_class = train_class,
+                   predict_cov = predict_cov,
+                   identifiers = pred_ident)</code></pre>
+<pre class="r"><code>str(nbp)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    39420 obs. of  6 variables:
+##  $ Id_fish  : num  1 1 1 1 1 2 2 2 2 2 ...
+##  $ Id_scale : num  1 2 3 4 5 1 2 3 4 5 ...
+##  $ nbp_class: chr  &quot;D&quot; &quot;D&quot; &quot;D&quot; &quot;D&quot; ...
+##  $ covariate: chr  &quot;Li7&quot; &quot;Li7&quot; &quot;Li7&quot; &quot;Li7&quot; ...
+##  $ p_val    : num  0.299 0.299 0.844 0.862 0.49 ...
+##  $ logdens  : num  0.282 0.281 0.801 0.806 0.582 ...</code></pre>
+<pre class="r"><code>table(nbp$nbp_class)</code></pre>
+<pre><code>## 
+##    A    D    M    T 
+## 9855 9855 9855 9855</code></pre>
+<pre class="r"><code>ids = c(0:3)*nrow(predict_cov)*ncol(predict_cov)+1
+nbp[ids, ]</code></pre>
+<pre><code>##      Id_fish Id_scale nbp_class covariate  p_val logdens
+## 233        1        1         D       Li7 0.2992    0.28
+## 2331       1        1         A       Li7 0.0018   -4.40
+## 2332       1        1         M       Li7 0.4042    0.64
+## 2333       1        1         T       Li7 0.0937   -0.87</code></pre>
+</div>
+<div id="aggregation" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Aggregation</h2>
+<pre class="r"><code>p_val = nbp$p_val
+by = nbp[, c(&quot;Id_fish&quot;, &quot;nbp_class&quot;, &quot;covariate&quot;), drop=F]
+by = nbp[, c(&quot;Id_fish&quot;, &quot;nbp_class&quot;), drop=F]
+agg = aggregate(p_val, by = by, FUN=NBP_aggregate_fischer)</code></pre>
+<pre class="r"><code>head(agg)</code></pre>
+<pre><code>##   Id_fish nbp_class       x
+## 1       1         A 9.0e-10
+## 2       2         A 4.0e-07
+## 3       3         A 1.1e-11
+## 4       4         A 7.8e-16
+## 5       5         A 0.0e+00
+## 6       6         A 2.1e-06</code></pre>
+<p>Note: There is an helper function that does this for you
+<code>?NBP_aggregate_p_values</code>. But maybe you prefer dplyr or
+other aggregation functions!</p>
+</div>
+</div>
+<div id="summaries" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Summaries</h1>
+<p>There are many ways to summarize the p-values and predictions. We
+give a few here to give you an idea. But in general, we recommend
+thinking about how to summarize and aggregate the p-values for your
+application and decision making process.</p>
+<div id="summarize-with-categories" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Summarize with
+categories</h2>
+<p>We use the aggregated p-values, and a cutoff function, to create 0/1
+results. What we in <a href="Btopic136.html">Btopic136</a> and the paper
+refer to as W.</p>
+<pre class="r"><code>agg2 = NBP_pred_categories(agg)</code></pre>
+<pre><code>## Warning in NBP_pred_categories(agg): One of your columns is an integer column.
+##             Make sure that you want to threshold this one!
+##             If not, use as.character on it before calling this function.</code></pre>
+<p>We convert the integer column to character, because it is an ID
+column:</p>
+<pre class="r"><code>agg$Id_fish = as.character(agg$Id_fish)
+agg12 = NBP_pred_categories(agg)</code></pre>
+<p>And then the warning has disappeared.</p>
+<pre class="r"><code>head(agg12)</code></pre>
+<pre><code>##   Id_fish nbp_class x
+## 1       1         A 0
+## 2       2         A 0
+## 3       3         A 0
+## 4       4         A 0
+## 5       5         A 0
+## 6       6         A 0</code></pre>
+<p>We can sum this up, for each class/location, to see how many escaped
+fish could possibly have come from that location.</p>
+<pre class="r"><code>agg13 = aggregate(agg12$x, by=agg12[, c(&quot;nbp_class&quot;), drop=F], FUN=sum)</code></pre>
+<pre class="r"><code>N_fish = length(unique(agg12$Id_fish))
+agg13 = rbind(agg13, c(&quot;All&quot;, N_fish))
+names(agg13)[2] = &quot;Not_impossible&quot;
+agg13$Not_possible = N_fish - as.numeric(agg13[, 2])
+agg13</code></pre>
+<pre><code>##   nbp_class Not_impossible Not_possible
+## 1         A             79          182
+## 2         D             70          191
+## 3         M            111          150
+## 4         T            205           56
+## 5       All            261            0</code></pre>
+<p>This means that up to 79 of the figh may have escaped from location
+A, etc.</p>
+</div>
+<div id="a-different-summary" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> A different
+summary</h2>
+<p>The previous summary avoids putting 0’s. This means that the cutoff
+is very small and it does not put a 0 unless the p-value is very small.
+In the following summary we show how to put a lot more 0s. Here we will
+put 0 if the p-value represents significance at the 0.05 level.</p>
+<pre class="r"><code>agg22 = NBP_pred_categories(agg, type = &quot;simple_cutoff&quot;, cutoff = 0.05)</code></pre>
+<pre class="r"><code>agg23 = aggregate(agg22$x, by=agg2[, c(&quot;nbp_class&quot;), drop=F], FUN=sum)</code></pre>
+<pre class="r"><code>N_fish = length(unique(agg22$Id_fish))
+agg23 = rbind(agg23, c(&quot;All&quot;, N_fish))
+names(agg23)[2] = &quot;Very_possible&quot;
+agg23</code></pre>
+<pre><code>##   nbp_class Very_possible
+## 1         A            20
+## 2         D            22
+## 3         M            39
+## 4         T           112
+## 5       All           261</code></pre>
+<p>This means that 20 fish fit very well with location A. Some of these
+may fit with several locations, and then it is not immediately clear
+which location it comes from.</p>
+<pre class="r"><code>cbind(agg23, agg13[, 2, drop=F])</code></pre>
+<pre><code>##   nbp_class Very_possible Not_impossible
+## 1         A            20             79
+## 2         D            22             70
+## 3         M            39            111
+## 4         T           112            205
+## 5       All           261            261</code></pre>
+</div>
+<div id="grades" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Grades</h2>
+<p>Here we summarise with grades from 1 to 6, where 1 means that it does
+not fit well at all, and 5/6 means that it fits very well. For details,
+read the function <code>NBP_pred_categories</code>.</p>
+<p>Instead of summarising it, we show fish by fish how well it fits to
+each location:</p>
+<pre class="r"><code>agg31 = NBP_pred_categories(agg, type = &quot;Grading1to6_V1&quot;)
+agg31 = reshape(agg31, direction=&quot;wide&quot;, idvar=c(&quot;Id_fish&quot;), 
+             timevar=&quot;nbp_class&quot;)
+names(agg31)[-1] = substr(names(agg31)[-1], 3, 3)
+
+
+head(agg31)</code></pre>
+<pre><code>##   Id_fish A D M T
+## 1       1 1 3 5 6
+## 2       2 2 2 4 5
+## 3       3 1 1 1 5
+## 4       4 1 1 1 2
+## 5       5 1 1 1 1
+## 6       6 2 3 3 3</code></pre>
+<p>For decision making, we can go through fish by fish, use these
+grades, and other external information that may be available, to make an
+informed expert opinion.</p>
+<p>If the expert has questions about the grades, pull up the p-values
+from where it comes. E.g. for fish 2, class T:</p>
+<pre class="r"><code>is1 = nbp$Id_fish==2 &amp; nbp$nbp_class==&quot;T&quot;
+str(nbp[is1, ])</code></pre>
+<pre><code>## &#39;data.frame&#39;:    45 obs. of  6 variables:
+##  $ Id_fish  : num  2 2 2 2 2 2 2 2 2 2 ...
+##  $ Id_scale : num  1 2 3 4 5 1 2 3 4 5 ...
+##  $ nbp_class: chr  &quot;T&quot; &quot;T&quot; &quot;T&quot; &quot;T&quot; ...
+##  $ covariate: chr  &quot;Li7&quot; &quot;Li7&quot; &quot;Li7&quot; &quot;Li7&quot; ...
+##  $ p_val    : num  0.152 0.391 0.464 0.749 0.384 ...
+##  $ logdens  : num  -0.496 0.165 0.263 0.481 0.152 ...</code></pre>
+<p>In this way we can iteratively learn about the grades, the model, and
+the covariates. We can then improve our understanding, our modelling,
+and our decision making over time.</p>
+</div>
+</div>
+<div id="cross-validation" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Cross validation</h1>
+<p>Here we perform CV with a big for loop. This is to investigate the
+performance of the three alternate models. One of the alternate models
+is using the NBP package to do a robust Naive Bayes.</p>
+<pre class="r"><code>dfas = dfa[!(dfa$Is_escape), ]
+rm(dfa)
+all_locs = unique(dfas$Location)
+all_locs</code></pre>
+<pre><code>## [1] &quot;D&quot; &quot;A&quot; &quot;M&quot; &quot;T&quot;</code></pre>
+<pre class="r"><code>n_sim = 100
+all.pred.compare = data.frame()
+
+for (i.simulations in 1:n_sim){
+  for (true_escape_loc in all_locs) {
+    idx = which(dfas$Location==true_escape_loc)
+    id.escape = sort(sample(idx, 5))
+  
+    ## Create Training set
+    dfa_train_cov = dfas[-id.escape, -c(1:4)]
+    dfa_train_class = dfas[-id.escape, &quot;Location&quot;]
+    
+    ## Create Test set
+    dfa_testing = dfas[id.escape, -c(1:4)]
+    
+    ## Fit and predict
+    nbp = NBP_classify(train_cov = dfa_train_cov,
+                       train_class = dfa_train_class,
+                       predict_cov = dfa_testing)
+    
+    ## Direct aggregation over all
+    nbp_agg = NBP_aggregate_p_values(nbp$p_val, by=nbp[, &quot;nbp_class&quot;, drop=F])
+    pred.NBP = nbp_agg$nbp_class[which.max(nbp_agg$p_val)]
+    
+    ## Naive Bayes with robust estimation
+    nnb_agg = aggregate(nbp[, &quot;logdens&quot;, drop=F], by = nbp[, 2, drop=F], 
+                        FUN=sum, na.rm=T)
+    # nnb_agg
+    pred.NB2 = nnb_agg$nbp_class[which.max(nnb_agg$logdens)]
+    
+    if (require(e1071)){
+      ## Standard Naive Bayes
+      fit.nb=naiveBayes(dfa_train_class~., dfa_train_cov)
+      pred.nb.1=predict(fit.nb, dfa_testing)
+      tt &lt;- table(pred.nb.1)
+      pred.NB1 = names(tt[which.max(tt)])
+      all.pred.compare = rbind(all.pred.compare, 
+              data.frame(true_escape_loc, pred.NBP, pred.NB2, pred.NB1))
+
+    } else {
+      all.pred.compare = rbind(all.pred.compare, 
+              data.frame(true_escape_loc, pred.NBP, pred.NB2))
+      
+    }
+      
+  }
+}</code></pre>
+<p>This is the “biggest p-value”, from the NBP package:</p>
+<pre class="r"><code>table(all.pred.compare[, c(1,2)])</code></pre>
+<pre><code>##                pred.NBP
+## true_escape_loc   A   D   M   T
+##               A 100   0   0   0
+##               D   0  89   3   8
+##               M   0   7  46  47
+##               T   0   0   0 100</code></pre>
+<p>This is a robust Naive Bayes from the NBP package:</p>
+<pre class="r"><code>table(all.pred.compare[, c(1,3)])</code></pre>
+<pre><code>##                pred.NB2
+## true_escape_loc   A   D   M   T
+##               A 100   0   0   0
+##               D   0  92   7   1
+##               M   0  10  86   4
+##               T   2   0   1  97</code></pre>
+<p>This is standard Naive Bayes, using the package e1071:</p>
+<pre class="r"><code>try({
+  table(all.pred.compare[, c(1,4)])
+  })</code></pre>
+<pre><code>##                pred.NB1
+## true_escape_loc   A   D   M   T
+##               A 100   0   0   0
+##               D   0  89  11   0
+##               M   0  21  79   0
+##               T   4   0   6  90</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

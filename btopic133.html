@@ -350,15 +350,30 @@ div.tocify {
 <h1 class="title toc-ignore">Non-separable space-time modelling of
 temperature data in Europe</h1>
 <h4 class="author">Haakon Bakka</h4>
-<h4 class="date">btopic 133 updated 18 March 2020</h4>
+<h4 class="date">btopic 133 updated 18 March 2020, added Outdated note
+14th April 2023</h4>
 
 </div>
 
 
-<div id="about" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> About</h1>
+<div id="outdated" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Outdated?</h1>
+<p>This code is somewhat outdated, and is not a good starting point for
+these models. I changed jobs, and my colleagues worked on this after I
+left. Please open the paper <em>The diffusion-based extension of the
+Matérn field to space-time</em> <a
+href="https://arxiv.org/abs/2006.04917"
+class="uri">https://arxiv.org/abs/2006.04917</a> and go to Section 7
+supplementary materials. There you find these links: <a
+href="https://github.com/finnlindgren/spacetime-paper-code"
+class="uri">https://github.com/finnlindgren/spacetime-paper-code</a> <a
+href="https://github.com/eliaskrainski/INLAspacetime"
+class="uri">https://github.com/eliaskrainski/INLAspacetime</a></p>
+</div>
+<div id="about" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> About</h1>
 <p>This is supplementary material to the paper <em>The diffusion-based
-extension of the Matérn field to space-time</em> by Bakka et. al. <a
+extension of the Matérn field to space-time</em> <a
 href="https://arxiv.org/abs/2006.04917"
 class="uri">https://arxiv.org/abs/2006.04917</a></p>
 <p>Here we see a comparison of the two first of the three main models in
@@ -368,8 +383,8 @@ non-separable model.</p>
 space-time model to run fast we had to take many shortcuts. This code
 example is therefore not a good analysis of the data, but it shows the
 main steps in an analysis.</p>
-<div id="setup" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> Setup</h2>
+<div id="setup" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Setup</h2>
 <p>First, you need to download the functions we will use to your current
 working directory <code>getwd()</code>.</p>
 <pre><code>download.file(&quot;https://raw.githubusercontent.com/haakonbakkagit/haakonbakkagit.github.io/master/functions-rgeneric-121-march2020.R&quot;, destfile=&quot;functions-rgeneric-121-march2020.R&quot;)</code></pre>
@@ -385,8 +400,8 @@ library(mapdata)
 ## Load functions
 source(&quot;functions-rgeneric-121-march2020.R&quot;)</code></pre>
 </div>
-<div id="input" class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> Input</h2>
+<div id="input" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Input</h2>
 <pre class="r"><code>## Number of time points used
 ## Subsets the data
 t.max = 4
@@ -395,8 +410,8 @@ t.max = 4
 ## ex: 2, 1.5
 max.e = 2</code></pre>
 </div>
-<div id="keeping-track-of-objects" class="section level2" number="1.3">
-<h2><span class="header-section-number">1.3</span> Keeping track of
+<div id="keeping-track-of-objects" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Keeping track of
 objects</h2>
 <p>We define empty lists to keep track of the models we will run.</p>
 <pre class="r"><code>## Prior model information
@@ -409,11 +424,11 @@ stack = list()</code></pre>
 </div>
 </div>
 <div id="data-on-weekly-median-temperatures" class="section level1"
-number="2">
-<h1><span class="header-section-number">2</span> Data on weekly median
+number="3">
+<h1><span class="header-section-number">3</span> Data on weekly median
 temperatures</h1>
-<div id="load-data" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Load data</h2>
+<div id="load-data" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Load data</h2>
 <p>This dataset was extracted and aggregated from the GCHND Data. See
 the DOI <a href="doi:10.1175/JTECH-D-11-00103.1"
 class="uri">doi:10.1175/JTECH-D-11-00103.1</a>. The data here is a very
@@ -430,8 +445,8 @@ small subset, please see the full data for any real applications.</p>
 ##  $ altitude : num  24 222 222 222 11 11 7 7 4.9 6.1 ...</code></pre>
 <p>We will explain the variables after they have been renamed.</p>
 </div>
-<div id="rename-data" class="section level2" number="2.2">
-<h2><span class="header-section-number">2.2</span> Rename data</h2>
+<div id="rename-data" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Rename data</h2>
 <p>I rename the variables to my usual standard, to make it simpler for
 us to reuse code.</p>
 <pre class="r"><code>df1 = data.frame(locx = df.eur$longitude, locy = df.eur$latitude, 
@@ -440,8 +455,8 @@ us to reuse code.</p>
 The response is median daily-mean temperature over the week.</p>
 </div>
 <div id="plot-observation-locations" class="section level2"
-number="2.3">
-<h2><span class="header-section-number">2.3</span> Plot observation
+number="3.3">
+<h2><span class="header-section-number">3.3</span> Plot observation
 locations</h2>
 <pre class="r"><code>plot(df1$locx, df1$locy, col=&quot;blue&quot;,
      xlab=&quot;longitude&quot;, ylab=&quot;latitude&quot;, main=&quot;Observation locations&quot;)
@@ -454,16 +469,16 @@ application should use a coordinate system (e.g. UTM) where the
 distances are the same on the <code>locx</code>-axis and the
 <code>locy</code>-axis.</p>
 </div>
-<div id="histogram-of-response" class="section level2" number="2.4">
-<h2><span class="header-section-number">2.4</span> Histogram of
+<div id="histogram-of-response" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Histogram of
 response</h2>
 <pre class="r"><code>hist(df1$y, breaks=100)</code></pre>
 <p><img src="btopic133_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>This shows that the response has a few possible outliers, but no
 major issues.</p>
 </div>
-<div id="altitude-covariate" class="section level2" number="2.5">
-<h2><span class="header-section-number">2.5</span> Altitude
+<div id="altitude-covariate" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Altitude
 covariate</h2>
 <p>We transform the altitude covariate to avoid heavy skewness (look at
 a histogram of the altitude). Then we group it into 200 distinct value
@@ -482,8 +497,8 @@ df1$altitude.t = alt</code></pre>
 is a bit arbitrary in this case, but we do not believe temperature would
 be linearly affected by altitude.</p>
 </div>
-<div id="select-a-subset" class="section level2" number="2.6">
-<h2><span class="header-section-number">2.6</span> Select a subset</h2>
+<div id="select-a-subset" class="section level2" number="3.6">
+<h2><span class="header-section-number">3.6</span> Select a subset</h2>
 <p>Next, select part of the dataframe, to speed up computations.</p>
 <pre class="r"><code>if (T) { 
   stopifnot(t.max &lt;= 20)
@@ -513,8 +528,8 @@ summary(df2)</code></pre>
 ##  Max.   :8.2</code></pre>
 </div>
 </div>
-<div id="data-exploration" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Data exploration</h1>
+<div id="data-exploration" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Data exploration</h1>
 <p>We plot how the response changes in time.</p>
 <pre class="r"><code>plot(df2$time, df2$y)</code></pre>
 <p><img src="btopic133_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
@@ -530,8 +545,8 @@ summary(df2)</code></pre>
 <p>We plot how the response changes in (transformed) altitude.</p>
 <pre class="r"><code>plot(df2$altitude.t, df2$y)</code></pre>
 <p><img src="btopic133_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<div id="plot-data-in-space" class="section level2" number="3.1">
-<h2><span class="header-section-number">3.1</span> Plot data in
+<div id="plot-data-in-space" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Plot data in
 space</h2>
 <p>We visualise some slices of the data.</p>
 <pre class="r"><code>for (i in 1:3) {
@@ -546,8 +561,8 @@ space</h2>
 quite flat, with a low range and “few effective replicates”. This will
 lead to problems in estimating the spatial range.</p>
 </div>
-<div id="plot-in-latitude" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> Plot in latitude</h2>
+<div id="plot-in-latitude" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Plot in latitude</h2>
 <p>We know the earth has a very strong latitude effect, where it gets
 colder to the North.</p>
 <pre class="r"><code>plot(df2$locy, df2$y)
@@ -555,8 +570,8 @@ abline(lm(df2$y ~ df2$locy), col=&quot;blue&quot;)</code></pre>
 <p><img src="btopic133_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 </div>
 </div>
-<div id="simple-model" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Simple model</h1>
+<div id="simple-model" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Simple model</h1>
 <p>Define some variables to be used throughout, as hyper-prior
 specifications.</p>
 <pre class="r"><code>hyper.iid.fix = list(prec = list(initial = -2*log(0.1), fixed=T))
@@ -597,10 +612,10 @@ fits[[1]] = inla(form.lmm,
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.74, Running = 0.626, Post = 0.0391, Total = 3.41 
+##     Pre = 2.67, Running = 0.602, Post = 0.0304, Total = 3.3 
 ## Fixed effects:
 ##              mean    sd 0.025quant 0.5quant 0.97quant  mode kld
-## (Intercept) 23.50 0.764      22.00    23.50     24.93 23.50   0
+## (Intercept) 23.50 0.755      22.02    23.50     24.92 23.50   0
 ## locy        -0.44 0.011      -0.47    -0.44     -0.42 -0.44   0
 ## 
 ## Random effects:
@@ -611,12 +626,12 @@ fits[[1]] = inla(form.lmm,
 ## Model hyperparameters:
 ##                                          mean    sd 0.025quant
 ## Precision for the Gaussian observations 0.149 0.004      0.141
-## Precision for time                      0.862 0.606      0.171
+## Precision for time                      0.871 0.603      0.171
 ##                                         0.5quant 0.97quant  mode
 ## Precision for the Gaussian observations    0.149     0.157 0.148
-## Precision for time                         0.712     2.325 0.448
+## Precision for time                         0.725     2.320 0.454
 ## 
-## Marginal log-Likelihood:  -8178.99 
+## Marginal log-Likelihood:  -8179.00 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -626,8 +641,8 @@ hist(resid, breaks = 200)</code></pre>
 <p>These residuals have some outliers at low temperatures. But since
 there are so few, and they are not too far out, we will proceed without
 any adjustments.</p>
-<div id="plot-residuals-in-space" class="section level2" number="4.1">
-<h2><span class="header-section-number">4.1</span> Plot residuals in
+<div id="plot-residuals-in-space" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Plot residuals in
 space</h2>
 <p>We plot the resiudlas in space to check if there is a residual
 spatio-temporal structure, and there is.</p>
@@ -643,8 +658,8 @@ spatio-temporal structure, and there is.</p>
 </div>
 </div>
 <div id="create-spatial-and-temporal-meshes" class="section level1"
-number="5">
-<h1><span class="header-section-number">5</span> Create spatial and
+number="6">
+<h1><span class="header-section-number">6</span> Create spatial and
 temporal meshes</h1>
 <p>The temporal mesh is just a uniform grid of values.</p>
 <pre class="r"><code>mesh.t = inla.mesh.1d(1:t.max)</code></pre>
@@ -662,14 +677,14 @@ axis(2)</code></pre>
 <pre><code>## [1] 3592</code></pre>
 </div>
 <div id="separable-space-time-model-component" class="section level1"
-number="6">
-<h1><span class="header-section-number">6</span> Separable space-time
+number="7">
+<h1><span class="header-section-number">7</span> Separable space-time
 model component</h1>
 <p>This is the standard model to use in INLA for space-time random
 effects.</p>
 <div id="spatial-part-of-the-separable-model" class="section level2"
-number="6.1">
-<h2><span class="header-section-number">6.1</span> Spatial part of the
+number="7.1">
+<h2><span class="header-section-number">7.1</span> Spatial part of the
 separable model</h2>
 <p>This model component can be grouped with time to produce a
 spatio-temporal model component. It can also be used by itself to create
@@ -679,8 +694,8 @@ mco.space = inla.spde2.pcmatern(mesh = mesh.s,
                                 prior.range = c(100, .5), prior.sigma = c(1, .5))</code></pre>
 </div>
 <div id="stack-for-the-separable-model" class="section level2"
-number="6.2">
-<h2><span class="header-section-number">6.2</span> Stack for the
+number="7.2">
+<h2><span class="header-section-number">7.2</span> Stack for the
 separable model</h2>
 <p>For a simple spatial component we use the following A matrix.</p>
 <pre class="r"><code>A.s1 = inla.spde.make.A(mesh = mesh.s, loc = cbind(df2$locx, df2$locy))</code></pre>
@@ -695,8 +710,8 @@ A.st = inla.spde.make.A(mesh = mesh.s, loc = cbind(df2$locx, df2$locy), group = 
   A = list(A.st, 1, 1, 1, A.s1), 
   tag = &#39;stdata&#39;) </code></pre>
 </div>
-<div id="separable-model-formula" class="section level2" number="6.3">
-<h2><span class="header-section-number">6.3</span> Separable model
+<div id="separable-model-formula" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> Separable model
 formula</h2>
 <p>We create a short description of the model number 2:</p>
 <pre class="r"><code>M[[2]]$shortname = &quot;Separable&quot;</code></pre>
@@ -713,12 +728,12 @@ M[[2]]$formula = form.sep</code></pre>
 </div>
 </div>
 <div id="nonseparable-space-time-model-component" class="section level1"
-number="7">
-<h1><span class="header-section-number">7</span> Nonseparable space-time
+number="8">
+<h1><span class="header-section-number">8</span> Nonseparable space-time
 model component</h1>
 <div id="nonseparable-model-rgeneric-object" class="section level2"
-number="7.1">
-<h2><span class="header-section-number">7.1</span> Nonseparable model:
+number="8.1">
+<h2><span class="header-section-number">8.1</span> Nonseparable model:
 rgeneric object</h2>
 <pre class="r"><code>## Rgeneric object containing needed variables
 ## Mesh in space and time
@@ -735,8 +750,8 @@ mco.nonsep = inla.rgeneric.define(
   model = stmodel121.interpret, debug = FALSE, n = nm, obj = rgen.obj)</code></pre>
 </div>
 <div id="stack-for-the-nonseparable-model" class="section level2"
-number="7.2">
-<h2><span class="header-section-number">7.2</span> Stack for the
+number="8.2">
+<h2><span class="header-section-number">8.2</span> Stack for the
 nonseparable model</h2>
 <pre class="r"><code>## Special: Since the index is very structured we can do this
 ## We know that iset is in the right order 
@@ -752,8 +767,8 @@ stack[[3]] = inla.stack(
   tag = &#39;stdata&#39;) </code></pre>
 </div>
 <div id="nonseparable-model-formula" class="section level2"
-number="7.3">
-<h2><span class="header-section-number">7.3</span> Nonseparable model
+number="8.3">
+<h2><span class="header-section-number">8.3</span> Nonseparable model
 formula</h2>
 <p>We create a short description of the model number 2:</p>
 <pre class="r"><code>M[[2]]$shortname = &quot;Non-separable&quot;</code></pre>
@@ -768,14 +783,14 @@ form.nonsep = y ~ -1 + m + f(i.nonsep, model = mco.nonsep.fix, n = nm)   + f(tim
 M[[3]]$formula = form.nonsep</code></pre>
 </div>
 </div>
-<div id="compute-inference-with-inla" class="section level1" number="8">
-<h1><span class="header-section-number">8</span> Compute inference with
+<div id="compute-inference-with-inla" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Compute inference with
 INLA</h1>
 <p>Setup some initial values (use NULL if you do not know them).</p>
 <pre class="r"><code>M[[2]]$init = c(0.404 , 2.207 , 1.813 , 3.804)
 M[[3]]$init = c(0.435 , 8.012 , 2.944 , 2.553)</code></pre>
-<div id="time-consuming-inla-run" class="section level2" number="8.1">
-<h2><span class="header-section-number">8.1</span> Time-consuming INLA
+<div id="time-consuming-inla-run" class="section level2" number="9.1">
+<h2><span class="header-section-number">9.1</span> Time-consuming INLA
 run</h2>
 <pre class="r"><code>## Fit model 2 and 3
 for (i in 2:3){
@@ -801,34 +816,34 @@ for (i in 2:3){
     print(round(fits[[i]]$cpu.used[4],2))
 }</code></pre>
 <pre><code>## Total 
-##   3.4 
+##   3.3 
 ## Total 
-##    13 
+##    11 
 ## Total 
-##   481</code></pre>
+##   473</code></pre>
 <p>The nonseparable is slower than the separable model, because the
 nonseparable model is coded in R, while the separable is coded in C.</p>
 <p>We compute good initial values as follows.</p>
 <pre class="r"><code>for (i in 1:length(M)){
     print(paste(round(fits[[i]]$internal.summary.hyperpar$mean, 3), collapse = &quot; , &quot;))
 }</code></pre>
-<pre><code>## [1] &quot;-1.907 , -0.369&quot;
-## [1] &quot;0.321 , 2.021 , 1.741 , 3.709&quot;
+<pre><code>## [1] &quot;-1.907 , -0.357&quot;
+## [1] &quot;0.321 , 2.023 , 1.744 , 3.709&quot;
 ## [1] &quot;0.326 , 7.004 , 2.456 , 2.159&quot;</code></pre>
 </div>
-<div id="quick-summaries" class="section level2" number="8.2">
-<h2><span class="header-section-number">8.2</span> Quick summaries</h2>
+<div id="quick-summaries" class="section level2" number="9.2">
+<h2><span class="header-section-number">9.2</span> Quick summaries</h2>
 <pre class="r"><code>## Comparison of the Precision for Gaussian observations
 fits[[2]]$summary.hyperpar</code></pre>
 <pre><code>##                                         mean     sd 0.025quant
-## Precision for the Gaussian observations 1.38 0.0502       1.28
-## Range for i                             7.58 0.6981       6.31
-## Stdev for i                             5.72 0.5086       4.79
+## Precision for the Gaussian observations 1.38 0.0501       1.28
+## Range for i                             7.59 0.7022       6.31
+## Stdev for i                             5.74 0.5127       4.80
 ## GroupRho for i                          0.95 0.0068       0.94
 ##                                         0.5quant 0.97quant mode
-## Precision for the Gaussian observations     1.38      1.48 1.38
-## Range for i                                 7.54      8.99 7.46
-## Stdev for i                                 5.70      6.75 5.64
+## Precision for the Gaussian observations     1.38      1.47 1.38
+## Range for i                                 7.56      9.00 7.49
+## Stdev for i                                 5.72      6.77 5.67
 ## GroupRho for i                              0.95      0.96 0.95</code></pre>
 <pre class="r"><code>fits[[3]]$summary.hyperpar</code></pre>
 <pre><code>##                                         mean    sd 0.025quant
@@ -847,7 +862,7 @@ data.frame(var=c(&quot;Range.s&quot;, &quot;Stdev&quot;, &quot;Range.t&quot;), e
 <pre><code>##                         var X0.5quant X0.025quant X0.97quant
 ## Theta2 for i.nonsep Range.s      11.7         9.5         14
 ## Theta3 for i.nonsep   Stdev       8.7         7.1         10
-## Theta1 for i.nonsep Range.t    1105.3       664.5       1753</code></pre>
+## Theta1 for i.nonsep Range.t    1105.5       663.8       1753</code></pre>
 <p>The two Gaussian precisions are very similar, showing that the
 residuals are similar. The range in space is estimated in a similar way
 between the two models. The <span class="math inline">\(\sigma\)</span>
@@ -863,8 +878,8 @@ dependency (in the space-time random effect).</p>
 #summary(fits[[3]])</code></pre>
 </div>
 </div>
-<div id="plot-results" class="section level1" number="9">
-<h1><span class="header-section-number">9</span> Plot results</h1>
+<div id="plot-results" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Plot results</h1>
 <p>First we plot the two one-dimensional random effect,
 <code>f(time)</code>and <code>f(altitude)</code>.</p>
 <pre class="r"><code>plot(df2$time, df2$y)
@@ -876,15 +891,15 @@ points(fits[[2]]$summary.random$time$mean, col=&quot;blue&quot;, pch=19, cex=2)<
 <pre class="r"><code>## Compare fitted values and observations.
 # plot(fits[[2]]$summary.linear.predictor$mean[1:nrow(df2)], df2$y)</code></pre>
 </div>
-<div id="spatial-plots" class="section level1" number="10">
-<h1><span class="header-section-number">10</span> Spatial plots</h1>
+<div id="spatial-plots" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Spatial plots</h1>
 <p>Extract the space-time variables. We add on the intercept for easier
 comparison.</p>
 <pre class="r"><code>rf.st.sep = fits[[2]]$summary.random$i$mean + fits[[2]]$summary.fixed$mean[1]
 rf.st.nonsep = fits[[3]]$summary.random$i$mean + fits[[3]]$summary.fixed$mean[1]</code></pre>
 <div id="function-for-plotting-in-space" class="section level2"
-number="10.1">
-<h2><span class="header-section-number">10.1</span> Function for
+number="11.1">
+<h2><span class="header-section-number">11.1</span> Function for
 plotting in space</h2>
 <p>We create a local plotting function, designed for this script.</p>
 <pre class="r"><code>## Define default plotting window
@@ -924,8 +939,8 @@ chunks will run. In the default scrip, these do nothing.</p>
   local.plot.field(fits[[3]]$summary.random$s$mean)
 }</code></pre>
 </div>
-<div id="year-3" class="section level2" number="10.2">
-<h2><span class="header-section-number">10.2</span> Year 3</h2>
+<div id="year-3" class="section level2" number="11.2">
+<h2><span class="header-section-number">11.2</span> Year 3</h2>
 <p>We compare the separable and nonseparable model. Here, we will only
 show the contribution from the spatio-temporal model component. Another
 interesting comparison would be to compare the linear predictor or the
@@ -953,8 +968,8 @@ map(&quot;worldHires&quot;, add=TRUE, col = grey(.5))</code></pre>
 <p><img src="btopic133_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
 </div>
 <div id="temporal-change-in-the-nonseparable-model"
-class="section level2" number="10.3">
-<h2><span class="header-section-number">10.3</span> Temporal change in
+class="section level2" number="11.3">
+<h2><span class="header-section-number">11.3</span> Temporal change in
 the nonseparable model</h2>
 <p>We now investigate how the nonseparable random effect changes in
 time. The change is substantial even though the temporal correlation is
@@ -968,8 +983,8 @@ for (i in 1:3) {
 <p><img src="btopic133_files/figure-html/unnamed-chunk-53-1.png" width="672" /><img src="btopic133_files/figure-html/unnamed-chunk-53-2.png" width="672" /><img src="btopic133_files/figure-html/unnamed-chunk-53-3.png" width="672" /></p>
 </div>
 <div id="general-note-on-the-plots" class="section level2"
-number="10.4">
-<h2><span class="header-section-number">10.4</span> General note on the
+number="11.4">
+<h2><span class="header-section-number">11.4</span> General note on the
 plots</h2>
 <p>All the spatial plots look a bit strange and irregular. This is
 because the spatial mesh does not have a high enough resolution. To get
@@ -977,8 +992,8 @@ better plots, increse <code>max.e</code>, but be prepared that the code
 example takes quite some time to run.</p>
 </div>
 </div>
-<div id="end" class="section level1" number="11">
-<h1><span class="header-section-number">11</span> End</h1>
+<div id="end" class="section level1" number="12">
+<h1><span class="header-section-number">12</span> End</h1>
 <p>Thank you for reading.</p>
 </div>
 

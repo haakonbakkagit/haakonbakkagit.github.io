@@ -729,28 +729,28 @@ fit5 = inla(form3, family=&quot;gaussian&quot;, data = data1,
 <pre class="r"><code>## We see that the precision for fa1 is very big, so there is little effect of fa1
 fit5$summary.hyperpar[, 1:2]</code></pre>
 <pre><code>##                                           mean      sd
-## Precision for the Gaussian observations   0.34 8.0e-03
-## Precision for fa1                       188.99 2.1e+02
-## Precision for fa2                         0.21 8.9e-02
-## Precision for fa3                         1.25 5.7e-01
-## Precision for fa4                       464.69 1.4e+03
-## Precision for fa5                         4.63 2.1e+00
-## Precision for fa6                        47.93 2.2e+01</code></pre>
+## Precision for the Gaussian observations   0.34 7.3e-03
+## Precision for fa1                       249.45 2.9e+02
+## Precision for fa2                         4.07 7.3e+00
+## Precision for fa3                         0.90 3.7e-01
+## Precision for fa4                       443.59 1.2e+03
+## Precision for fa5                         4.32 2.0e+00
+## Precision for fa6                        25.10 2.0e+01</code></pre>
 <pre class="r"><code>## The following uncertainties are much better than in model 4
 fit5$summary.random$fa1[, 1:3]</code></pre>
 <pre><code>##         ID   mean    sd
-## 1 F1level1 -0.079 0.062
-## 2 F1level2  0.029 0.063
-## 3 F1level3  0.025 0.062
-## 4 F1level4 -0.033 0.062
-## 5 F1level5  0.045 0.062
-## 6 F1level6 -0.037 0.062
-## 7 F1level7  0.049 0.062</code></pre>
+## 1 F1level1 -0.071 0.058
+## 2 F1level2  0.026 0.058
+## 3 F1level3  0.023 0.057
+## 4 F1level4 -0.030 0.058
+## 5 F1level5  0.041 0.057
+## 6 F1level6 -0.034 0.057
+## 7 F1level7  0.045 0.058</code></pre>
 <pre class="r"><code>## The following uncertainties are better than in model 4
 fit5$summary.random$fa2[, 1:3]</code></pre>
-<pre><code>##         ID mean  sd
-## 1 F2level1 -1.2 1.8
-## 2 F2level2  1.2 1.8</code></pre>
+<pre><code>##         ID mean   sd
+## 1 F2level1 -1.2 0.67
+## 2 F2level2  1.2 0.67</code></pre>
 </div>
 </div>
 <div id="fit-inla-with-everything" class="section level1" number="5">
@@ -766,24 +766,24 @@ fit6 = inla(form4, family=&quot;gaussian&quot;, data = c(data1, list(X=X)),
 <p>Continuous covariates:</p>
 <pre class="r"><code>## Total RMSE
 sqrt(sum((betas - fit6$summary.fixed$mean[-1])^2))</code></pre>
-<pre><code>## [1] 0.045</code></pre>
+<pre><code>## [1] 0.046</code></pre>
 <pre class="r"><code>## Is the estimate within two std errors?
 table((abs(betas - fit6$summary.fixed$mean[-1]))&lt;fit6$summary.fixed$sd[-1]*2)</code></pre>
 <pre><code>## 
-## TRUE 
-##   27</code></pre>
+## FALSE  TRUE 
+##     1    26</code></pre>
 <pre class="r"><code>## Quantiled model sd
 quantile(fit6$summary.fixed$sd[-1])</code></pre>
 <pre><code>##     0%    25%    50%    75%   100% 
-## 0.0096 0.0097 0.0134 0.0137 0.0249</code></pre>
+## 0.0096 0.0097 0.0134 0.0137 0.0250</code></pre>
 <p>Factors:</p>
 <pre class="r"><code>print(paste(&quot;Effect on level&quot;, effect.level[2], &quot;is&quot;, effect.size[2], 
             &quot;compared to baseline 0&quot;))</code></pre>
 <pre><code>## [1] &quot;Effect on level 2 is 2.32970852456796 compared to baseline 0&quot;</code></pre>
 <pre class="r"><code>fit6$summary.random$fa2[, 1:3]</code></pre>
 <pre><code>##         ID mean  sd
-## 1 F2level1 -1.2 0.5
-## 2 F2level2  1.2 0.5</code></pre>
+## 1 F2level1 -1.2 1.1
+## 2 F2level2  1.2 1.1</code></pre>
 <div id="next-steps" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Next steps</h2>
 <p>This was the first round of modelling. We can look at the results and

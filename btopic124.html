@@ -427,7 +427,7 @@ res1 = inla(formula, family = &quot;gaussian&quot;, data = df,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res1$summary.fixed</code></pre>
 <pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  3.02 0.024       2.97     3.02      3.06  3.02 2.7e-11
+## (Intercept)  3.02 0.024       2.97     3.02      3.06  3.02 2.5e-11
 ## x1           0.70 0.022       0.65     0.70      0.74  0.70 2.7e-11
 ## x2          -0.31 0.021      -0.35    -0.31     -0.27 -0.31 2.7e-11</code></pre>
 </div>
@@ -456,7 +456,7 @@ res2 = inla(formula, family = &quot;gaussian&quot;, data = df,
             control.predictor = list(compute=T))</code></pre>
 <pre class="r"><code>res2$summary.fixed</code></pre>
 <pre><code>##              mean    sd 0.025quant 0.5quant 0.97quant  mode     kld
-## (Intercept)  3.01 0.019       2.98     3.01      3.05  3.01 2.6e-11
+## (Intercept)  3.01 0.019       2.98     3.01      3.05  3.01 2.7e-11
 ## x1           0.71 0.017       0.67     0.71      0.74  0.71 2.7e-11
 ## x2          -0.30 0.017      -0.33    -0.30     -0.27 -0.30 2.7e-11
 ## x3           0.28 0.017       0.25     0.28      0.32  0.28 2.7e-11</code></pre>

@@ -687,8 +687,8 @@ y &lt;- x.hat + w + rnorm(n*k, 0, sd.y)
 w &lt;- factor(w)
 #see the mean  of y which have the same value of w
 tapply(y, w, mean)</code></pre>
-<pre><code>##     -1      0      1 
-## -1.031  0.056  0.883</code></pre>
+<pre><code>##    -1     0     1 
+## -1.77 -0.44  0.47</code></pre>
 <p>The last step: organize our data in a data frame. Sometimes, it may
 happen that we have different data locations for different times. To
 show that, we just drop half of the observations. The provided code
@@ -851,7 +851,7 @@ res &lt;- inla(formula, data=inla.stack.data(stack),
             control.mode=list(restart=T, theta=init)) # line to add to speed up
 
 res$internal.summary.hyperpar$mode</code></pre>
-<pre><code>## [1]  4.642  1.004 -0.011  1.677</code></pre>
+<pre><code>## [1] 4.6669 0.9999 0.0062 1.7846</code></pre>
 </div>
 <div id="results" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Results</h2>
@@ -867,12 +867,12 @@ class="math inline">\(95%\)</span> confidence interval of the
 coefficients.</p>
 <pre class="r"><code>tapply(dat$y, dat$w, mean)  # Observed mean for each covariate level</code></pre>
 <pre><code>##    -1     0     1 
-## -1.03  0.16  1.10</code></pre>
+## -1.84 -0.46  0.61</code></pre>
 <pre class="r"><code>round(res$summary.fixed,4) # Coefficients of the categorical variable</code></pre>
 <pre><code>##      mean   sd 0.025quant 0.5quant 0.97quant  mode kld
-## w-1 -0.89 0.24      -1.37    -0.89     -0.43 -0.89   0
-## w0   0.15 0.24      -0.33     0.15      0.61  0.15   0
-## w1   1.13 0.24       0.65     1.13      1.59  1.13   0</code></pre>
+## w-1 -1.39 0.25      -1.89    -1.39     -0.92 -1.39   0
+## w0  -0.36 0.25      -0.86    -0.36      0.11 -0.36   0
+## w1   0.61 0.25       0.12     0.61      1.09  0.61   0</code></pre>
 <div id="marginal-posterior-distribution-plot" class="section level3"
 number="4.3.1">
 <h3><span class="header-section-number">4.3.1</span> Marginal Posterior
