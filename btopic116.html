@@ -36,6 +36,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -527,26 +536,26 @@ result</h2>
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.03, Running = 0.631, Post = 0.0269, Total = 3.69 
+##     Pre = 3, Running = 0.636, Post = 0.0242, Total = 3.66 
 ## Fixed effects:
 ##             mean   sd 0.025quant 0.5quant 0.97quant mode kld
-## (Intercept)  8.6 0.68        7.1      8.6       9.8  8.6   0
+## (Intercept)  8.5 0.69        7.1      8.6       9.8  8.6   0
 ## 
 ## Random effects:
 ##   Name     Model
 ##     t AR1 model
 ## 
 ## Model hyperparameters:
-##                                             mean      sd 0.025quant
-## Precision for the Gaussian observations 1.84e+04 1.8e+04   1224.658
-## Precision for t                         2.69e-01 8.4e-02      0.125
-## Rho for t                               8.92e-01 3.3e-02      0.822
+##                                             mean       sd 0.025quant
+## Precision for the Gaussian observations 1.64e+04 1.69e+04   1110.026
+## Precision for t                         2.62e-01 8.20e-02      0.123
+## Rho for t                               8.94e-01 3.30e-02      0.822
 ##                                         0.5quant 0.97quant     mode
-## Precision for the Gaussian observations 1.30e+04  6.25e+04 3356.172
-## Precision for t                         2.63e-01  4.38e-01    0.251
-## Rho for t                               8.95e-01  9.49e-01    0.899
+## Precision for the Gaussian observations 1.13e+04  5.81e+04 3055.335
+## Precision for t                         2.55e-01  4.32e-01    0.241
+## Rho for t                               8.96e-01  9.49e-01    0.901
 ## 
-## Marginal log-Likelihood:  -199.95 
+## Marginal log-Likelihood:  -199.78 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -563,28 +572,28 @@ results</h2>
 <pre class="r"><code>str(res$summary.random$t)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    143 obs. of  8 variables:
 ##  $ ID        : num  1 2 3 4 5 6 7 8 9 10 ...
-##  $ mean      : num  0.549 0.249 1.349 1.549 1.749 ...
-##  $ sd        : num  0.679 0.679 0.679 0.679 0.679 ...
-##  $ 0.025quant: num  -0.7788 -1.0786 0.0211 0.2212 0.4213 ...
-##  $ 0.5quant  : num  0.533 0.233 1.333 1.533 1.733 ...
-##  $ 0.97quant : num  1.91 1.61 2.71 2.91 3.11 ...
-##  $ mode      : num  0.512 0.213 1.312 1.513 1.713 ...
-##  $ kld       : num  2.28e-05 2.28e-05 2.28e-05 2.28e-05 2.28e-05 ...</code></pre>
+##  $ mean      : num  0.551 0.251 1.351 1.551 1.751 ...
+##  $ sd        : num  0.686 0.686 0.686 0.686 0.686 ...
+##  $ 0.025quant: num  -0.7898 -1.0895 0.0102 0.2103 0.4104 ...
+##  $ 0.5quant  : num  0.535 0.235 1.334 1.535 1.735 ...
+##  $ 0.97quant : num  1.92 1.62 2.72 2.92 3.12 ...
+##  $ mode      : num  0.514 0.214 1.314 1.514 1.714 ...
+##  $ kld       : num  2.22e-05 2.22e-05 2.22e-05 2.22e-05 2.22e-05 ...</code></pre>
 <pre class="r"><code>str(res$marginals.fixed)</code></pre>
 <pre><code>## List of 1
-##  $ (Intercept): num [1:43, 1:2] 5.1 5.23 5.74 6.68 7.11 ...
+##  $ (Intercept): num [1:43, 1:2] 5.07 5.2 5.72 6.67 7.1 ...
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2
 ##   .. ..$ : NULL
 ##   .. ..$ : chr [1:2] &quot;x&quot; &quot;y&quot;</code></pre>
 <pre class="r"><code>str(res$marginals.hyperpar, 1)</code></pre>
 <pre><code>## List of 3
-##  $ Precision for the Gaussian observations: num [1:43, 1:2] 59.5 122.6 281.1 762.9 1224.7 ...
+##  $ Precision for the Gaussian observations: num [1:43, 1:2] 59 119 266 701 1110 ...
 ##   ..- attr(*, &quot;hyperid&quot;)= chr &quot;65001|INLA.Data1&quot;
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2
-##  $ Precision for t                        : num [1:43, 1:2] 0.0482 0.0604 0.0784 0.1073 0.1246 ...
+##  $ Precision for t                        : num [1:43, 1:2] 0.0488 0.0608 0.0783 0.1061 0.1227 ...
 ##   ..- attr(*, &quot;hyperid&quot;)= chr &quot;14001|t&quot;
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2
-##  $ Rho for t                              : num [1:43, 1:2] 0.706 0.737 0.771 0.806 0.822 ...
+##  $ Rho for t                              : num [1:43, 1:2] 0.696 0.731 0.767 0.805 0.822 ...
 ##   ..- attr(*, &quot;hyperid&quot;)= chr &quot;14002|t&quot;
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2</code></pre>
 </div>

@@ -36,6 +36,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -574,9 +583,9 @@ time.taken &lt;- end.time - start.time
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
 }</code></pre>
-<pre><code>## [1] &quot;4.715,0.954,0.863&quot;
-## [1] &quot;4.738,0.49,2.389&quot;
-## [1] &quot;4.393,2.375,-0.196&quot;</code></pre>
+<pre><code>## [1] &quot;4.869,0.92,0.831&quot;
+## [1] &quot;4.729,0.492,2.397&quot;
+## [1] &quot;4.402,2.374,-0.201&quot;</code></pre>
 <div id="summaries" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> Summaries</h2>
 <pre class="r"><code>summary(M[[1]]$res)</code></pre>
@@ -602,10 +611,10 @@ time.taken &lt;- end.time - start.time
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.48, Running = 0.884, Post = 0.0367, Total = 4.4 
+##     Pre = 3.52, Running = 0.985, Post = 0.0348, Total = 4.54 
 ## Fixed effects:
 ##   mean  sd 0.025quant 0.5quant 0.97quant mode kld
-## m 0.28 1.5       -2.6     0.28         3 0.28   0
+## m 0.28 1.4       -2.4     0.28       2.8 0.28   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -613,15 +622,15 @@ time.taken &lt;- end.time - start.time
 ## 
 ## Model hyperparameters:
 ##                                           mean     sd 0.025quant
-## Precision for the Gaussian observations 132.52 83.594      36.08
-## Range for s                               2.75  0.632       1.77
-## Stdev for s                               2.49  0.509       1.68
+## Precision for the Gaussian observations 137.54 84.237      32.77
+## Range for s                               2.71  0.630       1.77
+## Stdev for s                               2.46  0.505       1.68
 ##                                         0.5quant 0.97quant  mode
-## Precision for the Gaussian observations   112.02    334.98 80.25
-## Range for s                                 2.66      4.16  2.48
-## Stdev for s                                 2.42      3.61  2.28
+## Precision for the Gaussian observations   118.86    337.42 82.85
+## Range for s                                 2.61      4.14  2.40
+## Stdev for s                                 2.38      3.59  2.21
 ## 
-## Marginal log-Likelihood:  -101.21 
+## Marginal log-Likelihood:  -101.30 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -648,24 +657,24 @@ time.taken &lt;- end.time - start.time
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.9, Running = 2.98, Post = 0.0343, Total = 5.91 
+##     Pre = 3.01, Running = 3.43, Post = 0.0347, Total = 6.47 
 ## Fixed effects:
 ##   mean  sd 0.025quant 0.5quant 0.97quant mode kld
-## m  3.3 2.6       -1.8      3.3       8.1  3.3   0
+## m  3.3 2.6       -1.8      3.3       8.2  3.3   0
 ## 
 ## Random effects:
 ##   Name     Model
 ##     s RGeneric2
 ## 
 ## Model hyperparameters:
-##                                           mean     sd 0.025quant
-## Precision for the Gaussian observations 118.44 30.770      69.51
-## Theta1 for s                              0.54  0.326      -0.07
-## Theta2 for s                              2.44  0.356       1.78
+##                                            mean     sd 0.025quant
+## Precision for the Gaussian observations 118.170 30.742     69.736
+## Theta1 for s                              0.538  0.326     -0.074
+## Theta2 for s                              2.449  0.356      1.780
 ##                                         0.5quant 0.97quant    mode
-## Precision for the Gaussian observations  114.554    186.04 107.112
-## Theta1 for s                               0.529      1.18   0.483
-## Theta2 for s                               2.431      3.15   2.381
+## Precision for the Gaussian observations  114.117    186.06 106.288
+## Theta1 for s                               0.527      1.18   0.485
+## Theta2 for s                               2.437      3.15   2.390
 ## 
 ## Marginal log-Likelihood:  15.25 
 ##  is computed 
@@ -694,7 +703,7 @@ time.taken &lt;- end.time - start.time
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.46, Running = 0.755, Post = 0.0304, Total = 4.24 
+##     Pre = 3.48, Running = 0.882, Post = 0.051, Total = 4.42 
 ## Fixed effects:
 ##   mean   sd 0.025quant 0.5quant 0.97quant mode kld
 ## m  4.3 0.11        4.1      4.3       4.5  4.3   0
@@ -705,15 +714,15 @@ time.taken &lt;- end.time - start.time
 ## 
 ## Model hyperparameters:
 ##                                           mean     sd 0.025quant
-## Precision for the Gaussian observations 83.019 16.226     55.962
-## Range for s                             12.620  4.296      7.064
-## Stdev for s                              0.936  0.275      0.563
+## Precision for the Gaussian observations 83.359 16.198     56.134
+## Range for s                             12.621  4.293      7.073
+## Stdev for s                              0.933  0.274      0.561
 ##                                         0.5quant 0.97quant   mode
-## Precision for the Gaussian observations   81.354    117.77 77.995
-## Range for s                               11.686     22.87  9.884
-## Stdev for s                                0.881      1.58  0.768
+## Precision for the Gaussian observations   81.777    117.87 78.649
+## Range for s                               11.686     22.86  9.882
+## Stdev for s                                0.877      1.58  0.764
 ## 
-## Marginal log-Likelihood:  26.54 
+## Marginal log-Likelihood:  26.53 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -793,7 +802,7 @@ data.frame(name=unlist(lapply(M, function(x) c(x$shortname))),
            mae=unlist(lapply(M, function(x) c(x$mae))),
            mae.sd=unlist(lapply(M, function(x) c(x$mae.sd))))</code></pre>
 <pre><code>##               name  rmse   mae  mae.sd
-## 1 stationary-model 0.346 0.190 0.00169
+## 1 stationary-model 0.346 0.191 0.00168
 ## 2    barrier-model 0.075 0.057 0.00028
 ## 3    neumann-model 0.152 0.056 0.00082</code></pre>
 </div>

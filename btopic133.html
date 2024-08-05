@@ -36,6 +36,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -612,10 +621,10 @@ fits[[1]] = inla(form.lmm,
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.81, Running = 0.642, Post = 0.0318, Total = 3.49 
+##     Pre = 2.85, Running = 0.636, Post = 0.0315, Total = 3.52 
 ## Fixed effects:
 ##              mean    sd 0.025quant 0.5quant 0.97quant  mode kld
-## (Intercept) 23.50 0.753      22.02    23.50     24.91 23.50   0
+## (Intercept) 23.50 0.756      22.02    23.50     24.92 23.50   0
 ## locy        -0.44 0.011      -0.47    -0.44     -0.42 -0.44   0
 ## 
 ## Random effects:
@@ -626,12 +635,12 @@ fits[[1]] = inla(form.lmm,
 ## Model hyperparameters:
 ##                                          mean    sd 0.025quant
 ## Precision for the Gaussian observations 0.149 0.004      0.141
-## Precision for time                      0.872 0.602      0.170
+## Precision for time                      0.871 0.603      0.171
 ##                                         0.5quant 0.97quant  mode
 ## Precision for the Gaussian observations    0.149     0.157 0.148
-## Precision for time                         0.727     2.318 0.455
+## Precision for time                         0.724     2.320 0.454
 ## 
-## Marginal log-Likelihood:  -8179.01 
+## Marginal log-Likelihood:  -8179.00 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -820,35 +829,35 @@ for (i in 2:3){
 ## Total 
 ##    13 
 ## Total 
-##   500</code></pre>
+##   497</code></pre>
 <p>The nonseparable is slower than the separable model, because the
 nonseparable model is coded in R, while the separable is coded in C.</p>
 <p>We compute good initial values as follows.</p>
 <pre class="r"><code>for (i in 1:length(M)){
     print(paste(round(fits[[i]]$internal.summary.hyperpar$mean, 3), collapse = &quot; , &quot;))
 }</code></pre>
-<pre><code>## [1] &quot;-1.907 , -0.356&quot;
-## [1] &quot;0.32 , 2.018 , 1.738 , 3.708&quot;
-## [1] &quot;0.326 , 7.001 , 2.454 , 2.158&quot;</code></pre>
+<pre><code>## [1] &quot;-1.907 , -0.358&quot;
+## [1] &quot;0.32 , 2.018 , 1.739 , 3.709&quot;
+## [1] &quot;0.326 , 7.001 , 2.455 , 2.158&quot;</code></pre>
 </div>
 <div id="quick-summaries" class="section level2" number="9.2">
 <h2><span class="header-section-number">9.2</span> Quick summaries</h2>
 <pre class="r"><code>## Comparison of the Precision for Gaussian observations
 fits[[2]]$summary.hyperpar</code></pre>
 <pre><code>##                                         mean     sd 0.025quant
-## Precision for the Gaussian observations 1.38 0.0502       1.28
-## Range for i                             7.55 0.6944       6.30
-## Stdev for i                             5.71 0.5063       4.79
+## Precision for the Gaussian observations 1.38 0.0501       1.28
+## Range for i                             7.55 0.6946       6.30
+## Stdev for i                             5.72 0.5067       4.79
 ## GroupRho for i                          0.95 0.0068       0.94
 ##                                         0.5quant 0.97quant mode
-## Precision for the Gaussian observations     1.38      1.48 1.38
-## Range for i                                 7.51      8.97 7.42
-## Stdev for i                                 5.68      6.73 5.62
+## Precision for the Gaussian observations     1.38      1.47 1.38
+## Range for i                                 7.52      8.97 7.42
+## Stdev for i                                 5.69      6.74 5.63
 ## GroupRho for i                              0.95      0.96 0.95</code></pre>
 <pre class="r"><code>fits[[3]]$summary.hyperpar</code></pre>
 <pre><code>##                                         mean    sd 0.025quant
 ## Precision for the Gaussian observations  1.4 0.052        1.3
-## Theta1 for i.nonsep                      7.0 0.251        6.5
+## Theta1 for i.nonsep                      7.0 0.252        6.5
 ## Theta2 for i.nonsep                      2.5 0.103        2.2
 ## Theta3 for i.nonsep                      2.2 0.099        2.0
 ##                                         0.5quant 0.97quant mode
@@ -860,9 +869,9 @@ fits[[2]]$summary.hyperpar</code></pre>
 ## hyperparameters of the non-separable model as follows
 data.frame(var=c(&quot;Range.s&quot;, &quot;Stdev&quot;, &quot;Range.t&quot;), exp(fits[[3]]$summary.hyperpar[c(3,4,2), c(4,3,5)]))</code></pre>
 <pre><code>##                         var X0.5quant X0.025quant X0.97quant
-## Theta2 for i.nonsep Range.s      11.6         9.5         14
+## Theta2 for i.nonsep Range.s      11.7         9.5         14
 ## Theta3 for i.nonsep   Stdev       8.7         7.1         10
-## Theta1 for i.nonsep Range.t    1102.3       664.0       1751</code></pre>
+## Theta1 for i.nonsep Range.t    1102.8       662.1       1750</code></pre>
 <p>The two Gaussian precisions are very similar, showing that the
 residuals are similar. The range in space is estimated in a similar way
 between the two models. The <span class="math inline">\(\sigma\)</span>

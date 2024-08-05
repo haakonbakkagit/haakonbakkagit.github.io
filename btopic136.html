@@ -36,6 +36,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -452,13 +461,8 @@ predict(fit.rf, newdata = prediction.cov)</code></pre>
 </div>
 <div id="naive-bayes" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Naive Bayes</h2>
-<pre class="r"><code>library(e1071)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;e1071&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:gtools&#39;:
-## 
-##     permutations</code></pre>
-<pre class="r"><code>## We get the wrong prediction
+<pre class="r"><code>library(e1071)
+## We get the wrong prediction
 fit.nb=naiveBayes(Species~., iris[-44, ])
 pred.nb.1=predict(fit.nb, prediction.cov)
 pred.nb.1</code></pre>

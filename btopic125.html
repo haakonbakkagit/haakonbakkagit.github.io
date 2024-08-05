@@ -36,6 +36,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -523,22 +532,22 @@ colnames(res.sim) = NULL
 table(res.sim[1, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##    79    21</code></pre>
+##    81    19</code></pre>
 <pre class="r"><code>## Model 1: beta2
 table(res.sim[2, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##    35    65</code></pre>
+##    31    69</code></pre>
 <pre class="r"><code>## Model 2: beta1
 table(res.sim[3, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##     4    96</code></pre>
+##     9    91</code></pre>
 <pre class="r"><code>## Model 2: beta2
 table(res.sim[4, ])</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##    18    82</code></pre>
+##    12    88</code></pre>
 <p>We see that Model 1 has a very bad coverage. This is due to bad
 estimates of the uncertainty, and hence bad estimates of the credible
 intervals. The coverage of Model 2 is better, because the <span

@@ -36,6 +36,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -631,9 +640,9 @@ time.taken &lt;- end.time - start.time
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
 }</code></pre>
-<pre><code>## [1] &quot;6.406,0.501,-0.467&quot;
-## [1] &quot;6.379,-1.111,-0.655&quot;
-## [1] &quot;6.161,-1.037,-1.365&quot;</code></pre>
+<pre><code>## [1] &quot;6.404,0.499,-0.469&quot;
+## [1] &quot;6.436,-1.112,-0.656&quot;
+## [1] &quot;6.154,-1.033,-1.365&quot;</code></pre>
 </div>
 <div id="summaries" class="section level2" number="0.12">
 <h2><span class="header-section-number">0.12</span> 9. Summaries</h2>
@@ -662,26 +671,26 @@ time.taken &lt;- end.time - start.time
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.48, Running = 2.33, Post = 0.0871, Total = 5.9 
+##     Pre = 3.71, Running = 4.18, Post = 0.0511, Total = 7.94 
 ## Fixed effects:
 ##   mean   sd 0.025quant 0.5quant 0.97quant mode kld
-## m 0.74 0.27       0.21     0.74       1.3 0.74   0
+## m 0.74 0.27       0.22     0.74       1.2 0.74   0
 ## 
 ## Random effects:
 ##   Name     Model
 ##     s SPDE2 model
 ## 
 ## Model hyperparameters:
-##                                           mean      sd 0.025quant
-## Precision for the Gaussian observations 755.12 486.867    213.748
-## Range for s                               1.95   0.815      0.911
-## Stdev for s                               0.71   0.238      0.385
+##                                            mean      sd 0.025quant
+## Precision for the Gaussian observations 746.707 483.011    207.107
+## Range for s                               1.951   0.805      0.942
+## Stdev for s                               0.711   0.234      0.396
 ##                                         0.5quant 0.97quant    mode
-## Precision for the Gaussian observations  630.839   1940.29 451.548
-## Range for s                                1.767      3.91   1.452
-## Stdev for s                                0.663      1.27   0.572
+## Precision for the Gaussian observations  624.041   1921.20 444.834
+## Range for s                                1.774      3.90   1.451
+## Stdev for s                                0.665      1.27   0.571
 ## 
-## Marginal log-Likelihood:  -2.01 
+## Marginal log-Likelihood:  -1.97 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -710,7 +719,7 @@ time.taken &lt;- end.time - start.time
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.99, Running = 5.95, Post = 0.054, Total = 8.99 
+##     Pre = 2.99, Running = 7.9, Post = 0.05, Total = 10.9 
 ## Fixed effects:
 ##   mean    sd 0.025quant 0.5quant 0.97quant mode kld
 ## m 0.43 0.072       0.28     0.43      0.56 0.43   0
@@ -721,15 +730,15 @@ time.taken &lt;- end.time - start.time
 ## 
 ## Model hyperparameters:
 ##                                            mean      sd 0.025quant
-## Precision for the Gaussian observations 883.515 834.068     158.91
-## Theta1 for s                             -1.104   0.123      -1.34
-## Theta2 for s                             -0.644   0.199      -1.03
+## Precision for the Gaussian observations 905.293 843.381     157.15
+## Theta1 for s                             -1.105   0.123      -1.34
+## Theta2 for s                             -0.645   0.198      -1.03
 ##                                         0.5quant 0.97quant    mode
-## Precision for the Gaussian observations  640.125  2895.144 367.377
-## Theta1 for s                              -1.106    -0.868  -1.112
-## Theta2 for s                              -0.647    -0.262  -0.656
+## Precision for the Gaussian observations  660.692  2945.143 374.631
+## Theta1 for s                              -1.107    -0.869  -1.113
+## Theta2 for s                              -0.648    -0.264  -0.657
 ## 
-## Marginal log-Likelihood:  -6.24 
+## Marginal log-Likelihood:  -6.23 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>

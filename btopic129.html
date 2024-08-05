@@ -37,6 +37,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -688,7 +697,7 @@ w &lt;- factor(w)
 #see the mean  of y which have the same value of w
 tapply(y, w, mean)</code></pre>
 <pre><code>##    -1     0     1 
-## -0.69  0.39  1.47</code></pre>
+## -1.35 -0.42  0.63</code></pre>
 <p>The last step: organize our data in a data frame. Sometimes, it may
 happen that we have different data locations for different times. To
 show that, we just drop half of the observations. The provided code
@@ -851,7 +860,7 @@ res &lt;- inla(formula, data=inla.stack.data(stack),
             control.mode=list(restart=T, theta=init)) # line to add to speed up
 
 res$internal.summary.hyperpar$mode</code></pre>
-<pre><code>## [1]  4.717  1.026 -0.012  1.698</code></pre>
+<pre><code>## [1]  4.703  1.015 -0.042  1.709</code></pre>
 </div>
 <div id="results" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Results</h2>
@@ -867,12 +876,12 @@ class="math inline">\(95%\)</span> confidence interval of the
 coefficients.</p>
 <pre class="r"><code>tapply(dat$y, dat$w, mean)  # Observed mean for each covariate level</code></pre>
 <pre><code>##    -1     0     1 
-## -0.79  0.36  1.42</code></pre>
+## -1.40 -0.38  0.72</code></pre>
 <pre class="r"><code>round(res$summary.fixed,4) # Coefficients of the categorical variable</code></pre>
 <pre><code>##      mean   sd 0.025quant 0.5quant 0.97quant  mode kld
-## w-1 -0.82 0.25      -1.31    -0.82     -0.35 -0.82   0
-## w0   0.20 0.25      -0.29     0.20      0.67  0.20   0
-## w1   1.17 0.25       0.68     1.17      1.65  1.17   0</code></pre>
+## w-1 -1.26 0.24      -1.73    -1.26     -0.80 -1.26   0
+## w0  -0.24 0.24      -0.71    -0.24      0.22 -0.24   0
+## w1   0.74 0.24       0.26     0.74      1.19  0.74   0</code></pre>
 <div id="marginal-posterior-distribution-plot" class="section level3"
 number="4.3.1">
 <h3><span class="header-section-number">4.3.1</span> Marginal Posterior

@@ -36,6 +36,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -578,10 +587,8 @@ factorization <span class="citation">(Rue and Held 2005)</span>. Then we
 plot that field, adding the barrier area in grey on top. The value of
 the field on the barrier is of no interest, as there can never be
 observations there.</p>
-<pre class="r"><code>u = inla.qsample(n=1, Q=Q, seed = set.inla.seed)</code></pre>
-<pre><code>## Warning in inla.qsample(n = 1, Q = Q, seed = set.inla.seed): Since
-## &#39;seed!=0&#39;, parallel model is disabled and serial model is selected</code></pre>
-<pre class="r"><code>u = u[ ,1]
+<pre class="r"><code>u = inla.qsample(n=1, Q=Q, seed = set.inla.seed)
+u = u[ ,1]
 # - access the first sample
 
 local.plot.field(u, main=&quot;The true (simulated) spatial field&quot;)
@@ -710,7 +717,7 @@ res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.68, Running = 4.34, Post = 0.0801, Total = 8.11 
+##     Pre = 3.59, Running = 7.89, Post = 0.0623, Total = 11.5 
 ## Fixed effects:
 ##           mean   sd 0.025quant 0.5quant 0.97quant  mode kld
 ## intercept -0.3 0.35      -0.97    -0.32       0.4 -0.34   0
@@ -720,14 +727,14 @@ res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
 ##     s SPDE2 model
 ## 
 ## Model hyperparameters:
-##                                          mean    sd 0.025quant
-## Precision for the Gaussian observations 28.04 2.870      22.77
-## Range for s                              2.53 0.567       1.69
-## Stdev for s                              0.99 0.174       0.72
+##                                           mean    sd 0.025quant
+## Precision for the Gaussian observations 28.051 2.871      22.77
+## Range for s                              2.527 0.567       1.69
+## Stdev for s                              0.989 0.174       0.72
 ##                                         0.5quant 0.97quant   mode
-## Precision for the Gaussian observations   27.908     33.80 27.673
-## Range for s                                2.439      3.82  2.233
-## Stdev for s                                0.965      1.38  0.905
+## Precision for the Gaussian observations   27.924     33.80 27.700
+## Range for s                                2.434      3.82  2.225
+## Stdev for s                                0.964      1.38  0.903
 ## 
 ## Marginal log-Likelihood:  -152.92 
 ##  is computed 
@@ -779,8 +786,6 @@ class="math inline">\(\log(precision), \log(sigma),
              prior = &quot;pc.prec&quot;, fixed = FALSE, 
              param = c(0.2,0.5)))),
        control.mode=list(restart=T, theta=c(3.2, 0.4, 1.6)))</code></pre>
-<pre><code>## Warning in inla.model.properties.generic(inla.trim.family(model), mm[names(mm) == : Model &#39;rgeneric&#39; in section &#39;latent&#39; is marked as &#39;experimental&#39;; changes may appear at any time.
-##   Use this model with extra care!!! Further warnings are disabled.</code></pre>
 <pre class="r"><code>summary(res.barrier)</code></pre>
 <pre><code>## 
 ## Call:
@@ -804,7 +809,7 @@ class="math inline">\(\log(precision), \log(sigma),
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.21, Running = 9.14, Post = 0.0725, Total = 12.4 
+##     Pre = 3, Running = 12.6, Post = 0.0595, Total = 15.6 
 ## Fixed effects:
 ##            mean   sd 0.025quant 0.5quant 0.97quant  mode kld
 ## intercept -0.33 0.31      -0.95    -0.34      0.29 -0.35   0
@@ -815,15 +820,15 @@ class="math inline">\(\log(precision), \log(sigma),
 ## 
 ## Model hyperparameters:
 ##                                           mean   sd 0.025quant
-## Precision for the Gaussian observations 27.808 2.84     22.577
-## Theta1 for s                            -0.119 0.16     -0.406
-## Theta2 for s                             0.892 0.20      0.535
+## Precision for the Gaussian observations 27.779 2.84     22.579
+## Theta1 for s                            -0.118 0.16     -0.406
+## Theta2 for s                             0.893 0.20      0.535
 ##                                         0.5quant 0.97quant   mode
-## Precision for the Gaussian observations   27.686    33.488 27.480
-## Theta1 for s                              -0.129     0.206 -0.169
-## Theta2 for s                               0.879     1.299  0.828
+## Precision for the Gaussian observations   27.649    33.476 27.408
+## Theta1 for s                              -0.127     0.207 -0.166
+## Theta2 for s                               0.880     1.299  0.831
 ## 
-## Marginal log-Likelihood:  -146.69 
+## Marginal log-Likelihood:  -146.67 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -851,11 +856,11 @@ posterior of the hyper-parameters</h3>
 stationary model, see <a href="btopic108.html">BTopic108</a>.</p>
 <pre class="r"><code>res.barrier$summary.hyperpar</code></pre>
 <pre><code>##                                          mean   sd 0.025quant
-## Precision for the Gaussian observations 27.81 2.84      22.58
+## Precision for the Gaussian observations 27.78 2.84      22.58
 ## Theta1 for s                            -0.12 0.16      -0.41
 ## Theta2 for s                             0.89 0.20       0.53
 ##                                         0.5quant 0.97quant  mode
-## Precision for the Gaussian observations    27.69     33.49 27.48
+## Precision for the Gaussian observations    27.65     33.48 27.41
 ## Theta1 for s                               -0.13      0.21 -0.17
 ## Theta2 for s                                0.88      1.30  0.83</code></pre>
 <p>This shows the ordering of the hyper-parameters, and is how we know

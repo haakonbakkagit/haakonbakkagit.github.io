@@ -36,6 +36,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LPSR75LYY6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LPSR75LYY6');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -430,7 +439,7 @@ formula1 = y ~ x1 + x2 + f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></p
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.92, Running = 0.493, Post = 0.0532, Total = 3.46 
+##     Pre = 2.99, Running = 0.533, Post = 0.0534, Total = 3.57 
 ## Fixed effects:
 ##              mean   sd 0.025quant 0.5quant 0.97quant  mode kld
 ## (Intercept) -0.39 0.18      -0.74    -0.39    -0.031 -0.40   0
@@ -443,7 +452,7 @@ formula1 = y ~ x1 + x2 + f(plate, model=&quot;iid&quot;, hyper=hyper1)</code></p
 ## 
 ## Model hyperparameters:
 ##                      mean    sd 0.025quant 0.5quant 0.97quant mode
-## Precision for plate 21.39 41.32       2.96    10.62     88.71 6.06
+## Precision for plate 21.39 41.32       2.96    10.62     88.69 6.06
 ## 
 ## Marginal log-Likelihood:  -68.44 
 ##  is computed 
@@ -471,14 +480,14 @@ at the first sample.</p>
 <pre><code>## List of 3
 ##  $ hyperpar: Named num 1.75
 ##   ..- attr(*, &quot;names&quot;)= chr &quot;Precision for plate&quot;
-##  $ latent  : num [1:45, 1] -1.0011 -0.5166 -0.9039 -0.0429 -0.4154 ...
+##  $ latent  : num [1:45, 1] -0.458 -0.523 -0.83 0.562 -0.367 ...
 ##   ..- attr(*, &quot;dimnames&quot;)=List of 2
 ##   .. ..$ : chr [1:45] &quot;Predictor:1&quot; &quot;Predictor:2&quot; &quot;Predictor:3&quot; &quot;Predictor:4&quot; ...
 ##   .. ..$ : NULL
 ##  $ logdens :List of 3
 ##   ..$ hyperpar: num -4.76
-##   ..$ latent  : num -5.7
-##   ..$ joint   : num -10.5</code></pre>
+##   ..$ latent  : num -10.7
+##   ..$ joint   : num -15.5</code></pre>
 <p>Here, <code>$hyperpar</code> is the part of the first sample
 representing the hyper-parameters, <code>$latent</code> represents all
 the latent variables, and <code>$logdens</code> is the prior and
@@ -486,21 +495,21 @@ posterior log probability densities. The <code>$latent</code>, however,
 is quite complicated.</p>
 <pre class="r"><code>t(samples[[1]]$latent)</code></pre>
 <pre><code>##      Predictor:1 Predictor:2 Predictor:3 Predictor:4 Predictor:5
-## [1,]          -1       -0.52        -0.9      -0.043       -0.42
+## [1,]       -0.46       -0.52       -0.83        0.56       -0.37
 ##      Predictor:6 Predictor:7 Predictor:8 Predictor:9 Predictor:10
-## [1,]         1.9        0.97         1.3        0.39         0.97
+## [1,]         0.9        0.55         1.3        0.48         0.46
 ##      Predictor:11 Predictor:12 Predictor:13 Predictor:14 Predictor:15
-## [1,]          1.7        -0.43        -0.44         -1.4        0.062
+## [1,]          1.5         0.74         -0.9         -1.1         0.55
 ##      Predictor:16 Predictor:17 Predictor:18 Predictor:19 Predictor:20
-## [1,]         -1.7       -0.077         0.64         0.16         0.34
+## [1,]         -2.1        -0.65         0.55         0.19        -0.04
 ##      Predictor:21 plate:1 plate:2 plate:3 plate:4 plate:5 plate:6
-## [1,]         0.46   -0.28    0.21   -0.18    0.68    0.31     1.1
+## [1,]         0.56   -0.29   -0.36   -0.67    0.73    -0.2   0.072
 ##      plate:7 plate:8 plate:9 plate:10 plate:11 plate:12 plate:13
-## [1,]    0.16     0.5   -0.42     0.16     0.89     0.53     0.52
+## [1,]   -0.28    0.49   -0.34    -0.36     0.69      1.5    -0.14
 ##      plate:14 plate:15 plate:16 plate:17 plate:18 plate:19 plate:20
-## [1,]    -0.42        1    -0.73    -0.66    0.064    -0.42    -0.24
+## [1,]    -0.38      1.3     -1.3    -0.88     0.32   -0.045    -0.27
 ##      plate:21 (Intercept):1  x1:1 x2:1
-## [1,]    -0.12         -0.72 -0.23  1.5</code></pre>
+## [1,]     0.33         -0.16 -0.59 0.99</code></pre>
 <pre class="r"><code># - transposed for shorter printing
 # - this is a column vector</code></pre>
 <p>Here, the names show which part of the latent field these sample
@@ -544,27 +553,27 @@ ind.effect = contents$start[id.effect]-1 + (1:contents$length[id.effect])
 <pre class="r"><code>## See an example for the first sample
 samples[[1]]$latent[ind.effect, , drop=F]</code></pre>
 <pre><code>##            [,1]
-## plate:1  -0.279
-## plate:2   0.205
-## plate:3  -0.182
-## plate:4   0.679
-## plate:5   0.306
-## plate:6   1.120
-## plate:7   0.162
-## plate:8   0.500
-## plate:9  -0.418
-## plate:10  0.160
-## plate:11  0.891
-## plate:12  0.529
-## plate:13  0.518
-## plate:14 -0.420
-## plate:15  1.016
-## plate:16 -0.730
-## plate:17 -0.656
-## plate:18  0.064
-## plate:19 -0.425
-## plate:20 -0.235
-## plate:21 -0.122</code></pre>
+## plate:1  -0.294
+## plate:2  -0.358
+## plate:3  -0.666
+## plate:4   0.727
+## plate:5  -0.202
+## plate:6   0.072
+## plate:7  -0.276
+## plate:8   0.490
+## plate:9  -0.343
+## plate:10 -0.362
+## plate:11  0.689
+## plate:12  1.500
+## plate:13 -0.136
+## plate:14 -0.377
+## plate:15  1.309
+## plate:16 -1.328
+## plate:17 -0.884
+## plate:18  0.317
+## plate:19 -0.045
+## plate:20 -0.272
+## plate:21  0.326</code></pre>
 <pre class="r"><code>## Draw this part of every sample
 samples.effect = lapply(samples, function(x) x$latent[ind.effect])</code></pre>
 </div>
@@ -577,74 +586,74 @@ colnames(s.eff) = rownames(samples[[1]]$latent)[ind.effect]
 # - retrieve names from original object
 summary(s.eff)</code></pre>
 <pre><code>##     plate:1         plate:2         plate:3         plate:4     
-##  Min.   :-1.62   Min.   :-0.91   Min.   :-1.36   Min.   :-0.53  
-##  1st Qu.:-0.49   1st Qu.:-0.21   1st Qu.:-0.49   1st Qu.: 0.06  
-##  Median :-0.29   Median :-0.05   Median :-0.31   Median : 0.22  
-##  Mean   :-0.32   Mean   :-0.07   Mean   :-0.33   Mean   : 0.24  
-##  3rd Qu.:-0.12   3rd Qu.: 0.08   3rd Qu.:-0.16   3rd Qu.: 0.40  
-##  Max.   : 0.65   Max.   : 0.85   Max.   : 0.52   Max.   : 1.20  
+##  Min.   :-1.31   Min.   :-0.89   Min.   :-1.13   Min.   :-0.54  
+##  1st Qu.:-0.50   1st Qu.:-0.22   1st Qu.:-0.50   1st Qu.: 0.05  
+##  Median :-0.29   Median :-0.08   Median :-0.33   Median : 0.22  
+##  Mean   :-0.32   Mean   :-0.09   Mean   :-0.33   Mean   : 0.23  
+##  3rd Qu.:-0.12   3rd Qu.: 0.05   3rd Qu.:-0.16   3rd Qu.: 0.39  
+##  Max.   : 0.37   Max.   : 0.83   Max.   : 0.41   Max.   : 1.20  
 ##     plate:5         plate:6         plate:7         plate:8     
-##  Min.   :-0.94   Min.   :-1.00   Min.   :-0.62   Min.   :-0.46  
-##  1st Qu.:-0.10   1st Qu.:-0.10   1st Qu.: 0.01   1st Qu.: 0.12  
-##  Median : 0.05   Median : 0.09   Median : 0.16   Median : 0.28  
-##  Mean   : 0.05   Mean   : 0.11   Mean   : 0.17   Mean   : 0.30  
-##  3rd Qu.: 0.20   3rd Qu.: 0.31   3rd Qu.: 0.31   3rd Qu.: 0.46  
-##  Max.   : 0.91   Max.   : 1.63   Max.   : 1.02   Max.   : 1.52  
+##  Min.   :-0.96   Min.   :-1.32   Min.   :-0.54   Min.   :-0.55  
+##  1st Qu.:-0.09   1st Qu.:-0.09   1st Qu.: 0.02   1st Qu.: 0.14  
+##  Median : 0.06   Median : 0.09   Median : 0.15   Median : 0.30  
+##  Mean   : 0.06   Mean   : 0.12   Mean   : 0.17   Mean   : 0.31  
+##  3rd Qu.: 0.23   3rd Qu.: 0.32   3rd Qu.: 0.32   3rd Qu.: 0.48  
+##  Max.   : 1.08   Max.   : 1.53   Max.   : 1.09   Max.   : 1.48  
 ##     plate:9         plate:10        plate:11        plate:12    
-##  Min.   :-1.44   Min.   :-1.07   Min.   :-1.03   Min.   :-0.63  
-##  1st Qu.:-0.21   1st Qu.:-0.35   1st Qu.:-0.07   1st Qu.: 0.02  
+##  Min.   :-0.88   Min.   :-1.10   Min.   :-0.80   Min.   :-0.87  
+##  1st Qu.:-0.22   1st Qu.:-0.35   1st Qu.:-0.07   1st Qu.: 0.04  
 ##  Median :-0.05   Median :-0.19   Median : 0.10   Median : 0.21  
-##  Mean   :-0.06   Mean   :-0.21   Mean   : 0.13   Mean   : 0.24  
-##  3rd Qu.: 0.09   3rd Qu.:-0.06   3rd Qu.: 0.32   3rd Qu.: 0.42  
-##  Max.   : 0.87   Max.   : 0.54   Max.   : 1.47   Max.   : 1.48  
+##  Mean   :-0.06   Mean   :-0.20   Mean   : 0.13   Mean   : 0.24  
+##  3rd Qu.: 0.08   3rd Qu.:-0.03   3rd Qu.: 0.31   3rd Qu.: 0.42  
+##  Max.   : 0.75   Max.   : 0.61   Max.   : 1.54   Max.   : 1.50  
 ##     plate:13        plate:14        plate:15        plate:16    
-##  Min.   :-0.80   Min.   :-1.03   Min.   :-0.39   Min.   :-1.50  
-##  1st Qu.:-0.15   1st Qu.:-0.23   1st Qu.: 0.20   1st Qu.:-0.35  
-##  Median : 0.02   Median :-0.06   Median : 0.41   Median :-0.12  
-##  Mean   : 0.02   Mean   :-0.06   Mean   : 0.43   Mean   :-0.15  
-##  3rd Qu.: 0.18   3rd Qu.: 0.11   3rd Qu.: 0.62   3rd Qu.: 0.06  
-##  Max.   : 0.96   Max.   : 0.83   Max.   : 1.55   Max.   : 1.21  
+##  Min.   :-1.00   Min.   :-0.97   Min.   :-0.40   Min.   :-1.77  
+##  1st Qu.:-0.14   1st Qu.:-0.26   1st Qu.: 0.20   1st Qu.:-0.34  
+##  Median : 0.04   Median :-0.08   Median : 0.38   Median :-0.12  
+##  Mean   : 0.03   Mean   :-0.08   Mean   : 0.42   Mean   :-0.15  
+##  3rd Qu.: 0.19   3rd Qu.: 0.08   3rd Qu.: 0.62   3rd Qu.: 0.07  
+##  Max.   : 0.97   Max.   : 0.70   Max.   : 1.50   Max.   : 0.98  
 ##     plate:17        plate:18        plate:19        plate:20    
-##  Min.   :-1.53   Min.   :-0.92   Min.   :-1.36   Min.   :-0.69  
-##  1st Qu.:-0.55   1st Qu.:-0.22   1st Qu.:-0.30   1st Qu.:-0.03  
-##  Median :-0.30   Median :-0.06   Median :-0.12   Median : 0.11  
-##  Mean   :-0.33   Mean   :-0.06   Mean   :-0.12   Mean   : 0.13  
-##  3rd Qu.:-0.10   3rd Qu.: 0.10   3rd Qu.: 0.06   3rd Qu.: 0.29  
-##  Max.   : 0.64   Max.   : 1.01   Max.   : 0.71   Max.   : 1.41  
+##  Min.   :-1.56   Min.   :-1.00   Min.   :-1.21   Min.   :-0.58  
+##  1st Qu.:-0.51   1st Qu.:-0.21   1st Qu.:-0.27   1st Qu.:-0.03  
+##  Median :-0.28   Median :-0.04   Median :-0.11   Median : 0.12  
+##  Mean   :-0.31   Mean   :-0.06   Mean   :-0.11   Mean   : 0.14  
+##  3rd Qu.:-0.08   3rd Qu.: 0.10   3rd Qu.: 0.05   3rd Qu.: 0.30  
+##  Max.   : 0.54   Max.   : 0.81   Max.   : 0.83   Max.   : 1.32  
 ##     plate:21    
-##  Min.   :-1.42  
-##  1st Qu.:-0.30  
+##  Min.   :-1.35  
+##  1st Qu.:-0.27  
 ##  Median :-0.08  
-##  Mean   :-0.10  
+##  Mean   :-0.09  
 ##  3rd Qu.: 0.11  
-##  Max.   : 1.13</code></pre>
+##  Max.   : 1.02</code></pre>
 </div>
 <div id="verifying-output" class="section level2" number="5.4">
 <h2><span class="header-section-number">5.4</span> Verifying output</h2>
 <p>We compare these samples to the usual posterior summaries.</p>
 <pre class="r"><code>cbind(colMeans(s.eff), res1$summary.random$plate$mean)</code></pre>
 <pre><code>##            [,1]   [,2]
-## plate:1  -0.316 -0.309
-## plate:2  -0.070 -0.087
-## plate:3  -0.334 -0.333
-## plate:4   0.237  0.227
-## plate:5   0.051  0.056
-## plate:6   0.110  0.111
-## plate:7   0.171  0.167
-## plate:8   0.296  0.300
-## plate:9  -0.061 -0.063
-## plate:10 -0.207 -0.195
-## plate:11  0.129  0.128
-## plate:12  0.236  0.222
-## plate:13  0.020  0.021
-## plate:14 -0.063 -0.065
-## plate:15  0.429  0.410
-## plate:16 -0.155 -0.141
-## plate:17 -0.333 -0.316
-## plate:18 -0.059 -0.060
-## plate:19 -0.124 -0.114
-## plate:20  0.132  0.135
-## plate:21 -0.095 -0.091</code></pre>
+## plate:1  -0.322 -0.309
+## plate:2  -0.085 -0.087
+## plate:3  -0.335 -0.333
+## plate:4   0.235  0.227
+## plate:5   0.065  0.056
+## plate:6   0.117  0.111
+## plate:7   0.166  0.167
+## plate:8   0.311  0.300
+## plate:9  -0.065 -0.063
+## plate:10 -0.197 -0.195
+## plate:11  0.126  0.128
+## plate:12  0.237  0.222
+## plate:13  0.032  0.021
+## plate:14 -0.080 -0.065
+## plate:15  0.420  0.410
+## plate:16 -0.149 -0.141
+## plate:17 -0.312 -0.316
+## plate:18 -0.057 -0.060
+## plate:19 -0.107 -0.114
+## plate:20  0.144  0.135
+## plate:21 -0.086 -0.091</code></pre>
 </div>
 </div>
 <div id="prediction-where-we-have-data" class="section level1"
@@ -669,7 +678,7 @@ linear predictor always start at the first element of
 <pre class="r"><code>## see one example value
 samples[[1]]$latent[7, , drop=F]</code></pre>
 <pre><code>##             [,1]
-## Predictor:7 0.97</code></pre>
+## Predictor:7 0.55</code></pre>
 <pre class="r"><code>## Draw this part of every sample
 samples.pred7 = lapply(samples, function(x) x$latent[7])
 samples.pred7 = unlist(samples.pred7)</code></pre>
@@ -756,10 +765,10 @@ sum = drop(f.x1.0 + f.x2.1 + f.plate.7 + int)
 list(model.component.sum.7 = sum, linear.predictor.7 = samples.pred7[nr])</code></pre>
 <pre><code>## $model.component.sum.7
 ## x1:1 
-##  1.2 
+## 0.77 
 ## 
 ## $linear.predictor.7
-## [1] 1.2</code></pre>
+## [1] 0.77</code></pre>
 <p>These two numbers are equal, or approximately equal, as they
 represent the exact same thing! To do this for all the sample numbers,
 create a for loop <code>for (nr in 1:length(samples))</code>.</p>
