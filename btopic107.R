@@ -1,9 +1,9 @@
-## ----setup, include=FALSE--------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------
 rm(list=ls())
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ---- warning=FALSE, message=FALSE-----------------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------
 library(INLA); library(fields)
 library(rgeos)
 library(viridisLite)
@@ -12,7 +12,7 @@ set.seed(2016)
 set.inla.seed = 2016
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 ## Load data
 load(file = "data/WebSiteData-Archipelago.RData")
 # - if you have saved the file locally
@@ -24,11 +24,11 @@ load(file = "data/WebSiteData-Archipelago.RData")
 str(poly.water, 1)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 df$y = df$y.smelt
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 M = list()
 # - the list of all models
 M[[1]] = list()
@@ -43,7 +43,7 @@ M[[4]] = list()
 M[[4]]$shortname = "barrier-all-cov"
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 max.edge = 0.6
 bound.outer = 4.6
 mesh = inla.mesh.2d(boundary = poly.water,
@@ -55,11 +55,11 @@ plot(mesh, main="Our mesh", lwd=0.5); points(df$locx, df$locy, col="red")
 mesh$n
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 A.i.s = inla.spde.make.A(mesh, loc=cbind(df$locx, df$locy))
 
 
-## ---- warning=FALSE, message=FALSE-----------------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------
  stk <- inla.stack(data=list(y=df$y, e=df$exposure), 
                     effects=list(s=1:mesh$n,
                                  data.frame(m=1, df[ ,5:11]), 
@@ -69,14 +69,14 @@ A.i.s = inla.spde.make.A(mesh, loc=cbind(df$locx, df$locy))
                     remove.unused = FALSE, tag='est')  
 
 
-## ---- warning=FALSE, message=FALSE-----------------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------
 spde = inla.spde2.pcmatern(mesh, prior.range = c(6, .5), prior.sigma = c(3, 0.01))
 # - We put the prior median at approximately 0.5*diff(range(df$locy))
 # - - this is roughly the extent of our study area
 # - The prior probability of marginal standard deviation 3 or more is 0.01.
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 hyper.iid = list(prec = list(prior = 'pc.prec', param = c(3, 0.01))) 
 # - the param the same as prior.sigma above, with the same interpretation
 M[[1]]$formula = y~ -1+m + f(s, model=spde) + f(iidx, model="iid", hyper=hyper.iid)
@@ -85,12 +85,12 @@ M[[2]]$formula = as.formula(paste( "y ~ -1 + ",paste(colnames(df)[5:11], collaps
 M[[2]]$formula = update(M[[2]]$formula, .~. +m + f(s, model=spde) + f(iidx, model="iid", hyper=hyper.iid))
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 print(M[[1]])
 print(M[[2]])
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 tl = length(mesh$graph$tv[,1])
 # - the number of triangles in the mesh
 posTri = matrix(0, tl, 2)
@@ -109,30 +109,30 @@ barrier.triangles = setdiff(1:tl, normal)
 poly.barrier = inla.barrier.polygon(mesh, barrier.triangles)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 barrier.model = inla.barrier.pcmatern(mesh, barrier.triangles = barrier.triangles, prior.range = c(6, .5), prior.sigma = c(3, 0.01))
 # - this creates the INLA object for the model
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 M[[3]]$formula = y~ -1+m + f(s, model=barrier.model) + f(iidx, model="iid", hyper=hyper.iid)
 # - no covariates (except intercept m)
 M[[4]]$formula = as.formula(paste( "y ~ -1 + ",paste(colnames(df)[5:11], collapse = " + ")))
 M[[4]]$formula = update(M[[4]]$formula, .~. +m + f(s, model=barrier.model) + f(iidx, model="iid", hyper=hyper.iid))
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 print(M[[3]])
 print(M[[4]])
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 par(mar=rep(.1, 4))
 plot(df$locx, y=df$locy, pch=20, asp=1)
 plot(poly.barrier, add=T, border="black", col="grey")
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 ## Initial values
 # - speeds up computations
 # - improves accuracy of computations
@@ -143,7 +143,7 @@ M[[3]]$init = c(0.833,2.244,-0.471)
 M[[4]]$init = c(0.044,1.274,-0.596)
 
 
-## ---- warning=FALSE, message=FALSE-----------------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------
 for (i in 1:length(M)){
     print(paste("Running:  ", M[[i]]$shortname))
     M[[i]]$res = inla(M[[i]]$formula,
@@ -156,24 +156,24 @@ for (i in 1:length(M)){
 # - time: < 20 min
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = ','))
 }
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 #summary(M[[1]]$res)
 #summary(M[[2]]$res)
 #summary(M[[3]]$res)
 #summary(M[[4]]$res)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 #M[[i]]$res$logfile
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 local.plot.field = function(field, mesh, xlim, ylim, ...){
   stopifnot(length(field) == mesh$n)
   # - error when using the wrong mesh
@@ -191,7 +191,7 @@ local.plot.field = function(field, mesh, xlim, ylim, ...){
 }
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 for (i in c(1,3)) {
   field = M[[i]]$res$summary.random$s$mean + M[[i]]$res$summary.fixed['m', 'mean']
   local.plot.field(field, mesh, main=paste(M[[i]]$shortname), zlim=c(-10.5, 1))
@@ -200,7 +200,7 @@ for (i in c(1,3)) {
 }
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 for (i in c(2,4)) {
   field = M[[i]]$res$summary.random$s$mean + M[[i]]$res$summary.fixed['m', 'mean']
   local.plot.field(field, mesh, main=paste(M[[i]]$shortname), zlim=c(-9, -4.5))
@@ -209,7 +209,7 @@ for (i in c(2,4)) {
 }
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 ## Set up dataframe with relevant results
 res = M[[2]]$res$summary.fixed[ ,c(4,3,5)]
 # - all covar, some quantiles

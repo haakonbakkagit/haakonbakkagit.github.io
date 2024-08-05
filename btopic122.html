@@ -575,12 +575,12 @@ use.</p>
 <pre class="r"><code>df = data.frame(y=y, locx=loc.data[ ,1], locy=loc.data[ ,2], x = x)
 summary(df)</code></pre>
 <pre><code>##        y              locx            locy             x         
-##  Min.   :-4.63   Min.   : 0.00   Min.   : 0.00   Min.   :-0.500  
-##  1st Qu.:-0.70   1st Qu.: 2.55   1st Qu.: 2.53   1st Qu.:-0.255  
-##  Median : 0.57   Median : 4.93   Median : 5.08   Median : 0.003  
-##  Mean   : 0.66   Mean   : 4.98   Mean   : 5.06   Mean   :-0.002  
-##  3rd Qu.: 1.99   3rd Qu.: 7.36   3rd Qu.: 7.58   3rd Qu.: 0.249  
-##  Max.   : 6.11   Max.   :10.00   Max.   :10.00   Max.   : 0.500</code></pre>
+##  Min.   :-4.45   Min.   : 0.00   Min.   : 0.00   Min.   :-0.500  
+##  1st Qu.: 0.06   1st Qu.: 2.55   1st Qu.: 2.53   1st Qu.:-0.255  
+##  Median : 1.20   Median : 4.93   Median : 5.08   Median : 0.003  
+##  Mean   : 1.20   Mean   : 4.98   Mean   : 5.06   Mean   :-0.002  
+##  3rd Qu.: 2.33   3rd Qu.: 7.36   3rd Qu.: 7.58   3rd Qu.: 0.249  
+##  Max.   : 6.41   Max.   :10.00   Max.   :10.00   Max.   : 0.500</code></pre>
 </div>
 </div>
 <div id="coding-the-spatial-effect-for-inference" class="section level1"
@@ -594,10 +594,10 @@ matrix</h2>
 use the same mesh for simulation and for inference.</p>
 <pre class="r"><code>mesh = inla.mesh.2d(loc = fake.locations, max.edge=c(0.4, 1))
 mesh$n</code></pre>
-<pre><code>## [1] 2433</code></pre>
+<pre><code>## [1] 2394</code></pre>
 <pre class="r"><code>A = inla.spde.make.A(mesh=mesh, loc=data.matrix(df[ , c(&#39;locx&#39;, &#39;locy&#39;)]))
 dim(A); </code></pre>
-<pre><code>## [1] 5000 2433</code></pre>
+<pre><code>## [1] 5000 2394</code></pre>
 <p>Plot the mesh and data; for diagnostics</p>
 <pre class="r"><code>par(mar=c(1,1,1,1))
 plot(mesh, asp=1)
@@ -636,7 +636,7 @@ likelihood</h2>
 class="math display">\[\sigma_\epsilon \sim \exp(\lambda) \]</span>
 where <span class="math inline">\(\lambda\)</span> is determined by
 setting the prior median. In this prior assumption we assume that some
-of the variability in the data <code>sd(y)=</code> 1.831 has been
+of the variability in the data <code>sd(y)=</code> 1.595 has been
 explained by the covariates (by modeling the “mean”).</p>
 <pre class="r"><code>family = &quot;gaussian&quot;
 prior.median.sd.g = 0.5 # prior median for sigma.epsilon
@@ -693,14 +693,14 @@ res = inla(formula, data=inla.stack.data(stack),
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.35, Running = 5.84, Post = 0.0931, Total = 9.28 
+##     Pre = 3.49, Running = 4.47, Post = 0.0938, Total = 8.05 
 ## Fixed effects:
-##            mean    sd 0.5quant 0.025quant 0.975quant 0.1quant
-## intercept 0.826 0.412    0.828      0.002       1.64     0.31
-## x         1.996 0.017    1.996      1.962       2.03     1.97
-##           0.9quant 0.25quant 0.75quant  mode kld
-## intercept     1.34     0.561      1.09 0.831   0
-## x             2.02     1.984      2.01 1.996   0
+##           mean    sd 0.5quant 0.025quant 0.975quant 0.1quant 0.9quant
+## intercept 1.23 0.346     1.23      0.546       1.92    0.798     1.67
+## x         2.00 0.017     2.00      1.962       2.03    1.973     2.02
+##           0.25quant 0.75quant mode kld
+## intercept      1.01      1.46 1.23   0
+## x              1.98      2.01 2.00   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -708,23 +708,23 @@ res = inla(formula, data=inla.stack.data(stack),
 ## 
 ## Model hyperparameters:
 ##                                          mean    sd 0.5quant
-## Precision for the Gaussian observations 10.38 0.248    10.38
-## Range for s                              2.46 0.276     2.44
-## Stdev for s                              1.76 0.174     1.75
+## Precision for the Gaussian observations 10.58 0.250    10.57
+## Range for s                              2.19 0.235     2.17
+## Stdev for s                              1.62 0.151     1.61
 ##                                         0.025quant 0.975quant
-## Precision for the Gaussian observations       9.90      10.88
-## Range for s                                   2.00       3.08
-## Stdev for s                                   1.47       2.15
+## Precision for the Gaussian observations      10.09      11.08
+## Range for s                                   1.77       2.69
+## Stdev for s                                   1.35       1.94
 ##                                         0.1quant 0.9quant 0.25quant
-## Precision for the Gaussian observations    10.07    10.71     10.21
-## Range for s                                 2.13     2.83      2.27
-## Stdev for s                                 1.56     2.00      1.64
+## Precision for the Gaussian observations    10.26    10.90     10.41
+## Range for s                                 1.90     2.50      2.02
+## Stdev for s                                 1.43     1.82      1.51
 ##                                         0.75quant  mode
-## Precision for the Gaussian observations     10.55 10.38
-## Range for s                                  2.63  2.37
-## Stdev for s                                  1.87  1.71
+## Precision for the Gaussian observations     10.74 10.57
+## Range for s                                  2.34  2.14
+## Stdev for s                                  1.72  1.59
 ## 
-## Marginal log-Likelihood:  -2725.60 
+## Marginal log-Likelihood:  -2708.57 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -770,7 +770,7 @@ class="math inline">\(f(s)\)</span>, <span
 class="math inline">\(f_s\)</span>) for the random effect. The
 difficulty with visualising these is that there are so many of them:</p>
 <pre class="r"><code>nrow(res$summary.random$s)</code></pre>
-<pre><code>## [1] 2433</code></pre>
+<pre><code>## [1] 2394</code></pre>
 <p>We will not only viusualise these at the data locations, but
 everywhere in the study area.</p>
 <pre class="r"><code>local.plot.field(res$summary.random[[&#39;s&#39;]][[&#39;mean&#39;]], mesh)

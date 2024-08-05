@@ -531,7 +531,7 @@ enough. We discuss mesh extensions in a different topic)</p>
   # - Use image.plot to get nice colors and legend
 }
 print(mesh$n)</code></pre>
-<pre><code>## [1] 2613</code></pre>
+<pre><code>## [1] 2604</code></pre>
 <pre class="r"><code># - This is the appropriate length of the field variable</code></pre>
 <p>The input variable <code>field</code> must have the same length as
 there are mesh nodes in the mesh.</p>
@@ -610,7 +610,7 @@ A.data = inla.spde.make.A(mesh, loc.data)
 # - this matrix can transform the field-defined-on-the-mesh 
 #   to the field-defined-on-the-data-locations
 c(dim(A.data), mesh$n, nrow(loc.data))</code></pre>
-<pre><code>## [1]  469 2613 2613  469</code></pre>
+<pre><code>## [1]  469 2604 2604  469</code></pre>
 <pre class="r"><code># - shows that the dimensions are correct
 u.data = A.data %*% u
 # - project the field from the finite element  
@@ -630,12 +630,12 @@ df$y = drop(sigma.u*u.data + sigma.epsilon*rnorm(nrow(df)))
 <p>We have now completed the simulation of the spatial dataset.</p>
 <pre class="r"><code>summary(df)</code></pre>
 <pre><code>##       locx          locy           y       
-##  Min.   :2.0   Min.   :2.0   Min.   :-3.7  
-##  1st Qu.:3.4   1st Qu.:3.7   1st Qu.:-1.4  
-##  Median :5.0   Median :5.5   Median :-0.3  
-##  Mean   :5.0   Mean   :5.1   Mean   :-0.2  
-##  3rd Qu.:6.5   3rd Qu.:6.7   3rd Qu.: 0.7  
-##  Max.   :8.0   Max.   :8.0   Max.   : 4.7</code></pre>
+##  Min.   :2.0   Min.   :2.0   Min.   :-3.4  
+##  1st Qu.:3.4   1st Qu.:3.7   1st Qu.:-0.9  
+##  Median :5.0   Median :5.5   Median :-0.5  
+##  Mean   :5.0   Mean   :5.1   Mean   :-0.5  
+##  3rd Qu.:6.5   3rd Qu.:6.7   3rd Qu.: 0.0  
+##  Max.   :8.0   Max.   :8.0   Max.   : 1.6</code></pre>
 <p>This is the entire dataframe, and is the only object we ‘know’,
 besides the spatial mesh and barrier, when we are performing
 inference.</p>
@@ -710,10 +710,10 @@ res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.47, Running = 2.47, Post = 0.0677, Total = 6 
+##     Pre = 3.68, Running = 4.34, Post = 0.0801, Total = 8.11 
 ## Fixed effects:
-##            mean  sd 0.025quant 0.5quant 0.97quant  mode kld
-## intercept -0.18 1.1       -2.5    -0.17         2 -0.17   0
+##           mean   sd 0.025quant 0.5quant 0.97quant  mode kld
+## intercept -0.3 0.35      -0.97    -0.32       0.4 -0.34   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -721,15 +721,15 @@ res.stationary &lt;- inla(formula, data=inla.stack.data(stk),
 ## 
 ## Model hyperparameters:
 ##                                          mean    sd 0.025quant
-## Precision for the Gaussian observations 27.01 2.825      21.85
-## Range for s                              4.79 1.362       2.99
-## Stdev for s                              2.03 0.509       1.33
-##                                         0.5quant 0.97quant  mode
-## Precision for the Gaussian observations    26.88     32.70 26.62
-## Range for s                                 4.51      8.01  3.91
-## Stdev for s                                 1.93      3.22  1.70
+## Precision for the Gaussian observations 28.04 2.870      22.77
+## Range for s                              2.53 0.567       1.69
+## Stdev for s                              0.99 0.174       0.72
+##                                         0.5quant 0.97quant   mode
+## Precision for the Gaussian observations   27.908     33.80 27.673
+## Range for s                                2.439      3.82  2.233
+## Stdev for s                                0.965      1.38  0.905
 ## 
-## Marginal log-Likelihood:  -190.87 
+## Marginal log-Likelihood:  -152.92 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -804,26 +804,26 @@ class="math inline">\(\log(precision), \log(sigma),
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.94, Running = 5.09, Post = 0.285, Total = 8.31 
+##     Pre = 3.21, Running = 9.14, Post = 0.0725, Total = 12.4 
 ## Fixed effects:
-##            mean  sd 0.025quant 0.5quant 0.97quant  mode kld
-## intercept -0.16 1.2       -2.5    -0.17       2.1 -0.18   0
+##            mean   sd 0.025quant 0.5quant 0.97quant  mode kld
+## intercept -0.33 0.31      -0.95    -0.34      0.29 -0.35   0
 ## 
 ## Random effects:
 ##   Name     Model
 ##     s RGeneric2
 ## 
 ## Model hyperparameters:
-##                                           mean    sd 0.025quant
-## Precision for the Gaussian observations 24.709 2.382     20.349
-## Theta1 for s                             0.536 0.224      0.132
-## Theta2 for s                             1.770 0.248      1.324
+##                                           mean   sd 0.025quant
+## Precision for the Gaussian observations 27.808 2.84     22.577
+## Theta1 for s                            -0.119 0.16     -0.406
+## Theta2 for s                             0.892 0.20      0.535
 ##                                         0.5quant 0.97quant   mode
-## Precision for the Gaussian observations   24.596    29.500 24.371
-## Theta1 for s                               0.523     0.989  0.472
-## Theta2 for s                               1.756     2.272  1.699
+## Precision for the Gaussian observations   27.686    33.488 27.480
+## Theta1 for s                              -0.129     0.206 -0.169
+## Theta2 for s                               0.879     1.299  0.828
 ## 
-## Marginal log-Likelihood:  -142.00 
+## Marginal log-Likelihood:  -146.69 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -851,13 +851,13 @@ posterior of the hyper-parameters</h3>
 stationary model, see <a href="btopic108.html">BTopic108</a>.</p>
 <pre class="r"><code>res.barrier$summary.hyperpar</code></pre>
 <pre><code>##                                          mean   sd 0.025quant
-## Precision for the Gaussian observations 24.71 2.38      20.35
-## Theta1 for s                             0.54 0.22       0.13
-## Theta2 for s                             1.77 0.25       1.32
+## Precision for the Gaussian observations 27.81 2.84      22.58
+## Theta1 for s                            -0.12 0.16      -0.41
+## Theta2 for s                             0.89 0.20       0.53
 ##                                         0.5quant 0.97quant  mode
-## Precision for the Gaussian observations    24.60     29.50 24.37
-## Theta1 for s                                0.52      0.99  0.47
-## Theta2 for s                                1.76      2.27  1.70</code></pre>
+## Precision for the Gaussian observations    27.69     33.49 27.48
+## Theta1 for s                               -0.13      0.21 -0.17
+## Theta2 for s                                0.88      1.30  0.83</code></pre>
 <p>This shows the ordering of the hyper-parameters, and is how we know
 what index to use later in the plots.</p>
 <p>To plot the hyper-parameters in the Barrier model, we must know the

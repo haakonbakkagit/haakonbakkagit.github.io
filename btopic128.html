@@ -673,8 +673,8 @@ dimensions</p>
 cat(&#39;Number of mesh points: &#39;, mesh$n, &#39;\n&#39;)
 
 cat(&#39;Number of locations: &#39;, dim(locations)[1], &#39;\n&#39;)</code></pre>
-<pre><code>## Dimension of A:  198 6539 
-## Number of mesh points:  6539 
+<pre><code>## Dimension of A:  198 6538 
+## Number of mesh points:  6538 
 ## Number of locations:  198</code></pre>
 <p>Next, we build a special object: the Stack object. It is build using
 the <span class="math inline">\(\texttt{inla.stack()}\)</span> function,
@@ -969,7 +969,7 @@ more precise posterior).</p>
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
 }</code></pre>
-<pre><code>## [1] &quot;2.504,1.198,-0.573&quot;
+<pre><code>## [1] &quot;2.505,1.198,-0.573&quot;
 ## [1] &quot;1.143,0.307,-0.618&quot;
 ## [1] &quot;0.787,2.34,-0.469&quot;
 ## [1] &quot;-0.009,1.323,-0.577&quot;</code></pre>

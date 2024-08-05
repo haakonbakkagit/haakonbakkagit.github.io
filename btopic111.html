@@ -458,7 +458,7 @@ mesh = inla.mesh.2d(boundary = poly,
 plot(mesh, main=&quot;Our mesh&quot;, lwd=0.5)</code></pre>
 <p><img src="btopic111_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <pre class="r"><code>mesh$n</code></pre>
-<pre><code>## [1] 2116</code></pre>
+<pre><code>## [1] 2112</code></pre>
 </div>
 <div id="stack-and-a-matrix" class="section level2" number="0.7">
 <h2><span class="header-section-number">0.7</span> 4. Stack and A
@@ -504,8 +504,8 @@ Omega.SP = dt.polygon.omega(mesh, Omega)</code></pre>
 <pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider
 ## using set_RGEOS_CheckValidity(2L)</code></pre>
 <pre><code>## Warning in RGEOSUnaryPredFunc(spgeom, byid, &quot;rgeos_isvalid&quot;):
-## Self-intersection at or near point 0.18499507000000001
-## -1.9259744700000001</code></pre>
+## Self-intersection at or near point 1.9092901200000001
+## -1.3923755900000001</code></pre>
 <pre><code>## mesh.polys is invalid</code></pre>
 <pre><code>## Warning in gUnaryUnion(mesh.polys): Invalid objects found; consider
 ## using set_RGEOS_CheckValidity(2L)</code></pre>
@@ -567,7 +567,7 @@ condition!</p>
 plot(mesh2, main=&quot;The second mesh&quot;, lwd=0.5)</code></pre>
 <p><img src="btopic111_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <pre class="r"><code>mesh2$n</code></pre>
-<pre><code>## [1] 1697</code></pre>
+<pre><code>## [1] 1707</code></pre>
 <div id="this-stack-and-a-matrix" class="section level3"
 number="0.10.1">
 <h3><span class="header-section-number">0.10.1</span> This Stack and A
@@ -631,9 +631,9 @@ time.taken &lt;- end.time - start.time
 <pre class="r"><code>for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = &#39;,&#39;))
 }</code></pre>
-<pre><code>## [1] &quot;6.397,0.502,-0.465&quot;
-## [1] &quot;6.369,-1.112,-0.661&quot;
-## [1] &quot;6.154,-1.032,-1.359&quot;</code></pre>
+<pre><code>## [1] &quot;6.406,0.501,-0.467&quot;
+## [1] &quot;6.379,-1.111,-0.655&quot;
+## [1] &quot;6.161,-1.037,-1.365&quot;</code></pre>
 </div>
 <div id="summaries" class="section level2" number="0.12">
 <h2><span class="header-section-number">0.12</span> 9. Summaries</h2>
@@ -662,26 +662,26 @@ time.taken &lt;- end.time - start.time
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.29, Running = 2.26, Post = 0.0698, Total = 5.63 
+##     Pre = 3.48, Running = 2.33, Post = 0.0871, Total = 5.9 
 ## Fixed effects:
 ##   mean   sd 0.025quant 0.5quant 0.97quant mode kld
-## m 0.75 0.27       0.21     0.75       1.3 0.75   0
+## m 0.74 0.27       0.21     0.74       1.3 0.74   0
 ## 
 ## Random effects:
 ##   Name     Model
 ##     s SPDE2 model
 ## 
 ## Model hyperparameters:
-##                                            mean      sd 0.025quant
-## Precision for the Gaussian observations 756.583 487.821    217.938
-## Range for s                               1.940   0.821      0.891
-## Stdev for s                               0.709   0.241      0.378
+##                                           mean      sd 0.025quant
+## Precision for the Gaussian observations 755.12 486.867    213.748
+## Range for s                               1.95   0.815      0.911
+## Stdev for s                               0.71   0.238      0.385
 ##                                         0.5quant 0.97quant    mode
-## Precision for the Gaussian observations  631.185   1945.52 452.756
-## Range for s                                1.762      3.92   1.452
-## Stdev for s                                0.662      1.28   0.573
+## Precision for the Gaussian observations  630.839   1940.29 451.548
+## Range for s                                1.767      3.91   1.452
+## Stdev for s                                0.663      1.27   0.572
 ## 
-## Marginal log-Likelihood:  -2.06 
+## Marginal log-Likelihood:  -2.01 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -710,7 +710,7 @@ time.taken &lt;- end.time - start.time
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 2.99, Running = 5.73, Post = 0.0665, Total = 8.78 
+##     Pre = 2.99, Running = 5.95, Post = 0.054, Total = 8.99 
 ## Fixed effects:
 ##   mean    sd 0.025quant 0.5quant 0.97quant mode kld
 ## m 0.43 0.072       0.28     0.43      0.56 0.43   0
@@ -721,15 +721,15 @@ time.taken &lt;- end.time - start.time
 ## 
 ## Model hyperparameters:
 ##                                            mean      sd 0.025quant
-## Precision for the Gaussian observations 883.606 841.672     158.48
-## Theta1 for s                             -1.105   0.123      -1.34
-## Theta2 for s                             -0.648   0.199      -1.03
+## Precision for the Gaussian observations 883.515 834.068     158.91
+## Theta1 for s                             -1.104   0.123      -1.34
+## Theta2 for s                             -0.644   0.199      -1.03
 ##                                         0.5quant 0.97quant    mode
-## Precision for the Gaussian observations  637.467  2911.039 364.889
-## Theta1 for s                              -1.107    -0.869  -1.113
-## Theta2 for s                              -0.651    -0.264  -0.662
+## Precision for the Gaussian observations  640.125  2895.144 367.377
+## Theta1 for s                              -1.106    -0.868  -1.112
+## Theta2 for s                              -0.647    -0.262  -0.656
 ## 
-## Marginal log-Likelihood:  -6.29 
+## Marginal log-Likelihood:  -6.24 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
@@ -808,10 +808,10 @@ data.frame(name=unlist(lapply(M, function(x) c(x$shortname))),
            rmse=unlist(lapply(M, function(x) c(x$rmse))),
            mae=unlist(lapply(M, function(x) c(x$mae))),
            mae.sd=unlist(lapply(M, function(x) c(x$mae.sd))))</code></pre>
-<pre><code>##               name rmse   mae  mae.sd
-## 1 stationary-model 0.14 0.099 0.00057
-## 2    barrier-model 0.17 0.126 0.00068
-## 3    neumann-model 0.21 0.146 0.00087</code></pre>
+<pre><code>##               name rmse  mae  mae.sd
+## 1 stationary-model 0.14 0.10 0.00058
+## 2    barrier-model 0.17 0.13 0.00068
+## 3    neumann-model 0.21 0.15 0.00088</code></pre>
 </div>
 <div id="comments-and-additional" class="section level2" number="0.15">
 <h2><span class="header-section-number">0.15</span> Comments and

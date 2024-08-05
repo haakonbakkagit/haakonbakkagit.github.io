@@ -1,9 +1,9 @@
-## ----setup, include=FALSE--------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------
 rm(list=ls())
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ---- warning=FALSE, message=FALSE-----------------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------
 library(INLA)
 library(mgcv)
 
@@ -16,7 +16,7 @@ set.seed(2016)
 set.inla.seed = 2016
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 N.loc = 100
 # - number of locations
 # - 100 in the soap-film paper (Wood)
@@ -26,7 +26,7 @@ sigma.eps = 0.05
 global.zlim = c(-0.3, 1.1)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 ## plot the function, and its boundary...
 fsb <- fs.boundary()
 m<-300;n<-150 
@@ -42,7 +42,7 @@ contour(xm,yn,tru.matrix,levels=seq(global.zlim[1], global.zlim[2],len=10),add=T
 range(tru, na.rm = T)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 dat = data.frame(y = tru, locx = xx, locy=yy)
 dat = dat[!is.na(dat$y), ]
 df = dat[sample(1:nrow(dat), size=N.loc) ,]
@@ -51,7 +51,7 @@ str(df)
 summary(df)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 p = Polygon(cbind(fsb$x, fsb$y))
 p = Polygons(list(p), ID = "none")
 poly = SpatialPolygons(list(p))
@@ -60,7 +60,7 @@ points(df$locx, df$locy)
 axis(1); axis(2)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 max.edge = 0.1
 bound.outer = 1.5
 mesh = inla.mesh.2d(boundary = poly,
@@ -75,7 +75,7 @@ plot(mesh, main="Our mesh", lwd=0.5)
 mesh$n
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 A.i.s = inla.spde.make.A(mesh, loc=cbind(df$locx, df$locy))
 stk = inla.stack(data=list(y=df$y), 
                     effects=list(s=1:mesh$n,
@@ -84,7 +84,7 @@ stk = inla.stack(data=list(y=df$y),
                     remove.unused = FALSE, tag='est') 
 
 
-## ---- warning=FALSE, message=FALSE-----------------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------
 prior.range = c(1, .5)
 prior.sigma = c(3, 0.01)
 spde = inla.spde2.pcmatern(mesh, prior.range=prior.range, prior.sigma=prior.sigma)
@@ -93,13 +93,13 @@ spde = inla.spde2.pcmatern(mesh, prior.range=prior.range, prior.sigma=prior.sigm
 # - The prior probability of marginal standard deviation 3 or more is 0.01.
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 M = list()
 M[[1]] = list(shortname="stationary-model")
 M[[1]]$formula = y~ -1+m + f(s, model=spde)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 mesh = dt.mesh.addon.posTri(mesh)
 # - compute the triangle positions
 normal = over(poly, SpatialPoints(mesh$posTri), returnList=T)
@@ -110,7 +110,7 @@ Omega.SP = dt.polygon.omega(mesh, Omega)
 plot(Omega.SP[[2]], col="grey", main="The barrier region (in grey)")
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 Q.barrier = dt.create.Q(mesh, Omega, 
                         fixed.ranges = c(NA, 0.5))
 # - We fix the barrier range to a different value than we 
@@ -135,12 +135,12 @@ barrier.model = dt.inla.model(
 
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 M[[2]] = list(shortname="barrier-model")
 M[[2]]$formula = y~ -1+m + f(s, model=barrier.model)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 mesh2 = inla.mesh.2d(boundary=poly,
                     max.edge = max.edge,
                     #cutoff = 0.1,
@@ -150,7 +150,7 @@ plot(mesh2, main="The second mesh", lwd=0.5)
 mesh2$n
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 A.i.s2 = inla.spde.make.A(mesh2, loc=cbind(df$locx, df$locy))
 stk2 = inla.stack(data=list(y=df$y), 
                     effects=list(s=1:mesh2$n,
@@ -159,17 +159,17 @@ stk2 = inla.stack(data=list(y=df$y),
                     remove.unused = FALSE, tag='est') 
 
 
-## ---- warning=FALSE, message=FALSE-----------------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------
 spde2 = inla.spde2.pcmatern(mesh2, prior.range=prior.range, prior.sigma=prior.sigma)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 M[[3]] = list(shortname="neumann-model")
 M[[3]]$formula = y~ -1+m + f(s, model=spde2)
 M[[3]]$stack = stk2
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 ## Initial values
 # - speeds up computations
 # - improves accuracy of computations
@@ -179,7 +179,7 @@ M[[2]]$init = c(6.986,-1.135,-0.603)
 M[[3]]$init = c(7.221,-0.953,-1.383)
 
 
-## ---- warning=FALSE, message=FALSE-----------------------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------
 hyper.iid = list(prec = list(prior = 'pc.prec', param = prior.sigma)) 
 # - have the same prior for noise sigma and spatial field sigma
 
@@ -203,26 +203,26 @@ time.taken <- end.time - start.time
 # - time: ??
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 for (i in 1:length(M)){
   print(paste(round(M[[i]]$res$internal.summary.hyperpar$mode, 3), collapse = ','))
 }
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 print(M[[1]]$shortname)
 summary(M[[1]]$res)
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 print(M[[2]]$shortname)
 summary(M[[2]]$res)
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 #M[[i]]$res$logfile
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 local.plot.field = function(field, mesh, xlim, ylim, zlim, n.contours=10, ...){
   stopifnot(length(field) == mesh$n)
   # - error when using the wrong mesh
@@ -243,7 +243,7 @@ local.plot.field = function(field, mesh, xlim, ylim, zlim, n.contours=10, ...){
 }
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 for (i in 1:3) {
   field = M[[i]]$res$summary.random$s$mean + M[[i]]$res$summary.fixed['m', 'mean']
   
@@ -257,7 +257,7 @@ for (i in 1:3) {
 }
 
 
-## --------------------------------------------------------------------------------
+## -----------------------------------------------------------------
 ## Truth on the grid
 summary(dat)
 

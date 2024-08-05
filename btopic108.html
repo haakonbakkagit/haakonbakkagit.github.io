@@ -533,12 +533,12 @@ patterns.</p>
 need the so-called A-matrix.</p>
 <pre class="r"><code>A = inla.spde.make.A(mesh=mesh, loc=data.matrix(df[ , c(&#39;locx&#39;, &#39;locy&#39;)]))
 dim(A)</code></pre>
-<pre><code>## [1]  178 1069</code></pre>
+<pre><code>## [1]  178 1075</code></pre>
 <pre class="r"><code>A[1:2, 100:200]</code></pre>
 <pre><code>## 2 x 101 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                                                                     
-## [1,] . . . . . . . . . . . . . . 1 . . . . . . . . . . . . . . . . .
-## [2,] . . . . . . . . . . . . . . 0 1 . . . . . . . . . . . . . . . .
+## [1,] . . . . . . . . . . . . . . . 1 . . . . . . . . . . . . . . . .
+## [2,] . . . . . . . . . . . . . . . . 1 . . . . . . . . . . . . . . .
 ##                                                                     
 ## [1,] . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 ## [2,] . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -674,11 +674,11 @@ other options available.</p>
 ##    silent, inla.mode = inla.mode, safe = FALSE, debug = debug, &quot;, 
 ##    &quot; .parent.frame = .parent.frame)&quot;) 
 ## Time used:
-##     Pre = 3.15, Running = 1.6, Post = 0.0352, Total = 4.78 
+##     Pre = 3.43, Running = 1.32, Post = 0.0625, Total = 4.81 
 ## Fixed effects:
 ##        mean  sd 0.025quant 0.5quant 0.97quant  mode kld
-## Xcov1 0.076 1.7       -3.3    0.076       3.3 0.076   0
-## Xcov2 2.326 1.8       -1.2    2.326       5.7 2.326   0
+## Xcov1 0.077 1.7       -3.3    0.077       3.3 0.077   0
+## Xcov2 2.333 1.8       -1.2    2.333       5.7 2.333   0
 ## 
 ## Random effects:
 ##   Name     Model
@@ -686,15 +686,15 @@ other options available.</p>
 ## 
 ## Model hyperparameters:
 ##                                           mean    sd 0.025quant
-## Precision for the Gaussian observations  0.028 0.007      0.016
-## Range for s                              3.315 0.954      1.793
-## Stdev for s                             10.026 1.869      6.933
+## Precision for the Gaussian observations  0.028 0.007      0.017
+## Range for s                              3.295 0.942      1.791
+## Stdev for s                             10.030 1.863      6.945
 ##                                         0.5quant 0.97quant  mode
 ## Precision for the Gaussian observations    0.027     0.044 0.025
-## Range for s                                3.198     5.404 2.981
-## Stdev for s                                9.824    14.052 9.397
+## Range for s                                3.179     5.356 2.965
+## Stdev for s                                9.829    14.040 9.404
 ## 
-## Marginal log-Likelihood:  -648.68 
+## Marginal log-Likelihood:  -648.66 
 ##  is computed 
 ## Posterior summaries for the linear predictor and the fitted values are computed
 ## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
